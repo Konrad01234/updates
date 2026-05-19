@@ -1,0 +1,5 @@
+# Python-Bytecode (wird automatisch neu erzeugt)
+__pycache__/
+*.pyc
+# OS-Kram
+.DS_Store

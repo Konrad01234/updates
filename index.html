@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="OrthoSmile – Ihre Kieferorthopädie-Praxis in München. Festsitzende Spangen, Aligner, Retainer und mehr. Jetzt Termin buchen!" />
+  <title>OrthoSmile – Kieferorthopädie München</title>
+
+  <!-- Preconnect -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
+  <!-- JS -->
+  <script src="script.js" defer></script>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════
+     LOADER
+     ═══════════════════════════════════════════════════════ -->
+<div id="loader" aria-hidden="true" aria-label="Seite wird geladen">
+  <div class="loader__ring"></div>
+  <span class="loader__text">OrthoSmile</span>
+</div>
+
+<!-- Cursor Trail Canvas -->
+<canvas id="cursor-trail" aria-hidden="true"></canvas>
+
+<!-- ═══════════════════════════════════════════════════════
+     NAVBAR
+     ═══════════════════════════════════════════════════════ -->
+<header id="navbar" role="banner">
+  <nav class="nav__container" aria-label="Hauptnavigation">
+
+    <a href="#" class="nav__logo" aria-label="OrthoSmile – Startseite">
+      <span class="nav__logo-icon" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2C8 2 5 5 5 9c0 3 1 5 2 7l1 4h8l1-4c1-2 2-4 2-7 0-4-3-7-7-7z"/>
+        </svg>
+      </span>
+      OrthoSmile
+    </a>
+
+    <ul class="nav__links" role="list">
+      <li><a href="#story"    class="nav__link" data-section="story"   >Über uns</a></li>
+      <li><a href="#services" class="nav__link" data-section="services">Leistungen</a></li>
+      <li><a href="#team"     class="nav__link" data-section="team"    >Team</a></li>
+      <li><a href="#faq"      class="nav__link" data-section="faq"     >FAQ</a></li>
+    </ul>
+
+    <a href="#cta-section" class="btn btn--primary nav__cta">Termin buchen</a>
+
+    <button class="nav__burger" aria-label="Menü öffnen" aria-expanded="false" aria-controls="nav-drawer">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- Mobile Drawer -->
+  <div class="nav__drawer" id="nav-drawer" aria-hidden="true" role="dialog" aria-label="Mobilmenü">
+    <a href="#story"    class="nav__link">Über uns</a>
+    <a href="#services" class="nav__link">Leistungen</a>
+    <a href="#team"     class="nav__link">Team</a>
+    <a href="#faq"      class="nav__link">FAQ</a>
+    <a href="#cta-section" class="btn btn--primary">Termin buchen</a>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════
+     HERO
+     ═══════════════════════════════════════════════════════ -->
+<section id="hero" aria-label="Willkommen bei OrthoSmile">
+  <div class="hero__bg" data-parallax-bg aria-hidden="true"></div>
+  <div class="hero__overlay" aria-hidden="true"></div>
+
+  <div class="hero__content">
+    <p class="hero__eyebrow">Kieferorthopädie in München</p>
+    <h1 class="hero__headline">
+      Ihr Lächeln in<br>
+      <span>besten Händen</span>
+    </h1>
+    <p class="hero__subtitle">
+      Professionelle Kieferorthopädie für jedes Alter –<br>
+      von der Erstberatung bis zur Retainerversorgung.
+    </p>
+    <div class="hero__actions">
+      <a href="#cta-section" class="btn btn--primary">
+        Termin vereinbaren
+        <i data-lucide="arrow-right" aria-hidden="true"></i>
+      </a>
+      <a href="#services" class="btn btn--outline-white">Unsere Leistungen</a>
+    </div>
+  </div>
+
+  <!-- Info Bar -->
+  <div class="hero__infobar" role="complementary" aria-label="Schnellkontakt">
+    <div class="infobar__col">
+      <span class="infobar__icon" aria-hidden="true">
+        <i data-lucide="calendar-check"></i>
+      </span>
+      <div>
+        <span class="infobar__label">Online-Termin</span>
+        <span class="infobar__value">Schnell & einfach buchbar</span>
+      </div>
+    </div>
+    <div class="infobar__col">
+      <span class="infobar__icon" aria-hidden="true">
+        <i data-lucide="phone-call"></i>
+      </span>
+      <div>
+        <span class="infobar__label">Notfallkontakt</span>
+        <span class="infobar__value">+49 89 123 456 78</span>
+      </div>
+    </div>
+    <div class="infobar__col">
+      <span class="infobar__icon" aria-hidden="true">
+        <i data-lucide="clock"></i>
+      </span>
+      <div>
+        <span class="infobar__label">Öffnungszeiten</span>
+        <span class="infobar__value">Mo–Fr 08:00 – 18:00 Uhr</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     STORY / STATS
+     ═══════════════════════════════════════════════════════ -->
+<section id="story" class="section-py" aria-labelledby="story-heading">
+  <div class="container">
+    <div class="story__header">
+      <span class="badge reveal">Unsere Geschichte</span>
+      <h2 id="story-heading" class="section-headline reveal" style="--reveal-delay:80ms">
+        Seit 15 Jahren für<br><span class="text--pink">Ihr strahlendes Lächeln</span>
+      </h2>
+      <p class="section-body story__body reveal" style="--reveal-delay:160ms">
+        Wir verbinden modernste Technologie mit persönlicher Fürsorge – für ein Behandlungserlebnis,
+        das Sie in angenehmer Erinnerung behalten. Unsere Praxis steht für Vertrauen, Qualität und ein
+        Lächeln, das ein Leben lang hält.
+      </p>
+    </div>
+  </div>
+
+  <!-- Stats Carousel -->
+  <div class="carousel" role="region" aria-label="Unsere Zahlen">
+    <div class="carousel__viewport">
+      <div class="carousel__track" id="carousel-track">
+
+        <!-- Card 1 -->
+        <div class="stat-card reveal">
+          <img class="stat-card__img"
+               src="https://images.unsplash.com/photo-1581595219315-a187dd40c322?w=400&auto=format&fit=crop"
+               alt="Patientin mit strahlendem Lächeln" loading="lazy" width="320" height="190" />
+          <div class="stat-card__body">
+            <span class="stat-card__number" data-count="15" data-suffix="+">0</span>
+            <span class="stat-card__label">Jahre Erfahrung</span>
+            <p class="stat-card__desc">
+              Über anderthalb Jahrzehnte Expertise in der Kieferorthopädie.
+            </p>
+            <div class="stat-card__dash"><span></span><span></span></div>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="stat-card reveal" style="--reveal-delay:80ms">
+          <img class="stat-card__img"
+               src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=400&auto=format&fit=crop"
+               alt="Freundlicher Arzt im Gespräch mit Patient" loading="lazy" width="320" height="190" />
+          <div class="stat-card__body">
+            <span class="stat-card__number" data-count="2000" data-suffix="+">0</span>
+            <span class="stat-card__label">Glückliche Patienten</span>
+            <p class="stat-card__desc">
+              Neue Patienten kommen vor allem durch Empfehlungen begeisterter Patienten.
+            </p>
+            <div class="stat-card__dash"><span></span><span></span></div>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="stat-card reveal" style="--reveal-delay:160ms">
+          <img class="stat-card__img"
+               src="https://images.unsplash.com/photo-1588776814546-1ffbb1e59d4e?w=400&auto=format&fit=crop"
+               alt="Modernes Behandlungszimmer" loading="lazy" width="320" height="190" />
+          <div class="stat-card__body">
+            <span class="stat-card__number" data-count="97" data-suffix="%">0</span>
+            <span class="stat-card__label">Weiterempfehlungsrate</span>
+            <p class="stat-card__desc">
+              97 von 100 Patienten würden unsere Praxis aktiv weiterempfehlen.
+            </p>
+            <div class="stat-card__dash"><span></span><span></span></div>
+          </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="stat-card reveal" style="--reveal-delay:240ms">
+          <img class="stat-card__img"
+               src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=400&auto=format&fit=crop"
+               alt="Digitales Röntgenbild" loading="lazy" width="320" height="190" />
+          <div class="stat-card__body">
+            <span class="stat-card__number" data-count="5" data-suffix=" Min">0</span>
+            <span class="stat-card__label">Erreichbarkeit</span>
+            <p class="stat-card__desc">
+              Zentral gelegen – in nur 5 Minuten mit U-Bahn oder Tram erreichbar.
+            </p>
+            <div class="stat-card__dash"><span></span><span></span></div>
+          </div>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="stat-card reveal" style="--reveal-delay:320ms">
+          <img class="stat-card__img"
+               src="https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=400&auto=format&fit=crop"
+               alt="Modernes Behandlungsgerät" loading="lazy" width="320" height="190" />
+          <div class="stat-card__body">
+            <span class="stat-card__number" data-count="3">0</span>
+            <span class="stat-card__label">Spezialisierte Ärzte</span>
+            <p class="stat-card__desc">
+              Unser Team aus erfahrenen Fachärzten steht Ihnen jederzeit zur Seite.
+            </p>
+            <div class="stat-card__dash"><span></span><span></span></div>
+          </div>
+        </div>
+
+      </div><!-- /.carousel__track -->
+    </div><!-- /.carousel__viewport -->
+
+    <div class="carousel__btns">
+      <button class="carousel__btn carousel__btn--prev" aria-label="Zurück">
+        <i data-lucide="chevron-left" aria-hidden="true"></i>
+      </button>
+      <button class="carousel__btn carousel__btn--next" aria-label="Weiter">
+        <i data-lucide="chevron-right" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div><!-- /.carousel -->
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SERVICES
+     ═══════════════════════════════════════════════════════ -->
+<section id="services" class="section-py" aria-labelledby="services-heading">
+  <div class="container">
+    <div class="services__header">
+      <div class="services__header-text">
+        <span class="badge reveal">Unsere Leistungen</span>
+        <h2 id="services-heading" class="section-headline reveal" style="--reveal-delay:80ms">
+          Umfassende Kieferorthopädie<br><span class="text--pink">für jedes Lächeln</span>
+        </h2>
+        <p class="section-body reveal" style="--reveal-delay:160ms">
+          Wir kombinieren Fachkompetenz, Einfühlungsvermögen und neueste Technologie für ein
+          Behandlungserlebnis, das Ihre Erwartungen übertrifft.
+        </p>
+      </div>
+      <a href="#cta-section" class="btn btn--dark reveal reveal--right">
+        Alle Leistungen
+        <i data-lucide="arrow-right" aria-hidden="true"></i>
+      </a>
+    </div>
+
+    <div class="services__grid">
+
+      <!-- [01] Festsitzende Spange -->
+      <article class="service-card reveal" aria-label="Festsitzende Spange">
+        <div class="service-card__img-wrap">
+          <img class="service-card__img"
+               src="https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=600&auto=format&fit=crop"
+               alt="Festsitzende Zahnspange" loading="lazy" width="600" height="375" />
+          <span class="service-card__number" aria-hidden="true">[01]</span>
+        </div>
+        <div class="service-card__body">
+          <div class="service-card__tags">
+            <span class="tag">Festsitzend</span>
+            <span class="tag">Metallspange</span>
+            <span class="tag">Keramik</span>
+          </div>
+          <h3 class="service-card__title">Festsitzende Spange</h3>
+          <p class="service-card__desc">
+            Bewährt und hochpräzise für alle Altersstufen. Unsere modernen
+            Brackets ermöglichen eine sanfte und effektive Zahnkorrektur.
+          </p>
+          <a href="#cta-section" class="btn btn--ghost service-card__cta">
+            Details ansehen
+            <i data-lucide="arrow-right" aria-hidden="true"></i>
+          </a>
+        </div>
+      </article>
+
+      <!-- [02] Aligner / Invisalign -->
+      <article class="service-card reveal" style="--reveal-delay:80ms" aria-label="Transparente Aligner">
+        <div class="service-card__img-wrap">
+          <img class="service-card__img"
+               src="https://images.unsplash.com/photo-1598256989800-fe5f95da9787?w=600&auto=format&fit=crop"
+               alt="Transparente Aligner Schienen" loading="lazy" width="600" height="375" />
+          <span class="service-card__number" aria-hidden="true">[02]</span>
+        </div>
+        <div class="service-card__body">
+          <div class="service-card__tags">
+            <span class="tag">Unsichtbar</span>
+            <span class="tag">Herausnehmbar</span>
+          </div>
+          <h3 class="service-card__title">Transparente Aligner</h3>
+          <p class="service-card__desc">
+            Nahezu unsichtbare Zahnschienen für diskrete Zahnkorrekturen –
+            ideal für Erwachsene und Jugendliche ab 16 Jahren.
+          </p>
+          <a href="#cta-section" class="btn btn--ghost service-card__cta">
+            Details ansehen
+            <i data-lucide="arrow-right" aria-hidden="true"></i>
+          </a>
+        </div>
+      </article>
+
+      <!-- [03] Retainer -->
+      <article class="service-card reveal" style="--reveal-delay:160ms" aria-label="Retainer">
+        <div class="service-card__img-wrap">
+          <img class="service-card__img"
+               src="https://images.unsplash.com/photo-1588776814546-1ffbb1e59d4e?w=600&auto=format&fit=crop"
+               alt="Zahnarzt erklärt Retainer" loading="lazy" width="600" height="375" />
+          <span class="service-card__number" aria-hidden="true">[03]</span>
+        </div>
+        <div class="service-card__body">
+          <div class="service-card__tags">
+            <span class="tag">Festsitzend</span>
+            <span class="tag">Herausnehmbar</span>
+          </div>
+          <h3 class="service-card__title">Retainer</h3>
+          <p class="service-card__desc">
+            Nach Abschluss der Behandlung sichern Retainer das erzielte
+            Ergebnis langfristig und verhindern ein Zurückwandern der Zähne.
+          </p>
+          <a href="#cta-section" class="btn btn--ghost service-card__cta">
+            Details ansehen
+            <i data-lucide="arrow-right" aria-hidden="true"></i>
+          </a>
+        </div>
+      </article>
+
+      <!-- [04] Digitales Röntgen -->
+      <article class="service-card reveal" style="--reveal-delay:240ms" aria-label="Digitales Röntgen">
+        <div class="service-card__img-wrap">
+          <img class="service-card__img"
+               src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=600&auto=format&fit=crop"
+               alt="Digitales Röntgengerät" loading="lazy" width="600" height="375" />
+          <span class="service-card__number" aria-hidden="true">[04]</span>
+        </div>
+        <div class="service-card__body">
+          <div class="service-card__tags">
+            <span class="tag">3D-Scan</span>
+            <span class="tag">Strahlungsarm</span>
+          </div>
+          <h3 class="service-card__title">Digitales Röntgen</h3>
+          <p class="service-card__desc">
+            Präzise Diagnostik mit strahlungsarmen digitalen Aufnahmen und
+            modernen 3D-Scans für eine genaue Behandlungsplanung.
+          </p>
+          <a href="#cta-section" class="btn btn--ghost service-card__cta">
+            Details ansehen
+            <i data-lucide="arrow-right" aria-hidden="true"></i>
+          </a>
+        </div>
+      </article>
+
+      <!-- [05] Erstberatung -->
+      <article class="service-card reveal" style="--reveal-delay:320ms" aria-label="Kostenlose Erstberatung">
+        <div class="service-card__img-wrap">
+          <img class="service-card__img"
+               src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=600&auto=format&fit=crop"
+               alt="Freundliche Beratung in der Praxis" loading="lazy" width="600" height="375" />
+          <span class="service-card__number" aria-hidden="true">[05]</span>
+        </div>
+        <div class="service-card__body">
+          <div class="service-card__tags">
+            <span class="tag">Kostenlos</span>
+            <span class="tag">Unverbindlich</span>
+          </div>
+          <h3 class="service-card__title">Erstberatung</h3>
+          <p class="service-card__desc">
+            In einem ausführlichen Erstgespräch analysieren wir Ihren Befund
+            und erarbeiten gemeinsam den optimalen Behandlungsplan für Sie.
+          </p>
+          <a href="#cta-section" class="btn btn--ghost service-card__cta">
+            Jetzt buchen
+            <i data-lucide="arrow-right" aria-hidden="true"></i>
+          </a>
+        </div>
+      </article>
+
+    </div><!-- /.services__grid -->
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     TEAM
+     ═══════════════════════════════════════════════════════ -->
+<section id="team" class="section-py" aria-labelledby="team-heading">
+  <div class="container">
+    <div class="team__header">
+      <span class="badge reveal">Unser Team</span>
+      <h2 id="team-heading" class="section-headline reveal" style="--reveal-delay:80ms">
+        Ihr erfahrenes<br><span class="text--pink">Expertenteam</span>
+      </h2>
+      <p class="section-body reveal" style="--reveal-delay:160ms">
+        Jedes Mitglied unseres Teams ist hochqualifiziert und leidenschaftlich daran
+        interessiert, Ihnen zu einem gesunden, strahlenden Lächeln zu verhelfen.
+      </p>
+    </div>
+
+    <div class="team__grid">
+
+      <!-- Dr. Anna Müller -->
+      <article class="team-card reveal" aria-label="Dr. Anna Müller">
+        <div class="team-card__img-wrap">
+          <img class="team-card__img"
+               src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=400&auto=format&fit=crop"
+               alt="Dr. Anna Müller, Kieferorthopädin" loading="lazy" width="400" height="533" />
+          <div class="team-card__overlay" aria-hidden="true">
+            <p class="team-card__bio">Spezialisiert auf Erwachsenenbehandlung und ästhetische Kieferorthopädie. 12 Jahre Erfahrung.</p>
+          </div>
+        </div>
+        <div class="team-card__info">
+          <div>
+            <p class="team-card__name">Dr. Anna Müller</p>
+            <p class="team-card__role">Fachärztin KFO</p>
+          </div>
+          <div class="team-card__socials" role="list" aria-label="Profile von Dr. Müller">
+            <a href="#" class="social-link" role="listitem" aria-label="Instagram von Dr. Müller">
+              <i data-lucide="instagram" aria-hidden="true"></i>
+            </a>
+            <a href="#" class="social-link" role="listitem" aria-label="LinkedIn von Dr. Müller">
+              <i data-lucide="linkedin" aria-hidden="true"></i>
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <!-- Dr. Felix Braun -->
+      <article class="team-card reveal" style="--reveal-delay:120ms" aria-label="Dr. Felix Braun">
+        <div class="team-card__img-wrap">
+          <img class="team-card__img"
+               src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&auto=format&fit=crop"
+               alt="Dr. Felix Braun, Kieferorthopäde" loading="lazy" width="400" height="533" />
+          <div class="team-card__overlay" aria-hidden="true">
+            <p class="team-card__bio">Experte für Aligner-Therapie und digitale Behandlungsplanung. Referent auf internationalen Kongressen.</p>
+          </div>
+        </div>
+        <div class="team-card__info">
+          <div>
+            <p class="team-card__name">Dr. Felix Braun</p>
+            <p class="team-card__role">Facharzt KFO</p>
+          </div>
+          <div class="team-card__socials" role="list" aria-label="Profile von Dr. Braun">
+            <a href="#" class="social-link" role="listitem" aria-label="Instagram von Dr. Braun">
+              <i data-lucide="instagram" aria-hidden="true"></i>
+            </a>
+            <a href="#" class="social-link" role="listitem" aria-label="LinkedIn von Dr. Braun">
+              <i data-lucide="linkedin" aria-hidden="true"></i>
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <!-- Dr. Sophie Wagner -->
+      <article class="team-card reveal" style="--reveal-delay:240ms" aria-label="Dr. Sophie Wagner">
+        <div class="team-card__img-wrap">
+          <img class="team-card__img"
+               src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&auto=format&fit=crop"
+               alt="Dr. Sophie Wagner, Kieferorthopädin" loading="lazy" width="400" height="533" />
+          <div class="team-card__overlay" aria-hidden="true">
+            <p class="team-card__bio">Schwerpunkt Kinderzahnheilkunde und Frühbehandlung. Zertifizierte Spezialistin für Myofunktionstherapie.</p>
+          </div>
+        </div>
+        <div class="team-card__info">
+          <div>
+            <p class="team-card__name">Dr. Sophie Wagner</p>
+            <p class="team-card__role">Fachärztin KFO</p>
+          </div>
+          <div class="team-card__socials" role="list" aria-label="Profile von Dr. Wagner">
+            <a href="#" class="social-link" role="listitem" aria-label="Instagram von Dr. Wagner">
+              <i data-lucide="instagram" aria-hidden="true"></i>
+            </a>
+            <a href="#" class="social-link" role="listitem" aria-label="LinkedIn von Dr. Wagner">
+              <i data-lucide="linkedin" aria-hidden="true"></i>
+            </a>
+          </div>
+        </div>
+      </article>
+
+    </div><!-- /.team__grid -->
+
+    <div class="team__cta">
+      <a href="#cta-section" class="btn btn--outline">
+        Termin mit unserem Team
+        <i data-lucide="arrow-right" aria-hidden="true"></i>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     WHY US
+     ═══════════════════════════════════════════════════════ -->
+<section id="why-us" class="section-py" aria-labelledby="why-heading">
+  <div class="container">
+    <div class="why__layout">
+      <div class="why__features">
+        <span class="badge reveal">Warum OrthoSmile?</span>
+        <h2 id="why-heading" class="section-headline reveal" style="--reveal-delay:80ms">
+          Wir behandeln Sie<br><span class="text--pink">wie Familie</span>
+        </h2>
+        <p class="section-body reveal" style="--reveal-delay:160ms">
+          Bei OrthoSmile stehen Sie im Mittelpunkt. Unser ganzheitlicher Ansatz verbindet
+          medizinische Exzellenz mit echter Menschlichkeit.
+        </p>
+        <ul class="feature-list" role="list">
+          <li class="feature-item reveal" style="--reveal-delay:200ms">
+            <span class="feature-item__bullet" aria-hidden="true">✳</span>
+            <div>
+              <p class="feature-item__title">Modernste Technologie</p>
+              <p class="feature-item__desc">3D-Scans, digitale Behandlungsplanung und strahlungsarmes Röntgen für präzise Diagnosen.</p>
+            </div>
+          </li>
+          <li class="feature-item reveal" style="--reveal-delay:280ms">
+            <span class="feature-item__bullet" aria-hidden="true">✳</span>
+            <div>
+              <p class="feature-item__title">Umfassendes Leistungsspektrum</p>
+              <p class="feature-item__desc">Von der Frühbehandlung bis zur Erwachsenenversorgung – alles aus einer Hand.</p>
+            </div>
+          </li>
+          <li class="feature-item reveal" style="--reveal-delay:360ms">
+            <span class="feature-item__bullet" aria-hidden="true">✳</span>
+            <div>
+              <p class="feature-item__title">Transparente Kommunikation</p>
+              <p class="feature-item__desc">Wir erklären jeden Behandlungsschritt verständlich und antworten auf all Ihre Fragen.</p>
+            </div>
+          </li>
+          <li class="feature-item reveal" style="--reveal-delay:440ms">
+            <span class="feature-item__bullet" aria-hidden="true">✳</span>
+            <div>
+              <p class="feature-item__title">Patientenzentrierte Pflege</p>
+              <p class="feature-item__desc">Kurze Wartezeiten, individuelle Terminplanung und ein herzliches Team, das für Sie da ist.</p>
+            </div>
+          </li>
+          <li class="feature-item reveal" style="--reveal-delay:520ms">
+            <span class="feature-item__bullet" aria-hidden="true">✳</span>
+            <div>
+              <p class="feature-item__title">Langfristige Ergebnisse</p>
+              <p class="feature-item__desc">Unsere Behandlungen sind darauf ausgelegt, Ihr Lächeln dauerhaft zu verbessern.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="why__image-wrap reveal reveal--right">
+        <img src="https://images.unsplash.com/photo-1629909615957-be38d48fbbe4?w=700&auto=format&fit=crop"
+             alt="Unser freundliches Praxisteam" loading="lazy" width="700" height="875" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     TESTIMONIALS
+     ═══════════════════════════════════════════════════════ -->
+<section id="testimonials" aria-labelledby="testimonials-heading">
+  <div class="testimonials__bg" aria-hidden="true"></div>
+  <div class="testimonials__overlay" aria-hidden="true"></div>
+
+  <div class="container testimonials__content">
+    <div class="testimonials__header">
+      <span class="badge badge--light reveal">Patientenstimmen</span>
+      <h2 id="testimonials-heading" class="section-headline section-headline--light reveal" style="--reveal-delay:80ms">
+        Was unsere Patienten sagen
+      </h2>
+    </div>
+
+    <div class="testimonial-slider" role="region" aria-live="polite" aria-label="Erfahrungsberichte">
+      <div class="testimonial-slider__track">
+
+        <!-- Slide 1 -->
+        <div class="testimonial-card is-active" aria-label="Bewertung von Maria K.">
+          <img class="testimonial-card__avatar"
+               src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=128&auto=format&fit=crop"
+               alt="Maria K." width="64" height="64" />
+          <div class="testimonial-card__stars" aria-label="5 von 5 Sternen">
+            <i data-lucide="star" aria-hidden="true"></i>
+            <i data-lucide="star" aria-hidden="true"></i>
+            <i data-lucide="star" aria-hidden="true"></i>
+            <i data-lucide="star" aria-hidden="true"></i>
+            <i data-lucide="star" aria-hidden="true"></i>
+          </div>
+          <blockquote>
+            <p class="testimonial-card__quote">
+              Ich war jahrelang unsicher wegen meiner Zähne. Das Team von OrthoSmile hat mir nicht nur
+              ein perfektes Lächeln gegeben – sie haben mir mein Selbstbewusstsein zurückgegeben.
+              Die Behandlung war komfortabel und das Ergebnis übertrifft alles, was ich erwartet hatte.
+            </p>
+          </blockquote>
+          <p class="testimonial-card__name">Maria K.</p>
+          <p class="testimonial-card__role">Lehrerin, München</p>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="testimonial-card" aria-label="Bewertung von Thomas B.">
+          <img class="testimonial-card__avatar"
+               src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=128&auto=format&fit=crop"
+               alt="Thomas B." width="64" height="64" />
+          <div class="testimonial-card__stars" aria-label="5 von 5 Sternen">
+            <i data-lucide="star" aria-hidden="true"></i>
+            <i data-lucide="star" aria-hidden="true"></i>
+            <i data-lucide="star" aria-hidden="true"></i>
+            <i data-lucide="star" aria-hidden="true"></i>
+            <i data-lucide="star" aria-hidden="true"></i>
+          </div>
+          <blockquote>
+            <p class="testimonial-card__quote">
+              Als Erwachsener hatte ich Bedenken wegen einer Zahnspange – doch mit den transparenten
+              Alignern von OrthoSmile war das kein Problem. Kaum sichtbar, komfortabel und das
+              Ergebnis nach nur 14 Monaten ist einfach fantastisch!
+            </p>
+          </blockquote>
+          <p class="testimonial-card__name">Thomas B.</p>
+          <p class="testimonial-card__role">Ingenieur, München</p>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="testimonial-card" aria-label="Bewertung von Sandra M.">
+          <img class="testimonial-card__avatar"
+               src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=128&auto=format&fit=crop"
+               alt="Sandra M." width="64" height="64" />
+          <div class="testimonial-card__stars" aria-label="5 von 5 Sternen">
+            <i data-lucide="star" aria-hidden="true"></i>
+            <i data-lucide="star" aria-hidden="true"></i>
+            <i data-lucide="star" aria-hidden="true"></i>
+            <i data-lucide="star" aria-hidden="true"></i>
+            <i data-lucide="star" aria-hidden="true"></i>
+          </div>
+          <blockquote>
+            <p class="testimonial-card__quote">
+              Meine Tochter (8) wird seit einem Jahr bei Dr. Wagner behandelt. Das Vertrauen,
+              das das gesamte Team aufgebaut hat, ist unglaublich. Sie geht sogar gerne zur
+              Kontrolle hin – das sagt alles!
+            </p>
+          </blockquote>
+          <p class="testimonial-card__name">Sandra M.</p>
+          <p class="testimonial-card__role">Mutter zweier Kinder, München</p>
+        </div>
+
+      </div><!-- /.testimonial-slider__track -->
+
+      <div class="testimonial-dots" role="tablist" aria-label="Bewertung auswählen">
+        <button class="testimonial-dot is-active" role="tab" aria-selected="true"  aria-label="Bewertung 1 anzeigen"></button>
+        <button class="testimonial-dot"           role="tab" aria-selected="false" aria-label="Bewertung 2 anzeigen"></button>
+        <button class="testimonial-dot"           role="tab" aria-selected="false" aria-label="Bewertung 3 anzeigen"></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     FAQ
+     ═══════════════════════════════════════════════════════ -->
+<section id="faq" class="section-py" aria-labelledby="faq-heading">
+  <div class="container">
+    <div class="faq__layout">
+      <div>
+        <span class="badge reveal">Häufige Fragen</span>
+        <h2 id="faq-heading" class="section-headline reveal" style="--reveal-delay:80ms">
+          Ihre Fragen,<br><span class="text--pink">unsere Antworten</span>
+        </h2>
+
+        <div class="accordion reveal" style="--reveal-delay:160ms">
+
+          <div class="accordion__item">
+            <button class="accordion__trigger" aria-expanded="false" aria-controls="faq-panel-1" id="faq-btn-1">
+              Ab welchem Alter empfiehlt sich eine kieferorthopädische Untersuchung?
+              <i data-lucide="chevron-down" class="accordion__icon" aria-hidden="true"></i>
+            </button>
+            <div class="accordion__panel" id="faq-panel-1" role="region" aria-labelledby="faq-btn-1">
+              <p>Bereits ab dem 6.–8. Lebensjahr kann eine Frühbehandlung sinnvoll sein. Wir empfehlen
+              eine erste Vorstellungen beim Zahnarzt, sobald die ersten bleibenden Zähne durchbrechen.
+              Je früher eine Fehlstellung erkannt wird, desto einfacher und schonender ist die Behandlung.</p>
+            </div>
+          </div>
+
+          <div class="accordion__item">
+            <button class="accordion__trigger" aria-expanded="false" aria-controls="faq-panel-2" id="faq-btn-2">
+              Wie lange dauert eine kieferorthopädische Behandlung?
+              <i data-lucide="chevron-down" class="accordion__icon" aria-hidden="true"></i>
+            </button>
+            <div class="accordion__panel" id="faq-panel-2" role="region" aria-labelledby="faq-btn-2">
+              <p>Die Behandlungsdauer hängt von der Schwere der Fehlstellung und der gewählten Methode ab.
+              Leichte Korrekturen mit Alignern können in 6–12 Monaten abgeschlossen sein; umfangreichere
+              Behandlungen mit fester Spange dauern typischerweise 1,5–3 Jahre.</p>
+            </div>
+          </div>
+
+          <div class="accordion__item">
+            <button class="accordion__trigger" aria-expanded="false" aria-controls="faq-panel-3" id="faq-btn-3">
+              Übernimmt die Krankenkasse die Kosten?
+              <i data-lucide="chevron-down" class="accordion__icon" aria-hidden="true"></i>
+            </button>
+            <div class="accordion__panel" id="faq-panel-3" role="region" aria-labelledby="faq-btn-3">
+              <p>Gesetzliche Krankenkassen übernehmen bei Kindern unter 18 Jahren in der Regel die Kosten
+              für medizinisch notwendige Behandlungen ab Schweregrad KIG 3. Private Kassen und Zusatzversicherungen
+              leisten oft mehr. Wir beraten Sie gerne zu Finanzierungsmöglichkeiten und Eigenanteilen.</p>
+            </div>
+          </div>
+
+          <div class="accordion__item">
+            <button class="accordion__trigger" aria-expanded="false" aria-controls="faq-panel-4" id="faq-btn-4">
+              Sind transparente Aligner genauso wirksam wie feste Spangen?
+              <i data-lucide="chevron-down" class="accordion__icon" aria-hidden="true"></i>
+            </button>
+            <div class="accordion__panel" id="faq-panel-4" role="region" aria-labelledby="faq-btn-4">
+              <p>Für leichte bis mittlere Zahnfehlstellungen erzielen moderne Aligner vergleichbare Ergebnisse
+              wie festsitzende Apparaturen. Bei komplexeren Fällen kann eine feste Spange vorzuziehen sein.
+              In Ihrer Erstberatung klären wir gemeinsam, welche Methode für Sie am besten geeignet ist.</p>
+            </div>
+          </div>
+
+          <div class="accordion__item">
+            <button class="accordion__trigger" aria-expanded="false" aria-controls="faq-panel-5" id="faq-btn-5">
+              Ist die Behandlung schmerzhaft?
+              <i data-lucide="chevron-down" class="accordion__icon" aria-hidden="true"></i>
+            </button>
+            <div class="accordion__panel" id="faq-panel-5" role="region" aria-labelledby="faq-btn-5">
+              <p>Zu Beginn und nach Aktivierungen können leichte Druckempfindungen auftreten, die in der Regel
+              nach 1–3 Tagen nachlassen. Diese sind ein Zeichen, dass die Behandlung wirkt. Bei Alignern
+              ist das Empfinden oft noch angenehmer als bei festen Apparaturen.</p>
+            </div>
+          </div>
+
+          <div class="accordion__item">
+            <button class="accordion__trigger" aria-expanded="false" aria-controls="faq-panel-6" id="faq-btn-6">
+              Was passiert nach der Behandlung?
+              <i data-lucide="chevron-down" class="accordion__icon" aria-hidden="true"></i>
+            </button>
+            <div class="accordion__panel" id="faq-panel-6" role="region" aria-labelledby="faq-btn-6">
+              <p>Nach Abschluss der aktiven Behandlung werden Retainer (Stabilisierungsschienen oder
+              -drähte) angepasst, die das Ergebnis dauerhaft sichern. Regelmäßige Nachsorgetermine
+              in den ersten Jahren gewährleisten ein bleibendes, schönes Lächeln.</p>
+            </div>
+          </div>
+
+        </div><!-- /.accordion -->
+      </div>
+
+      <!-- Call Card -->
+      <aside class="faq__callcard reveal reveal--right" aria-label="Direktkontakt">
+        <div class="faq__callcard-icon" aria-hidden="true">
+          <i data-lucide="phone-call"></i>
+        </div>
+        <h3>Noch Fragen offen?</h3>
+        <p>Unser Team beantwortet Ihre Fragen persönlich – rufen Sie uns einfach an oder schreiben Sie uns.</p>
+        <a href="tel:+498912345678" class="btn btn--white">
+          <i data-lucide="phone" aria-hidden="true"></i>
+          Jetzt anrufen
+        </a>
+        <a href="mailto:info@orthosmile.de" class="btn btn--outline-white">
+          E-Mail schreiben
+        </a>
+      </aside>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     CTA SECTION
+     ═══════════════════════════════════════════════════════ -->
+<section id="cta-section" class="section-py" aria-labelledby="cta-heading">
+  <div class="container" style="text-align:center">
+    <span class="cta-badge reveal">Kontakt aufnehmen</span>
+    <h2 id="cta-heading" class="cta__headline reveal" style="--reveal-delay:80ms">
+      Bereit für Ihr<br>perfektes Lächeln?
+    </h2>
+    <p class="cta__body reveal" style="--reveal-delay:160ms">
+      Vereinbaren Sie jetzt Ihre kostenlose Erstberatung. Wir freuen uns auf Sie!
+    </p>
+    <div style="display:flex;flex-wrap:wrap;gap:1rem;justify-content:center;" class="reveal" style="--reveal-delay:240ms">
+      <a href="mailto:info@orthosmile.de" class="btn btn--white">
+        <i data-lucide="calendar" aria-hidden="true"></i>
+        Termin online buchen
+      </a>
+      <a href="tel:+498912345678" class="btn btn--outline-white">
+        <i data-lucide="phone" aria-hidden="true"></i>
+        +49 89 123 456 78
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOOTER
+     ═══════════════════════════════════════════════════════ -->
+<footer id="footer" role="contentinfo">
+  <div class="container">
+    <div class="footer__main">
+
+      <!-- Brand -->
+      <div class="footer__brand">
+        <a href="#" class="footer__logo" aria-label="OrthoSmile – zurück zur Startseite">
+          <span class="footer__logo-icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2C8 2 5 5 5 9c0 3 1 5 2 7l1 4h8l1-4c1-2 2-4 2-7 0-4-3-7-7-7z"/>
+            </svg>
+          </span>
+          OrthoSmile
+        </a>
+        <p>Professionelle Kieferorthopädie für jedes Alter – in München seit 2010.</p>
+        <div class="footer__socials" role="list" aria-label="Soziale Netzwerke">
+          <a href="#" class="social-link" role="listitem" aria-label="OrthoSmile auf Instagram">
+            <i data-lucide="instagram" aria-hidden="true"></i>
+          </a>
+          <a href="#" class="social-link" role="listitem" aria-label="OrthoSmile auf Facebook">
+            <i data-lucide="facebook" aria-hidden="true"></i>
+          </a>
+          <a href="#" class="social-link" role="listitem" aria-label="OrthoSmile auf LinkedIn">
+            <i data-lucide="linkedin" aria-hidden="true"></i>
+          </a>
+          <a href="#" class="social-link" role="listitem" aria-label="OrthoSmile auf YouTube">
+            <i data-lucide="youtube" aria-hidden="true"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Nav: Leistungen -->
+      <nav class="footer__col" aria-label="Leistungen Navigation">
+        <h4>Leistungen</h4>
+        <ul role="list">
+          <li><a href="#services">Festsitzende Spange</a></li>
+          <li><a href="#services">Transparente Aligner</a></li>
+          <li><a href="#services">Retainer</a></li>
+          <li><a href="#services">Digitales Röntgen</a></li>
+          <li><a href="#services">Erstberatung</a></li>
+        </ul>
+      </nav>
+
+      <!-- Nav: Praxis -->
+      <nav class="footer__col" aria-label="Praxis Navigation">
+        <h4>Praxis</h4>
+        <ul role="list">
+          <li><a href="#story">Über uns</a></li>
+          <li><a href="#team">Unser Team</a></li>
+          <li><a href="#why-us">Warum OrthoSmile</a></li>
+          <li><a href="#testimonials">Patientenstimmen</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+      </nav>
+
+      <!-- Contact -->
+      <address class="footer__col">
+        <h4>Kontakt</h4>
+        <ul class="footer__contact" role="list">
+          <li class="footer__contact-item">
+            <i data-lucide="map-pin" aria-hidden="true"></i>
+            <span>Maximilianstraße 12<br>80539 München</span>
+          </li>
+          <li class="footer__contact-item">
+            <i data-lucide="phone" aria-hidden="true"></i>
+            <a href="tel:+498912345678">+49 89 123 456 78</a>
+          </li>
+          <li class="footer__contact-item">
+            <i data-lucide="mail" aria-hidden="true"></i>
+            <a href="mailto:info@orthosmile.de">info@orthosmile.de</a>
+          </li>
+          <li class="footer__contact-item">
+            <i data-lucide="clock" aria-hidden="true"></i>
+            <span>Mo–Fr 08:00–18:00<br>Sa 09:00–13:00</span>
+          </li>
+        </ul>
+      </address>
+
+    </div><!-- /.footer__main -->
+
+    <div class="footer__bottom">
+      <p>© 2026 OrthoSmile KFO-Praxis München. Alle Rechte vorbehalten.</p>
+      <nav class="footer__legal" aria-label="Rechtliche Links">
+        <a href="#">Datenschutz</a>
+        <a href="#">Impressum</a>
+        <a href="#">Barrierefreiheit</a>
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<!--
+  ╔══════════════════════════════════════════════════════════╗
+  ║   LERNRESSOURCEN & VERBESSERUNGSVORSCHLÄGE               ║
+  ╠══════════════════════════════════════════════════════════╣
+  ║                                                          ║
+  ║  DESIGN-INSPIRATION & TEMPLATES:                         ║
+  ║  • land-book.com     → Kuratierte Landing Pages          ║
+  ║  • awwwards.com      → Preisgekrönte Websites            ║
+  ║  • dribbble.com      → UI-Shots & Konzepte               ║
+  ║  • behance.net       → Vollständige Design-Projekte      ║
+  ║  • themewagon.com    → Kostenlose HTML-Templates         ║
+  ║  • html5up.net       → Responsive HTML5 Templates        ║
+  ║  • framer.com        → No-Code Website-Builder           ║
+  ║  • webflow.com       → Design + CMS                      ║
+  ║                                                          ║
+  ║  ANIMATIONEN LERNEN:                                     ║
+  ║  • gsap.com/docs     → GSAP ScrollTrigger, Timeline      ║
+  ║  • motion.dev        → Web Animations API (modern)       ║
+  ║  • animate.style     → Fertige CSS-Animationsklassen     ║
+  ║  • css-tricks.com    → CSS Animation Almanac             ║
+  ║  • keyframes.app     → Animation-Builder visuell         ║
+  ║                                                          ║
+  ║  FARBEN & DESIGN-TOOLS:                                  ║
+  ║  • coolors.co        → Farbpaletten-Generator            ║
+  ║  • uicolors.app      → Tailwind-Paletten aus einer Farbe ║
+  ║  • fontpair.co       → Google-Font-Kombinationen         ║
+  ║  • haikei.app        → SVG-Wellenhintergründe            ║
+  ║                                                          ║
+  ║  KOSTENLOSE STOCKFOTOS:                                  ║
+  ║  • unsplash.com      → HD-Fotos (dental/medical)         ║
+  ║  • pexels.com        → Weitere Gratis-Fotos              ║
+  ║  • freepik.com       → Vektoren & Illustrationen         ║
+  ║                                                          ║
+  ║  VERBESSERUNGEN FÜR DIESE SEITE:                         ║
+  ║  1. Echte Praxisfotos & Teambilder einbinden             ║
+  ║  2. Calendly / Doctolib Terminbuchungs-Widget            ║
+  ║  3. Google Maps im Footer einbetten                      ║
+  ║  4. Cookie-Banner (DSGVO) hinzufügen                     ║
+  ║  5. Vorher/Nachher-Slider (before-after CSS)             ║
+  ║  6. GSAP ScrollTrigger für komplexere Animationen        ║
+  ║  7. CSS Container Queries (moderner als Media Queries)   ║
+  ║  8. View Transitions API für Seitenwechsel               ║
+  ║  9. Blog-Sektion für SEO                                 ║
+  ║ 10. Lottie-Animationen für Icons                         ║
+  ╚══════════════════════════════════════════════════════════╝
+-->
+
+</body>
+</html>

@@ -4,141 +4,187 @@
 
 gsap.registerPlugin(ScrollTrigger);
 
-/* ── Helpers ─────────────────────────────────────────────── */
-function $(sel, ctx = document) { return ctx.querySelector(sel); }
-function $$(sel, ctx = document) { return [...ctx.querySelectorAll(sel)]; }
+function $(s, ctx = document) { return ctx.querySelector(s); }
+function $$(s, ctx = document) { return [...ctx.querySelectorAll(s)]; }
 
-/* ── Announcement bar dismiss ────────────────────────────── */
+/* ── Announce bar dismiss ─────────────────────────────────── */
 const announceBar   = $('#announceBar');
 const announceClose = $('#announceClose');
 const mainNav       = $('#mainNav');
 
-if (announceClose) {
-  announceClose.addEventListener('click', () => {
-    announceBar.classList.add('hidden');
-    mainNav.classList.add('announce-gone');
-    document.documentElement.style.setProperty('--announce-h', '0px');
-  });
-}
+announceClose.addEventListener('click', () => {
+  announceBar.classList.add('hidden');
+  mainNav.classList.add('announce-gone');
+  document.documentElement.style.setProperty('--announce-h', '0px');
+});
 
-/* ── Nav shrink on scroll ────────────────────────────────── */
+/* ── Nav scroll shrink ────────────────────────────────────── */
 window.addEventListener('scroll', () => {
   mainNav.classList.toggle('scrolled', window.scrollY > 60);
 }, { passive: true });
 
-/* ── Hero flavor carousel ────────────────────────────────── */
+/* ── Hero flavor data ─────────────────────────────────────── */
 const flavors = [
-  { name: 'Melon & Mint',          bg: '#8eba5b', canColor: '#6fa83a', flavorLabel: 'MELON & MINT' },
-  { name: 'Grapefruit',            bg: '#f0c040', canColor: '#e8734a', flavorLabel: 'GRAPEFRUIT' },
-  { name: 'Blackberry & Hibiscus', bg: '#5b8fe8', canColor: '#3a6cc0', flavorLabel: 'BLACKBERRY & HIBISCUS' },
-  { name: 'Passion Fruit',         bg: '#e8734a', canColor: '#c94f22', flavorLabel: 'PASSION FRUIT' },
+  {
+    name:       'Coconut Water',
+    pill:       'Coconut Water',
+    heroBg:     '#71CECA',
+    canTopBg:   '#71CECA',
+    canGradient:'linear-gradient(180deg, #71CECA 0%, #fff 55%, #fff 100%)',
+    nameColor:  '#71CECA',
+    flavorText: 'COCONUT<br>WATER',
+    footer:     'NO ADDED SUGAR · NOT FROM CONCENTRATE',
+    hasFibre:   false,
+    iconSvg: `
+      <ellipse cx="40" cy="42" rx="35" ry="34" fill="#4db84f"/>
+      <ellipse cx="40" cy="40" rx="31" ry="30" fill="#5ccc60"/>
+      <ellipse cx="40" cy="40" rx="14" ry="14" fill="#fff" opacity=".9"/>
+      <rect x="37" y="16" width="6" height="16" rx="3" fill="#71CECA"/>
+    `,
+  },
+  {
+    name:       'Mango Coconut Water',
+    pill:       'Mango Coconut Water',
+    heroBg:     '#e8963a',
+    canTopBg:   '#e05020',
+    canGradient:'linear-gradient(180deg, #e05020 0%, #e8963a 52%, #fff 54%, #fff 100%)',
+    nameColor:  '#e8963a',
+    flavorText: 'MANGO<br>COCONUT WATER',
+    footer:     'HIGH IN FIBRE · NO ADDED SUGAR',
+    hasFibre:   true,
+    iconSvg: `
+      <ellipse cx="40" cy="42" rx="35" ry="34" fill="#4db84f"/>
+      <path d="M40 8 Q75 8 75 76 L40 76Z" fill="#e8963a"/>
+      <ellipse cx="40" cy="40" rx="14" ry="14" fill="#fff" opacity=".9"/>
+      <rect x="37" y="16" width="6" height="16" rx="3" fill="#f5b040"/>
+    `,
+  },
+  {
+    name:       'Pineapple Coconut Water',
+    pill:       'Pineapple Coconut Water',
+    heroBg:     '#f5d020',
+    canTopBg:   '#e8b800',
+    canGradient:'linear-gradient(180deg, #f5d020 0%, #f5d020 52%, #fff 54%, #fff 100%)',
+    nameColor:  '#3d8a00',
+    flavorText: 'PINEAPPLE<br>COCONUT WATER',
+    footer:     'HIGH IN FIBRE · NO ADDED SUGAR',
+    hasFibre:   true,
+    iconSvg: `
+      <ellipse cx="40" cy="42" rx="35" ry="34" fill="#4db84f"/>
+      <path d="M40 8 Q75 8 75 76 L40 76Z" fill="#f5b040"/>
+      <ellipse cx="40" cy="40" rx="14" ry="14" fill="#fff" opacity=".9"/>
+      <rect x="37" y="16" width="6" height="16" rx="3" fill="#f5d020"/>
+      <path d="M50 20 Q58 26 56 36" stroke="#e8963a" stroke-width="2" fill="none" opacity=".7"/>
+    `,
+  },
 ];
 
 let currentFlavor = 0;
-const heroCan        = $('#heroCan');
-const heroSection    = $('#hero');
-const heroFlavorPill = $('#heroFlavorPill');
+const heroSection     = $('#hero');
+const canHeroBody     = $('#canHeroBody');
+const canFruitIcon    = $('#canFruitIcon');
+const canFlavorName   = $('#canFlavorName');
+const canFibreBadge   = $('#canFibreBadge');
+const heroFlavorPill  = $('#heroFlavorPill');
+const canTopBarEl     = $('#canTopBar');
 
-function setFlavor(idx) {
+function applyFlavor(idx, animate = true) {
   currentFlavor = (idx + flavors.length) % flavors.length;
   const f = flavors[currentFlavor];
 
-  gsap.to(heroSection, { backgroundColor: f.bg, duration: .5, ease: 'power2.out' });
-  gsap.to(heroCan, { opacity: 0, y: -20, duration: .22, onComplete: () => {
-    const nameEl  = heroCan.querySelector('.can-flavor-name');
-    const tagEl   = heroCan.querySelector('.can-flavor-tag');
-    if (nameEl) nameEl.textContent = f.flavorLabel;
-    gsap.to(heroCan, { opacity: 1, y: 0, duration: .28 });
-  }});
+  /* Background */
+  gsap.to(heroSection, { backgroundColor: f.heroBg, duration: .55, ease: 'power2.out' });
 
-  gsap.to(heroFlavorPill, { opacity: 0, scale: .9, duration: .2, onComplete: () => {
-    heroFlavorPill.textContent = f.name;
-    gsap.to(heroFlavorPill, { opacity: 1, scale: 1, duration: .25 });
-  }});
+  const doSwap = () => {
+    /* Can body gradient */
+    canHeroBody.style.background = f.canGradient;
+    canTopBarEl.style.background = 'rgba(255,255,255,.3)';
+
+    /* Icon */
+    canFruitIcon.innerHTML = f.iconSvg;
+
+    /* Flavor text */
+    canFlavorName.innerHTML = f.flavorText;
+    canFlavorName.style.color = f.nameColor;
+
+    /* Fibre badge */
+    if (f.hasFibre) {
+      canFibreBadge.classList.remove('hidden');
+    } else {
+      canFibreBadge.classList.add('hidden');
+    }
+
+    /* Pill text */
+    heroFlavorPill.textContent = f.pill;
+  };
+
+  if (animate) {
+    gsap.to('#canHeroBody', { opacity: 0, y: -16, duration: .22, onComplete: () => {
+      doSwap();
+      gsap.to('#canHeroBody', { opacity: 1, y: 0, duration: .28 });
+    }});
+    gsap.to(heroFlavorPill, { opacity: 0, scale: .9, duration: .18, onComplete: () => {
+      gsap.to(heroFlavorPill, { opacity: 1, scale: 1, duration: .25 });
+    }});
+  } else {
+    doSwap();
+  }
 }
 
-$('#heroPrev').addEventListener('click', () => setFlavor(currentFlavor - 1));
-$('#heroNext').addEventListener('click', () => setFlavor(currentFlavor + 1));
+$('#heroPrev').addEventListener('click', () => applyFlavor(currentFlavor - 1));
+$('#heroNext').addEventListener('click', () => applyFlavor(currentFlavor + 1));
 
-/* ── Hero mouse parallax ─────────────────────────────────── */
-const illus = $$('.illus');
-const depths = [0.04, 0.07, 0.05, 0.03, 0.06, 0.03, 0.08, 0.05, 0.06];
+/* ── Mousemove parallax on illustrations ─────────────────── */
+const illus  = $$('.illus');
+const depths = [0.03, 0.03, 0.05, 0.04, 0.06, 0.05, 0.02, 0.08, 0.07, 0.06, 0.04];
 
 window.addEventListener('mousemove', (e) => {
   const cx = window.innerWidth  / 2;
   const cy = window.innerHeight / 2;
-  const dx = e.clientX - cx;
-  const dy = e.clientY - cy;
-
   illus.forEach((el, i) => {
-    const d = depths[i] ?? 0.05;
+    const d = depths[i] ?? 0.04;
     gsap.to(el, {
-      x: dx * d,
-      y: dy * d,
-      duration: 1,
-      ease: 'power1.out',
+      x: (e.clientX - cx) * d,
+      y: (e.clientY - cy) * d,
+      duration: 1.2, ease: 'power1.out',
     });
   });
 }, { passive: true });
 
-/* Hero idle float animation */
+/* Idle float */
 illus.forEach((el, i) => {
   gsap.to(el, {
-    y: `+=${8 + (i % 3) * 5}`,
-    rotation: `+=${(i % 2 === 0 ? 1 : -1) * 4}`,
-    duration: 2.5 + i * 0.4,
-    yoyo: true,
-    repeat: -1,
-    ease: 'sine.inOut',
-    delay: i * 0.3,
+    y: `+=${6 + (i % 4) * 4}`,
+    rotation: `+=${(i % 2 === 0 ? 1 : -1) * 3}`,
+    duration: 2.8 + i * 0.35,
+    yoyo: true, repeat: -1,
+    ease: 'sine.inOut', delay: i * 0.25,
   });
 });
 
-/* ── GSAP hero entrance ──────────────────────────────────── */
-gsap.from('.hero-center', {
-  opacity: 0,
-  y: 60,
-  duration: 1,
-  ease: 'power3.out',
-  delay: .3,
-});
-
+/* ── Hero entrance ────────────────────────────────────────── */
+gsap.from('.hero-center', { opacity: 0, y: 70, duration: 1.1, ease: 'power3.out', delay: .25 });
 gsap.from('.illus', {
-  opacity: 0,
-  scale: 0.5,
-  stagger: 0.07,
-  duration: .8,
-  ease: 'back.out(1.5)',
-  delay: .4,
+  opacity: 0, scale: 0.4, stagger: 0.06,
+  duration: .8, ease: 'back.out(1.4)', delay: .35,
 });
 
-/* ── ScrollTrigger: benefit cards ───────────────────────── */
-$$('.benefit-card').forEach((card) => {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        card.classList.add('in-view');
-        observer.disconnect();
-      }
-    });
-  }, { threshold: 0.2 });
-  observer.observe(card);
-});
+/* ── IntersectionObserver helper ─────────────────────────── */
+function watchInView(selector, threshold = 0.2) {
+  $$(selector).forEach(el => {
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { el.classList.add('in-view'); obs.disconnect(); }
+      });
+    }, { threshold });
+    obs.observe(el);
+  });
+}
 
-/* ── ScrollTrigger: split photos ────────────────────────── */
-$$('[data-animate]').forEach((el) => {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        el.classList.add('in-view');
-        observer.disconnect();
-      }
-    });
-  }, { threshold: 0.15 });
-  observer.observe(el);
-});
+watchInView('.benefit-card', 0.2);
+watchInView('[data-animate]',  0.15);
 
-/* ── Flavors heading scale reveal ───────────────────────── */
+/* ── Flavors heading ────────────────────────────────────────── */
 const flavorsHeading = $('#flavorsHeading');
 const flavorStars    = $$('.flavors-stars svg');
 
@@ -147,9 +193,7 @@ if (flavorsHeading) {
     entries.forEach(e => {
       if (e.isIntersecting) {
         flavorsHeading.classList.add('in-view');
-        flavorStars.forEach((s, i) => {
-          setTimeout(() => s.classList.add('in-view'), 300 + i * 80);
-        });
+        flavorStars.forEach((s, i) => setTimeout(() => s.classList.add('in-view'), 300 + i * 90));
         obs.disconnect();
       }
     });
@@ -157,80 +201,57 @@ if (flavorsHeading) {
   obs.observe(flavorsHeading);
 }
 
-/* ── Product carousel (flavors) ─────────────────────────── */
+/* ── Flavor carousel ─────────────────────────────────────── */
 const carousel     = $('#flavorsCarousel');
 const carouselPrev = $('#carouselPrev');
 const carouselNext = $('#carouselNext');
 let carouselIndex  = 0;
 
-function getVisibleCount() {
+function getVisible() {
   return window.innerWidth < 600 ? 1 : window.innerWidth < 900 ? 2 : 3;
 }
-
 function updateCarousel() {
   const cards   = $$('.flavor-card', carousel);
-  const visible = getVisibleCount();
+  const visible = getVisible();
   const max     = cards.length - visible;
   carouselIndex = Math.max(0, Math.min(carouselIndex, max));
-  const pct     = (100 / visible) * carouselIndex;
-  gsap.to(carousel, { x: `-${pct}%`, duration: .45, ease: 'power2.out' });
+  gsap.to(carousel, { x: `-${(100 / visible) * carouselIndex}%`, duration: .48, ease: 'power2.out' });
 }
 
 carouselPrev.addEventListener('click', () => { carouselIndex--; updateCarousel(); });
 carouselNext.addEventListener('click', () => { carouselIndex++; updateCarousel(); });
 
-/* ── Subscription section reveals ───────────────────────── */
-const subLines  = $$('.sub-line');
-const subRocket = $('.subscribe-rocket');
-const bubbleBadge = $('.bubble-badge');
-
+/* ── Subscribe section ───────────────────────────────────── */
 const subObs = new IntersectionObserver((entries) => {
   entries.forEach(e => {
     if (e.isIntersecting) {
-      subLines.forEach((l, i) => setTimeout(() => l.classList.add('in-view'), i * 120));
-      if (subRocket)  setTimeout(() => subRocket.classList.add('in-view'), 200);
-      if (bubbleBadge) setTimeout(() => bubbleBadge.classList.add('in-view'), 400);
+      $$('.sub-line').forEach((l, i) => setTimeout(() => l.classList.add('in-view'), i * 130));
+      const rocket = $('.subscribe-rocket');
+      const badge  = $('.bubble-badge');
+      if (rocket) setTimeout(() => rocket.classList.add('in-view'), 200);
+      if (badge)  setTimeout(() => badge.classList.add('in-view'),  420);
       subObs.disconnect();
     }
   });
-}, { threshold: 0.15 });
+}, { threshold: 0.12 });
 
 const subSection = $('#subscribe');
 if (subSection) subObs.observe(subSection);
 
-/* ── GSAP scroll animations (GSAP ScrollTrigger extras) ──── */
-gsap.utils.toArray('.footer-col').forEach((col, i) => {
+/* ── GSAP scroll extras ──────────────────────────────────── */
+gsap.from('.flavor-card', {
+  opacity: 0, y: 60, stagger: .13, duration: .7, ease: 'power2.out',
+  scrollTrigger: { trigger: '.flavors-carousel', start: 'top 82%' },
+});
+
+$$('.footer-col').forEach((col, i) => {
   gsap.from(col, {
-    opacity: 0,
-    y: 30,
-    duration: .6,
-    delay: i * .1,
-    scrollTrigger: {
-      trigger: col,
-      start: 'top 90%',
-    }
+    opacity: 0, y: 28, duration: .6, delay: i * .1,
+    scrollTrigger: { trigger: col, start: 'top 92%' },
   });
 });
 
 gsap.from('.footer-brand', {
-  opacity: 0,
-  x: -30,
-  duration: .7,
-  scrollTrigger: {
-    trigger: '.footer-brand',
-    start: 'top 90%',
-  }
-});
-
-/* ── Flavor card stagger entrance ─────────────────────────── */
-gsap.from('.flavor-card', {
-  opacity: 0,
-  y: 60,
-  stagger: .12,
-  duration: .7,
-  ease: 'power2.out',
-  scrollTrigger: {
-    trigger: '.flavors-carousel',
-    start: 'top 80%',
-  }
+  opacity: 0, x: -30, duration: .7,
+  scrollTrigger: { trigger: '.footer-brand', start: 'top 92%' },
 });

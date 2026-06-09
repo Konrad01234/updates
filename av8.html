@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AV8 — Simply Refreshing Coconut Water</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+/* ============================================================
+   AV8 — Brand color: #71CECA (teal)
+   ============================================================ */
+:root {
+  --teal:       #71CECA;
+  --teal-dark:  #4ea8a4;
+  --teal-deep:  #2e8a86;
+  --green:      #4db84f;
+  --green-dark: #2e9e4f;
+  --cream:      #fdf6e8;
+  --yellow:     #f5d020;
+  --orange:     #e8963a;
+  --navy:       #1a3a48;
+  --black:      #111111;
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-ui:      'Space Grotesk', sans-serif;
+  --font-body:    'Inter', sans-serif;
+  --nav-h: 64px;
+  --announce-h: 40px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--font-body); color: var(--black); background: var(--cream); overflow-x: hidden; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--cream); }
+::-webkit-scrollbar-thumb { background: var(--teal); border-radius: 3px; }
+
+/* ── Announcement Bar ── */
+.announce-bar {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: var(--announce-h);
+  background: var(--navy); color: #fff;
+  font-family: var(--font-ui); font-size: 11px; font-weight: 600; letter-spacing: .1em;
+  z-index: 1000; overflow: hidden; display: flex; align-items: center;
+}
+.announce-bar.hidden { display: none; }
+.announce-track { display: flex; white-space: nowrap; animation: marquee 32s linear infinite; }
+.announce-track span { padding-right: 1rem; }
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.announce-close {
+  position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; color: #fff; font-size: 14px; cursor: pointer; opacity: .6; transition: opacity .2s;
+}
+.announce-close:hover { opacity: 1; }
+
+/* ── Navigation ── */
+.nav {
+  position: fixed; top: var(--announce-h); left: 0; right: 0;
+  height: var(--nav-h);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 40px; z-index: 999;
+  transition: background .3s, box-shadow .3s, height .3s;
+}
+.nav.scrolled {
+  background: rgba(253,246,232,.93); backdrop-filter: blur(12px);
+  box-shadow: 0 2px 20px rgba(0,0,0,.07); height: 56px;
+}
+.nav.announce-gone { top: 0; }
+.nav-logo {
+  font-family: var(--font-display); font-size: 38px; letter-spacing: .04em;
+  color: var(--black); text-decoration: none; line-height: 1;
+}
+.nav-links { display: flex; gap: 12px; list-style: none; }
+.nav-links a {
+  font-family: var(--font-ui); font-weight: 600; font-size: 14px;
+  color: var(--black); text-decoration: none;
+  background: rgba(255,255,255,.75); border: 1.5px solid rgba(0,0,0,.1);
+  border-radius: 100px; padding: 8px 20px; transition: background .2s, border-color .2s;
+}
+.nav-links a:hover { background: #fff; border-color: var(--teal); color: var(--teal-deep); }
+.nav-arrow { font-size: 10px; }
+.nav-icons { display: flex; gap: 10px; }
+.nav-icons button {
+  background: rgba(255,255,255,.75); border: 1.5px solid rgba(0,0,0,.1);
+  border-radius: 50%; width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background .2s; color: var(--black);
+}
+.nav-icons button:hover { background: #fff; border-color: var(--teal); }
+
+/* ── Hero ── */
+.hero {
+  position: relative; min-height: 100vh; background: var(--teal);
+  display: flex; align-items: center; justify-content: center;
+  padding-top: calc(var(--announce-h) + var(--nav-h)); overflow: hidden;
+}
+.hero-illustrations { position: absolute; inset: 0; pointer-events: none; }
+.illus { position: absolute; will-change: transform; }
+.illus-palm-l    { width: 220px; top: 0;   left: -20px;  transform-origin: bottom left; }
+.illus-palm-r    { width: 200px; top: 0;   right: -20px; transform-origin: bottom right; }
+.illus-coconut-l { width: 110px; bottom: 8%;  left: 5%; }
+.illus-coconut-r { width: 88px;  bottom: 14%; right: 4%; }
+.illus-mango     { width: 100px; bottom: 6%;  right: 12%; }
+.illus-pineapple { width: 65px;  top: 10%; right: 18%; }
+.illus-sand      { width: 380px; bottom: 0; left: 50%; transform: translateX(-50%); }
+.illus-spark1    { width: 32px; top: 18%; left: 36%; }
+.illus-spark2    { width: 26px; top: 12%; right: 30%; }
+.illus-spark3    { width: 20px; bottom: 30%; left: 24%; }
+.illus-leaf-br   { width: 140px; bottom: 0; right: 0; }
+
+.hero-center {
+  position: relative; z-index: 2;
+  display: flex; flex-direction: column; align-items: center; gap: 36px;
+}
+.can-hero-wrap {
+  width: 185px;
+  filter: drop-shadow(0 28px 50px rgba(0,0,0,.22));
+  transition: transform .4s ease;
+}
+.can-hero-wrap:hover { transform: rotate(-3deg) scale(1.04); }
+.can-hero-body {
+  border-radius: 18px 18px 14px 14px; overflow: hidden;
+  position: relative; background: var(--teal);
+}
+.can-top-bar { height: 8px; background: rgba(255,255,255,.35); border-radius: 18px 18px 0 0; }
+.can-inner {
+  padding: 18px 16px 24px;
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  background: linear-gradient(180deg, var(--teal) 0%, #fff 55%, #fff 100%);
+  min-height: 400px;
+}
+.can-brand-row {
+  font-family: var(--font-display); font-size: 54px; letter-spacing: .04em;
+  color: #fff; line-height: 1; text-shadow: 0 2px 8px rgba(0,0,0,.15);
+}
+.can-tagline {
+  font-family: var(--font-ui); font-size: 9px; font-weight: 700;
+  letter-spacing: .16em; color: rgba(255,255,255,.9); text-transform: uppercase; margin-top: -4px;
+}
+.can-icon-area { position: relative; margin: 10px 0 4px; }
+.can-fruit-icon { width: 78px; height: 78px; }
+.can-fibre-badge {
+  position: absolute; bottom: -6px; right: -8px;
+  background: var(--orange); color: #fff; border-radius: 50%;
+  width: 38px; height: 38px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font-family: var(--font-ui); font-size: 9px; font-weight: 700; line-height: 1.1; text-align: center;
+}
+.can-fibre-badge small { font-size: 7px; }
+.can-fibre-badge.hidden { display: none; }
+.can-flavor-display { text-align: center; margin-top: 8px; }
+.can-flavor-name-hero {
+  font-family: var(--font-display); font-size: 28px; letter-spacing: .06em;
+  line-height: 1.05; color: var(--teal);
+}
+.can-footer-text {
+  font-family: var(--font-body); font-size: 7.5px; color: #888;
+  text-align: center; letter-spacing: .08em; text-transform: uppercase; margin-top: 8px;
+}
+
+.hero-controls { display: flex; align-items: center; gap: 20px; }
+.hero-btn {
+  background: rgba(255,255,255,.28); border: 2px solid rgba(255,255,255,.6);
+  color: var(--black); width: 48px; height: 48px;
+  border-radius: 50%; font-size: 18px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .2s, transform .15s;
+}
+.hero-btn:hover { background: rgba(255,255,255,.6); transform: scale(1.1); }
+.hero-flavor-pill {
+  background: var(--black); color: #fff;
+  font-family: var(--font-ui); font-weight: 700; font-size: 15px;
+  letter-spacing: .04em; border: none; border-radius: 100px;
+  padding: 14px 36px; cursor: pointer; transition: background .2s, transform .15s;
+}
+.hero-flavor-pill:hover { background: var(--teal-deep); transform: scale(1.04); }
+
+/* ── Benefits ── */
+.benefits { background: var(--cream); padding: 100px 40px; }
+.benefits-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 48px;
+}
+.benefit-card {
+  text-align: center; display: flex; flex-direction: column; align-items: center; gap: 20px;
+  opacity: 0; transform: translateY(50px); transition: opacity .65s ease, transform .65s ease;
+}
+.benefit-card.in-view { opacity: 1; transform: none; }
+.benefit-icon { width: 100px; height: 100px; }
+.benefit-icon svg { width: 100%; height: 100%; }
+.benefit-card h3 { font-family: var(--font-display); font-size: 26px; letter-spacing: .06em; }
+.benefit-card p { font-size: 15px; line-height: 1.65; max-width: 260px; color: #555; }
+
+/* ── Split Photos ── */
+.split-photos { display: flex; height: 520px; overflow: hidden; }
+.split-photo { flex: 1; overflow: hidden; }
+.split-photo-left  { opacity:0; transform:translateX(-60px); transition: opacity .7s ease, transform .7s ease; }
+.split-photo-right { opacity:0; transform:translateX( 60px); transition: opacity .7s ease, transform .7s ease .1s; }
+.split-photo-left.in-view, .split-photo-right.in-view { opacity:1; transform:none; }
+.photo-placeholder { width:100%; height:100%; display:flex; align-items:center; justify-content:center; }
+.photo-ph-left  { background: #b8dede; }
+.photo-ph-right { background: #a8d0d0; }
+.photo-placeholder span {
+  font-family: var(--font-ui); font-weight:600; font-size:13px;
+  letter-spacing:.12em; color: rgba(0,0,0,.3); text-transform:uppercase;
+}
+
+/* ── Flavors Section ── */
+.flavors-section { background: var(--cream); padding: 80px 0 100px; overflow: hidden; }
+.flavors-heading-wrap { text-align: center; margin-bottom: 8px; }
+.flavors-big {
+  font-family: var(--font-display); font-size: clamp(80px, 14vw, 200px);
+  letter-spacing: .03em; line-height: .9; color: var(--black);
+  opacity: 0; transform: scale(.82); transition: opacity .7s ease, transform .7s ease;
+}
+.flavors-big.in-view { opacity: 1; transform: scale(1); }
+.flavors-stars { display:flex; justify-content:center; gap:12px; margin-top:12px; }
+.flavors-stars svg { width:18px; height:18px; opacity:0; transform:scale(0); transition: opacity .4s ease, transform .4s ease; }
+.flavors-stars svg.in-view { opacity:1; transform:scale(1); }
+.flavors-top-bar {
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 20px 40px; max-width:1200px; margin: 0 auto;
+}
+.see-all-btn {
+  background: var(--black); color:#fff;
+  font-family: var(--font-ui); font-weight:700; font-size:14px;
+  border:none; border-radius:100px; padding:14px 28px; cursor:pointer; transition: background .2s;
+}
+.see-all-btn:hover { background: var(--teal-deep); }
+.recommended-label { font-family: var(--font-ui); font-size:16px; font-weight:600; }
+.flavors-carousel-wrapper {
+  position:relative; display:flex; align-items:center; gap:16px;
+  padding: 0 40px; max-width:1300px; margin: 0 auto;
+}
+.flavors-carousel { display:flex; overflow:hidden; flex:1; border-radius:20px; }
+.flavor-card {
+  flex: 0 0 33.333%; background: var(--card-bg); min-height: 620px;
+  display:flex; flex-direction:column; align-items:center;
+  padding: 36px 20px 56px; position:relative; overflow:hidden; cursor:pointer;
+}
+.flavor-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:180px;
+  background: linear-gradient(180deg, var(--card-top) 0%, var(--card-bg) 100%); opacity:.6;
+}
+.flavor-card h3 {
+  font-family: var(--font-display); font-size: 30px; letter-spacing: .06em;
+  color: var(--black); text-align:center; margin-bottom: 24px; z-index:2; position:relative; line-height:1.05;
+}
+.flavor-can-wrap { flex:1; display:flex; align-items:center; justify-content:center; z-index:2; position:relative; }
+.flavor-can-visual {
+  width: 105px; border-radius: 14px 14px 12px 12px; overflow: hidden;
+  box-shadow: 0 18px 40px rgba(0,0,0,.18); transition: transform .35s ease; display:flex; flex-direction:column;
+}
+.flavor-card:hover .flavor-can-visual { transform: translateY(-14px) rotate(3deg); }
+.fcan-teal      { background: linear-gradient(180deg, #71CECA 55%, #fff 55%); }
+.fcan-mango     { background: linear-gradient(180deg, #e05020 0%, #e8963a 50%, #fff 52%); }
+.fcan-pineapple { background: linear-gradient(180deg, #f5d020 55%, #fff 55%); }
+.fcan-top { height: 6px; background: rgba(255,255,255,.3); border-radius: 14px 14px 0 0; }
+.fcan-body { flex:1; padding: 10px 10px 14px; display:flex; flex-direction:column; align-items:center; gap:3px; }
+.fcan-brand { font-family: var(--font-display); font-size: 32px; color:#fff; letter-spacing:.04em; line-height:1; }
+.fcan-sub { font-family: var(--font-ui); font-size: 6px; font-weight:700; letter-spacing:.14em; color:rgba(255,255,255,.9); text-transform:uppercase; }
+.fcan-icon { width: 52px; height: 52px; margin: 4px 0; }
+.fcan-badge {
+  background: var(--orange); color:#fff; border-radius: 100px; padding: 2px 8px;
+  font-family: var(--font-ui); font-size: 7px; font-weight:700; letter-spacing:.1em; margin: 2px 0;
+}
+.fcan-name { font-family: var(--font-display); font-size: 13px; letter-spacing:.04em; text-align:center; line-height:1.1; padding: 4px 4px 0; }
+.fcan-footer { font-family: var(--font-body); font-size: 6px; color:#888; text-align:center; letter-spacing:.08em; text-transform:uppercase; }
+.flavor-hover-overlay {
+  position:absolute; bottom:0; left:0; right:0; padding: 28px 20px;
+  display:flex; align-items:center; justify-content:space-between;
+  opacity:0; transform:translateY(10px); transition: opacity .3s ease, transform .3s ease; z-index:3;
+}
+.flavor-card:hover .flavor-hover-overlay { opacity:1; transform:none; }
+.discover-btn {
+  background:rgba(255,255,255,.92); color:var(--black);
+  font-family:var(--font-ui); font-weight:700; font-size:13px;
+  text-decoration:none; border-radius:100px; padding: 12px 22px; transition: background .2s;
+}
+.discover-btn:hover { background:#fff; }
+.add-btn {
+  width:44px; height:44px; border-radius:50%; background:rgba(255,255,255,.92);
+  border:none; font-size:22px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; transition: background .2s;
+}
+.add-btn:hover { background:#fff; }
+.carousel-btn {
+  flex-shrink:0; width:52px; height:52px; border-radius:50%;
+  background:rgba(255,255,255,.6); border:2px solid rgba(0,0,0,.1);
+  font-size:20px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition: background .2s, transform .2s; z-index:4;
+}
+.carousel-btn:hover { background:#fff; transform:scale(1.08); }
+
+/* ── Subscribe ── */
+.subscribe-section {
+  background: var(--cream); position:relative; padding: 80px 40px 140px;
+  overflow:hidden; min-height: 80vh; display:flex; align-items:center; justify-content:center;
+}
+.subscribe-bg-text {
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  text-align:center; width:100%; pointer-events:none; user-select:none;
+}
+.sub-line {
+  display:block; font-family: var(--font-display); font-size: clamp(56px, 10vw, 140px);
+  letter-spacing:.02em; color:var(--black); line-height:.95;
+  opacity:0; transition: opacity .65s ease, transform .65s ease;
+}
+.sub-line1 { transform: rotate(-4deg) translateX(-6%); }
+.sub-line2 { transform: rotate(2deg)  translateX(8%); }
+.sub-line3 { transform: rotate(-2deg) translateX(-4%); }
+.sub-line.in-view { opacity: 1; }
+.sub-line1.in-view { transform: rotate(-4deg) translateX(-6%); }
+.sub-line2.in-view { transform: rotate(2deg)  translateX(8%); }
+.sub-line3.in-view { transform: rotate(-2deg) translateX(-4%); }
+.subscribe-content {
+  position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; gap:24px; margin-top: 380px;
+}
+.subscribe-rocket {
+  position:absolute; bottom:calc(100% + 130px); left:10%; width:140px;
+  opacity:0; transform: translateY(30px) rotate(-20deg);
+  transition: opacity .8s ease, transform .8s ease;
+}
+.subscribe-rocket.in-view { opacity:1; transform: translateY(0) rotate(-20deg); }
+.subscribe-rocket svg { width:100%; height:auto; }
+.subscribe-text { text-align:center; }
+.subscribe-text p { font-family:var(--font-ui); font-size:18px; margin-bottom:20px; }
+.subscribe-btn {
+  display:inline-block; background: var(--teal); color:#fff;
+  font-family:var(--font-ui); font-weight:700; font-size:16px; letter-spacing:.04em;
+  border-radius:100px; padding:18px 56px; text-decoration:none;
+  transition: background .2s, transform .15s; box-shadow: 0 8px 28px rgba(113,206,202,.4);
+}
+.subscribe-btn:hover { background: var(--teal-deep); transform:scale(1.04); }
+.bubble-badge {
+  position:absolute; top:28%; right:7%; width:130px; z-index:3;
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; transform: rotate(12deg) scale(.7); transition: opacity .6s ease .3s, transform .6s ease .3s;
+}
+.bubble-badge.in-view { opacity:1; transform: rotate(12deg) scale(1); }
+.bubble-badge svg { position:absolute; width:100%; height:100%; }
+.bubble-text {
+  position:relative; z-index:1; font-family:var(--font-ui); font-size:12px; font-weight:700;
+  text-align:center; letter-spacing:.06em; line-height:1.4; color: var(--navy);
+}
+
+/* ── Footer ── */
+.footer { background: var(--navy); color:#fff; padding: 60px 40px 30px; }
+.footer-top { display:flex; gap:60px; margin-bottom:48px; flex-wrap:wrap; }
+.footer-brand { flex: 0 0 220px; }
+.footer-logo { font-family:var(--font-display); font-size:48px; letter-spacing:.05em; display:block; margin-bottom:12px; color: var(--teal); }
+.footer-brand p { font-size:14px; line-height:1.65; color:rgba(255,255,255,.55); }
+.footer-links { flex:1; display:flex; gap:48px; flex-wrap:wrap; }
+.footer-col h4 { font-family:var(--font-ui); font-weight:700; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:rgba(255,255,255,.4); margin-bottom:16px; }
+.footer-col ul { list-style:none; display:flex; flex-direction:column; gap:10px; }
+.footer-col a { color:rgba(255,255,255,.75); text-decoration:none; font-size:14px; transition:color .2s; }
+.footer-col a:hover { color: var(--teal); }
+.footer-bottom { border-top: 1px solid rgba(255,255,255,.08); padding-top:24px; display:flex; align-items:center; justify-content:space-between; }
+.footer-bottom p { font-size:13px; color:rgba(255,255,255,.35); }
+.footer-social { display:flex; gap:16px; }
+.footer-social a { color:rgba(255,255,255,.45); transition:color .2s; display:flex; }
+.footer-social a:hover { color: var(--teal); }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .nav { padding: 0 20px; }
+  .nav-links { gap: 8px; }
+  .nav-links a { padding: 6px 14px; font-size: 13px; }
+  .benefits-inner { grid-template-columns: 1fr; max-width: 420px; gap: 36px; }
+  .split-photos { flex-direction: column; height: auto; }
+  .split-photo  { height: 300px; }
+  .flavors-carousel-wrapper { padding: 0 16px; }
+  .flavor-card  { flex: 0 0 80%; }
+  .subscribe-section { padding: 60px 20px 80px; }
+  .subscribe-bg-text { position:relative; top:auto; left:auto; transform:none; }
+  .subscribe-content { margin-top: 40px; }
+  .subscribe-rocket { display: none; }
+  .footer-top { gap: 32px; }
+}
+@media (max-width: 600px) {
+  .nav-links { display: none; }
+  .hero { padding-top: calc(var(--announce-h) + var(--nav-h) + 10px); }
+  .can-hero-wrap { width: 150px; }
+  .can-brand-row { font-size: 44px; }
+  .can-flavor-name-hero { font-size: 22px; }
+  .flavors-big { font-size: 18vw; }
+  .sub-line { font-size: 13vw; }
+  .footer-links { gap: 24px; }
+  .footer-bottom { flex-direction:column; gap:12px; text-align:center; }
+}
+</style>
+</head>
+<body>
+
+  <!-- Announcement Bar -->
+  <div class="announce-bar" id="announceBar">
+    <div class="announce-track">
+      <span>FREE SHIPPING ON ALL ORDERS OVER $50 &nbsp;🥥&nbsp; NO ADDED SUGAR &nbsp;🥥&nbsp; HIGH IN FIBRE &nbsp;🥥&nbsp; SIMPLY REFRESHING &nbsp;🥥&nbsp; FREE SHIPPING ON ALL ORDERS OVER $50 &nbsp;🥥&nbsp; NO ADDED SUGAR &nbsp;🥥&nbsp; HIGH IN FIBRE &nbsp;🥥&nbsp; SIMPLY REFRESHING &nbsp;🥥&nbsp;</span>
+      <span aria-hidden="true">FREE SHIPPING ON ALL ORDERS OVER $50 &nbsp;🥥&nbsp; NO ADDED SUGAR &nbsp;🥥&nbsp; HIGH IN FIBRE &nbsp;🥥&nbsp; SIMPLY REFRESHING &nbsp;🥥&nbsp; FREE SHIPPING ON ALL ORDERS OVER $50 &nbsp;🥥&nbsp; NO ADDED SUGAR &nbsp;🥥&nbsp; HIGH IN FIBRE &nbsp;🥥&nbsp; SIMPLY REFRESHING &nbsp;🥥&nbsp;</span>
+    </div>
+    <button class="announce-close" id="announceClose" aria-label="Close">✕</button>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="nav" id="mainNav">
+    <a href="#" class="nav-logo">AV8</a>
+    <ul class="nav-links">
+      <li><a href="#flavors">Shop <span class="nav-arrow">▾</span></a></li>
+      <li><a href="#benefits">Learn <span class="nav-arrow">▾</span></a></li>
+      <li><a href="#subscribe">Subscription</a></li>
+    </ul>
+    <div class="nav-icons">
+      <button aria-label="Account">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      </button>
+      <button aria-label="Cart">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="hero-illustrations">
+      <svg class="illus illus-palm-l" viewBox="0 0 160 200" xmlns="http://www.w3.org/2000/svg">
+        <path d="M80 190 Q20 130 10 40 Q50 60 80 190Z" fill="#2e9e4f"/>
+        <path d="M80 190 Q10 160 5 80 Q45 90 80 190Z" fill="#3ab55e" opacity=".8"/>
+        <path d="M80 190 Q30 140 25 60 Q60 80 80 190Z" fill="#27843f" opacity=".6"/>
+        <path d="M80 190 Q50 150 60 90" stroke="#1f6b32" stroke-width="2" fill="none"/>
+      </svg>
+      <svg class="illus illus-palm-r" viewBox="0 0 160 200" xmlns="http://www.w3.org/2000/svg">
+        <path d="M80 190 Q140 130 150 40 Q110 60 80 190Z" fill="#2e9e4f"/>
+        <path d="M80 190 Q150 160 155 80 Q115 90 80 190Z" fill="#3ab55e" opacity=".8"/>
+        <path d="M80 190 Q130 140 135 60 Q100 80 80 190Z" fill="#27843f" opacity=".6"/>
+      </svg>
+      <svg class="illus illus-coconut-l" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="50" cy="52" rx="44" ry="44" fill="#4db84f"/>
+        <ellipse cx="50" cy="50" rx="40" ry="40" fill="#5ccc60"/>
+        <path d="M20 35 Q50 20 80 35" fill="none" stroke="#3a9940" stroke-width="2"/>
+        <path d="M15 50 Q50 32 85 50" fill="none" stroke="#3a9940" stroke-width="1.5"/>
+        <ellipse cx="50" cy="50" rx="18" ry="18" fill="#fff" opacity=".9"/>
+        <ellipse cx="50" cy="50" rx="14" ry="14" fill="#e8f4e8"/>
+        <rect x="47" y="22" width="6" height="20" rx="3" fill="#71CECA"/>
+        <ellipse cx="50" cy="22" rx="3" ry="2" fill="#5ab5b0"/>
+      </svg>
+      <svg class="illus illus-coconut-r" viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="45" cy="48" rx="40" ry="38" fill="#4db84f"/>
+        <ellipse cx="45" cy="46" rx="36" ry="34" fill="#5ccc60"/>
+        <ellipse cx="45" cy="46" rx="16" ry="16" fill="#fff" opacity=".9"/>
+        <ellipse cx="45" cy="46" rx="12" ry="12" fill="#e8f4e8"/>
+      </svg>
+      <svg class="illus illus-mango" viewBox="0 0 90 80" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 70 Q45 10 80 70 Q60 55 45 70 Q30 55 10 70Z" fill="#e8963a"/>
+        <path d="M14 70 Q45 16 76 70 Q58 58 45 68 Q32 58 14 70Z" fill="#f5b040"/>
+        <path d="M20 70 Q45 25 70 70 Q56 62 45 67 Q34 62 20 70Z" fill="#ffca4a"/>
+        <line x1="32" y1="55" x2="38" y2="68" stroke="#e8963a" stroke-width="1.2" opacity=".6"/>
+        <line x1="45" y1="50" x2="45" y2="68" stroke="#e8963a" stroke-width="1.2" opacity=".6"/>
+        <line x1="58" y1="55" x2="52" y2="68" stroke="#e8963a" stroke-width="1.2" opacity=".6"/>
+        <path d="M22 63 Q45 62 68 63" fill="none" stroke="#e8963a" stroke-width="1" opacity=".5"/>
+      </svg>
+      <svg class="illus illus-pineapple" viewBox="0 0 70 100" xmlns="http://www.w3.org/2000/svg">
+        <path d="M35 28 Q28 10 22 2 Q34 14 35 28Z" fill="#3ab55e"/>
+        <path d="M35 28 Q42 8 48 2 Q36 15 35 28Z" fill="#2e9e4f"/>
+        <path d="M35 28 Q35 8 35 0 Q38 12 35 28Z" fill="#4dc870"/>
+        <path d="M15 45 Q12 65 15 80 Q25 92 35 94 Q45 92 55 80 Q58 65 55 45 Q45 32 35 30 Q25 32 15 45Z" fill="#f5b040"/>
+        <path d="M22 42 Q35 38 48 42 Q35 46 22 42Z" fill="#e8963a" opacity=".6"/>
+        <path d="M18 52 Q35 47 52 52 Q35 57 18 52Z" fill="#e8963a" opacity=".5"/>
+        <path d="M17 62 Q35 57 53 62 Q35 67 17 62Z" fill="#e8963a" opacity=".5"/>
+        <path d="M18 72 Q35 67 52 72 Q35 77 18 72Z" fill="#e8963a" opacity=".4"/>
+        <line x1="27" y1="36" x2="27" y2="86" stroke="#e8963a" stroke-width="1" opacity=".3"/>
+        <line x1="35" y1="32" x2="35" y2="90" stroke="#e8963a" stroke-width="1" opacity=".3"/>
+        <line x1="43" y1="36" x2="43" y2="86" stroke="#e8963a" stroke-width="1" opacity=".3"/>
+      </svg>
+      <svg class="illus illus-sand" viewBox="0 0 300 60" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0 40 Q75 20 150 40 Q225 60 300 40 L300 60 L0 60Z" fill="#d4b87a" opacity=".4"/>
+        <path d="M0 50 Q75 35 150 50 Q225 65 300 50 L300 60 L0 60Z" fill="#c9a95e" opacity=".3"/>
+      </svg>
+      <svg class="illus illus-spark1" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
+        <path d="M15 2 L16.5 13 L28 15 L16.5 17 L15 28 L13.5 17 L2 15 L13.5 13Z" fill="#fff" opacity=".8"/>
+      </svg>
+      <svg class="illus illus-spark2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 1 L13.2 10 L22 12 L13.2 14 L12 23 L10.8 14 L2 12 L10.8 10Z" fill="#fff" opacity=".7"/>
+      </svg>
+      <svg class="illus illus-spark3" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 1 L11 8 L18 10 L11 12 L10 19 L9 12 L2 10 L9 8Z" fill="#fff" opacity=".6"/>
+      </svg>
+      <svg class="illus illus-leaf-br" viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 90 Q60 10 110 30 Q70 40 10 90Z" fill="#27843f"/>
+        <path d="M10 90 Q55 18 105 38 Q68 45 10 90Z" fill="#3ab55e" opacity=".7"/>
+        <line x1="10" y1="90" x2="95" y2="36" stroke="#1f6b32" stroke-width="1.5" opacity=".5"/>
+      </svg>
+    </div>
+
+    <div class="hero-center">
+      <div class="hero-can" id="heroCan">
+        <div class="can-hero-wrap" id="canHeroWrap">
+          <div class="can-hero-body" id="canHeroBody">
+            <div class="can-top-bar" id="canTopBar"></div>
+            <div class="can-inner">
+              <div class="can-brand-row">AV8</div>
+              <div class="can-tagline">SIMPLY REFRESHING</div>
+              <div class="can-icon-area">
+                <svg class="can-fruit-icon" id="canFruitIcon" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+                  <ellipse cx="40" cy="42" rx="35" ry="34" fill="#4db84f"/>
+                  <ellipse cx="40" cy="40" rx="31" ry="30" fill="#5ccc60"/>
+                  <ellipse cx="40" cy="40" rx="14" ry="14" fill="#fff" opacity=".9"/>
+                  <rect x="37" y="16" width="6" height="16" rx="3" fill="#71CECA"/>
+                </svg>
+                <div class="can-fibre-badge hidden" id="canFibreBadge">+5g<br><small>FIBRE</small></div>
+              </div>
+              <div class="can-flavor-display">
+                <span class="can-flavor-name-hero" id="canFlavorName">COCONUT<br>WATER</span>
+              </div>
+              <div class="can-footer-text" id="canFooterText">NO ADDED SUGAR · NOT FROM CONCENTRATE</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-controls">
+        <button class="hero-btn hero-prev" id="heroPrev" aria-label="Previous">←</button>
+        <button class="hero-flavor-pill" id="heroFlavorPill">Coconut Water</button>
+        <button class="hero-btn hero-next" id="heroNext" aria-label="Next">→</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- BENEFITS -->
+  <section class="benefits" id="benefits">
+    <div class="benefits-inner">
+      <div class="benefit-card" data-animate>
+        <div class="benefit-icon">
+          <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="40" cy="40" r="38" fill="#71CECA"/>
+            <text x="50%" y="56%" text-anchor="middle" dominant-baseline="middle" font-size="26" font-weight="bold" fill="#fff" font-family="Bebas Neue, sans-serif">5g</text>
+            <path d="M40 10 Q52 20 52 40 Q52 55 40 62 Q28 55 28 40 Q28 20 40 10Z" fill="rgba(255,255,255,.2)"/>
+          </svg>
+        </div>
+        <h3>HIGH IN FIBRE</h3>
+        <p>+5g of natural dietary fibre per can. Your gut will thank you.</p>
+      </div>
+      <div class="benefit-card" data-animate style="transition-delay:.12s">
+        <div class="benefit-icon">
+          <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="40" cy="40" r="38" fill="#4db84f"/>
+            <ellipse cx="40" cy="42" rx="22" ry="22" fill="#5ccc60"/>
+            <ellipse cx="40" cy="40" rx="10" ry="10" fill="#fff" opacity=".9"/>
+            <rect x="37" y="16" width="6" height="16" rx="3" fill="#fff"/>
+          </svg>
+        </div>
+        <h3>REAL COCONUT WATER</h3>
+        <p>Not from concentrate. Pure, natural coconut water with nothing artificial.</p>
+      </div>
+      <div class="benefit-card" data-animate style="transition-delay:.24s">
+        <div class="benefit-icon">
+          <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="40" cy="40" r="38" fill="#e8963a"/>
+            <text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle" font-size="22" font-weight="bold" fill="#fff" font-family="Bebas Neue, sans-serif">NO</text>
+            <text x="50%" y="72%" text-anchor="middle" dominant-baseline="middle" font-size="10" font-weight="bold" fill="rgba(255,255,255,.9)" font-family="Space Grotesk, sans-serif">ADDED SUGAR</text>
+          </svg>
+        </div>
+        <h3>ZERO ADDED SUGAR</h3>
+        <p>Naturally sweet from the coconut itself. Clean refreshment, every sip.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SPLIT PHOTOS -->
+  <section class="split-photos">
+    <div class="split-photo split-photo-left" data-animate>
+      <div class="photo-placeholder photo-ph-left"><span>LIFESTYLE PHOTO 1</span></div>
+    </div>
+    <div class="split-photo split-photo-right" data-animate>
+      <div class="photo-placeholder photo-ph-right"><span>LIFESTYLE PHOTO 2</span></div>
+    </div>
+  </section>
+
+  <!-- FLAVORS -->
+  <section class="flavors-section" id="flavors">
+    <div class="flavors-heading-wrap">
+      <h2 class="flavors-big" id="flavorsHeading">FLAVORS</h2>
+      <div class="flavors-stars">
+        <svg viewBox="0 0 24 24"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" fill="#111"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" fill="#111"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" fill="#111"/></svg>
+      </div>
+    </div>
+    <div class="flavors-top-bar">
+      <button class="see-all-btn">See all our products</button>
+      <span class="recommended-label">Recommended products</span>
+    </div>
+    <div class="flavors-carousel-wrapper">
+      <button class="carousel-btn" id="carouselPrev">←</button>
+      <div class="flavors-carousel" id="flavorsCarousel">
+        <div class="flavor-card" style="--card-bg:#71CECA; --card-top:#5ab5b0">
+          <h3>COCONUT<br>WATER</h3>
+          <div class="flavor-can-wrap">
+            <div class="flavor-can-visual fcan-teal">
+              <div class="fcan-top"></div>
+              <div class="fcan-body">
+                <div class="fcan-brand">AV8</div>
+                <div class="fcan-sub">SIMPLY REFRESHING</div>
+                <svg class="fcan-icon" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+                  <ellipse cx="30" cy="32" rx="26" ry="25" fill="#4db84f"/>
+                  <ellipse cx="30" cy="30" rx="22" ry="21" fill="#5ccc60"/>
+                  <ellipse cx="30" cy="30" rx="10" ry="10" fill="#fff" opacity=".9"/>
+                  <rect x="27" y="10" width="6" height="14" rx="3" fill="#71CECA"/>
+                </svg>
+                <div class="fcan-name" style="color:#71CECA">COCONUT<br>WATER</div>
+                <div class="fcan-footer">NO ADDED SUGAR</div>
+              </div>
+            </div>
+          </div>
+          <div class="flavor-hover-overlay">
+            <a href="#" class="discover-btn">Discover this product</a>
+            <button class="add-btn">＋</button>
+          </div>
+        </div>
+        <div class="flavor-card" style="--card-bg:#f5a030; --card-top:#e8963a">
+          <h3>MANGO<br>COCONUT WATER</h3>
+          <div class="flavor-can-wrap">
+            <div class="flavor-can-visual fcan-mango">
+              <div class="fcan-top"></div>
+              <div class="fcan-body">
+                <div class="fcan-brand">AV8</div>
+                <div class="fcan-sub">SIMPLY REFRESHING</div>
+                <svg class="fcan-icon" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+                  <ellipse cx="30" cy="32" rx="26" ry="25" fill="#4db84f"/>
+                  <path d="M30 7 Q56 7 56 57 L30 57Z" fill="#e8963a"/>
+                  <ellipse cx="30" cy="30" rx="10" ry="10" fill="#fff" opacity=".9"/>
+                  <rect x="27" y="10" width="6" height="14" rx="3" fill="#f5b040"/>
+                </svg>
+                <div class="fcan-badge">+5g FIBRE</div>
+                <div class="fcan-name" style="color:#e8963a">MANGO<br>COCONUT WATER</div>
+                <div class="fcan-footer">HIGH IN FIBRE · NO ADDED SUGAR</div>
+              </div>
+            </div>
+          </div>
+          <div class="flavor-hover-overlay">
+            <a href="#" class="discover-btn">Discover this product</a>
+            <button class="add-btn">＋</button>
+          </div>
+        </div>
+        <div class="flavor-card" style="--card-bg:#f5d020; --card-top:#e8b800">
+          <h3>PINEAPPLE<br>COCONUT WATER</h3>
+          <div class="flavor-can-wrap">
+            <div class="flavor-can-visual fcan-pineapple">
+              <div class="fcan-top"></div>
+              <div class="fcan-body">
+                <div class="fcan-brand">AV8</div>
+                <div class="fcan-sub">SIMPLY REFRESHING</div>
+                <svg class="fcan-icon" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+                  <ellipse cx="30" cy="32" rx="26" ry="25" fill="#4db84f"/>
+                  <path d="M30 7 Q56 7 56 57 L30 57Z" fill="#f5b040"/>
+                  <ellipse cx="30" cy="30" rx="10" ry="10" fill="#fff" opacity=".9"/>
+                  <rect x="27" y="10" width="6" height="14" rx="3" fill="#f5d020"/>
+                  <path d="M38 14 Q44 18 42 26" stroke="#e8963a" stroke-width="1.5" fill="none" opacity=".6"/>
+                </svg>
+                <div class="fcan-badge">+5g FIBRE</div>
+                <div class="fcan-name" style="color:#3d8a00">PINEAPPLE<br>COCONUT WATER</div>
+                <div class="fcan-footer">HIGH IN FIBRE · NO ADDED SUGAR</div>
+              </div>
+            </div>
+          </div>
+          <div class="flavor-hover-overlay">
+            <a href="#" class="discover-btn">Discover this product</a>
+            <button class="add-btn">＋</button>
+          </div>
+        </div>
+      </div>
+      <button class="carousel-btn" id="carouselNext">→</button>
+    </div>
+  </section>
+
+  <!-- SUBSCRIBE -->
+  <section class="subscribe-section" id="subscribe">
+    <div class="subscribe-bg-text">
+      <span class="sub-line sub-line1">STAY</span>
+      <span class="sub-line sub-line2">REFRESHED</span>
+      <span class="sub-line sub-line3">EVERY DAY?</span>
+    </div>
+    <div class="subscribe-content">
+      <div class="subscribe-rocket">
+        <svg viewBox="0 0 160 220" xmlns="http://www.w3.org/2000/svg">
+          <g transform="rotate(-20, 80, 110)">
+            <path d="M80 10 Q105 50 105 110 L80 130 L55 110 Q55 50 80 10Z" fill="#1a2744"/>
+            <path d="M80 10 Q92 45 92 110 L80 120 L68 110 Q68 45 80 10Z" fill="#71CECA"/>
+            <ellipse cx="80" cy="60" rx="14" ry="14" fill="#aee4f8"/>
+            <path d="M55 110 Q35 120 38 145 L55 130Z" fill="#e8963a"/>
+            <path d="M105 110 Q125 120 122 145 L105 130Z" fill="#e8963a"/>
+            <path d="M65 130 Q80 160 95 130 Q80 145 65 130Z" fill="#f5d020" opacity=".9"/>
+            <path d="M70 145 Q80 185 90 145 Q80 165 70 145Z" fill="#e8963a" opacity=".8"/>
+          </g>
+        </svg>
+      </div>
+      <div class="subscribe-text">
+        <p>Sign up for automatic delivery and save <strong>10%</strong>.</p>
+        <a href="#" class="subscribe-btn">Subscribe</a>
+      </div>
+    </div>
+    <div class="bubble-badge">
+      <svg viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg">
+        <path d="M65 5 C90 5 125 25 125 65 C125 95 105 125 65 125 C30 125 5 100 5 65 C5 30 35 5 65 5Z" fill="#71CECA" opacity=".3"/>
+        <path d="M65 10 C88 10 120 28 120 65 C120 93 101 120 65 120 C32 120 10 97 10 65 C10 33 38 10 65 10Z" fill="#5ab5b0" opacity=".4"/>
+      </svg>
+      <div class="bubble-text">WE HAVE<br>WHAT<br>YOU NEED</div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <span class="footer-logo">AV8</span>
+        <p>Simply Refreshing.<br>Real coconut water.<br>No added sugar.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Shop</h4>
+          <ul>
+            <li><a href="#">All Products</a></li>
+            <li><a href="#">Coconut Water</a></li>
+            <li><a href="#">Mango Coconut Water</a></li>
+            <li><a href="#">Pineapple Coconut Water</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Learn</h4>
+          <ul>
+            <li><a href="#">About Coconut Water</a></li>
+            <li><a href="#">Ingredients</a></li>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">FAQ</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">Wholesale</a></li>
+            <li><a href="#">Careers</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 AV8. All rights reserved.</p>
+      <div class="footer-social">
+        <a href="#" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>
+        </a>
+        <a href="#" aria-label="TikTok">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M19.6 3h-3.2v11.4c0 1.8-1.5 3.3-3.3 3.3s-3.3-1.5-3.3-3.3 1.5-3.3 3.3-3.3c.3 0 .6 0 .9.1V7.9c-.3 0-.6-.1-.9-.1C8.8 7.8 5.6 11 5.6 15s3.2 7.2 7.2 7.2 7.2-3.2 7.2-7.2V8.2c1.1.8 2.5 1.3 3.9 1.3V6c-2.1 0-3.9-1.3-4.3-3z"/></svg>
+        </a>
+        <a href="#" aria-label="Facebook">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+gsap.registerPlugin(ScrollTrigger);
+function $(s,c=document){return c.querySelector(s);}
+function $$(s,c=document){return[...c.querySelectorAll(s)];}
+
+/* Announce bar */
+$('#announceClose').addEventListener('click',()=>{
+  $('#announceBar').classList.add('hidden');
+  $('#mainNav').classList.add('announce-gone');
+  document.documentElement.style.setProperty('--announce-h','0px');
+});
+
+/* Nav scroll */
+window.addEventListener('scroll',()=>{
+  $('#mainNav').classList.toggle('scrolled',window.scrollY>60);
+},{passive:true});
+
+/* Flavor data */
+const flavors=[
+  {pill:'Coconut Water',heroBg:'#71CECA',
+   canGrad:'linear-gradient(180deg,#71CECA 0%,#fff 55%,#fff 100%)',
+   nameColor:'#71CECA',flavorText:'COCONUT<br>WATER',
+   footer:'NO ADDED SUGAR · NOT FROM CONCENTRATE',hasFibre:false,
+   icon:`<ellipse cx="40" cy="42" rx="35" ry="34" fill="#4db84f"/>
+         <ellipse cx="40" cy="40" rx="31" ry="30" fill="#5ccc60"/>
+         <ellipse cx="40" cy="40" rx="14" ry="14" fill="#fff" opacity=".9"/>
+         <rect x="37" y="16" width="6" height="16" rx="3" fill="#71CECA"/>`},
+  {pill:'Mango Coconut Water',heroBg:'#e8963a',
+   canGrad:'linear-gradient(180deg,#e05020 0%,#e8963a 52%,#fff 54%,#fff 100%)',
+   nameColor:'#e8963a',flavorText:'MANGO<br>COCONUT WATER',
+   footer:'HIGH IN FIBRE · NO ADDED SUGAR',hasFibre:true,
+   icon:`<ellipse cx="40" cy="42" rx="35" ry="34" fill="#4db84f"/>
+         <path d="M40 8 Q75 8 75 76 L40 76Z" fill="#e8963a"/>
+         <ellipse cx="40" cy="40" rx="14" ry="14" fill="#fff" opacity=".9"/>
+         <rect x="37" y="16" width="6" height="16" rx="3" fill="#f5b040"/>`},
+  {pill:'Pineapple Coconut Water',heroBg:'#f5d020',
+   canGrad:'linear-gradient(180deg,#f5d020 0%,#f5d020 52%,#fff 54%,#fff 100%)',
+   nameColor:'#3d8a00',flavorText:'PINEAPPLE<br>COCONUT WATER',
+   footer:'HIGH IN FIBRE · NO ADDED SUGAR',hasFibre:true,
+   icon:`<ellipse cx="40" cy="42" rx="35" ry="34" fill="#4db84f"/>
+         <path d="M40 8 Q75 8 75 76 L40 76Z" fill="#f5b040"/>
+         <ellipse cx="40" cy="40" rx="14" ry="14" fill="#fff" opacity=".9"/>
+         <rect x="37" y="16" width="6" height="16" rx="3" fill="#f5d020"/>
+         <path d="M50 20 Q58 26 56 36" stroke="#e8963a" stroke-width="2" fill="none" opacity=".7"/>`},
+];
+
+let cur=0;
+function applyFlavor(idx,anim=true){
+  cur=(idx+flavors.length)%flavors.length;
+  const f=flavors[cur];
+  gsap.to('#hero',{backgroundColor:f.heroBg,duration:.55,ease:'power2.out'});
+  const swap=()=>{
+    $('#canHeroBody').style.background=f.canGrad;
+    $('#canFruitIcon').innerHTML=f.icon;
+    const fn=$('#canFlavorName'); fn.innerHTML=f.flavorText; fn.style.color=f.nameColor;
+    $('#canFooterText').textContent=f.footer;
+    $('#canFibreBadge').classList.toggle('hidden',!f.hasFibre);
+    $('#heroFlavorPill').textContent=f.pill;
+  };
+  if(anim){
+    gsap.to('#canHeroBody',{opacity:0,y:-16,duration:.22,onComplete:()=>{swap();gsap.to('#canHeroBody',{opacity:1,y:0,duration:.28});}});
+    gsap.to('#heroFlavorPill',{opacity:0,scale:.9,duration:.18,onComplete:()=>gsap.to('#heroFlavorPill',{opacity:1,scale:1,duration:.25})});
+  }else{swap();}
+}
+$('#heroPrev').addEventListener('click',()=>applyFlavor(cur-1));
+$('#heroNext').addEventListener('click',()=>applyFlavor(cur+1));
+
+/* Parallax */
+const illus=$$('.illus');
+const d=[.03,.03,.05,.04,.06,.05,.02,.08,.07,.06,.04];
+window.addEventListener('mousemove',(e)=>{
+  const cx=window.innerWidth/2,cy=window.innerHeight/2;
+  illus.forEach((el,i)=>gsap.to(el,{x:(e.clientX-cx)*(d[i]||.04),y:(e.clientY-cy)*(d[i]||.04),duration:1.2,ease:'power1.out'}));
+},{passive:true});
+illus.forEach((el,i)=>gsap.to(el,{y:`+=${6+(i%4)*4}`,rotation:`+=${(i%2?-1:1)*3}`,duration:2.8+i*.35,yoyo:true,repeat:-1,ease:'sine.inOut',delay:i*.25}));
+
+/* Entrance */
+gsap.from('.hero-center',{opacity:0,y:70,duration:1.1,ease:'power3.out',delay:.25});
+gsap.from('.illus',{opacity:0,scale:.4,stagger:.06,duration:.8,ease:'back.out(1.4)',delay:.35});
+
+/* InView helper */
+function watchInView(sel,thr=.2){
+  $$(sel).forEach(el=>{
+    const o=new IntersectionObserver(entries=>{
+      entries.forEach(e=>{if(e.isIntersecting){el.classList.add('in-view');o.disconnect();}});
+    },{threshold:thr});
+    o.observe(el);
+  });
+}
+watchInView('.benefit-card',.2);
+watchInView('.split-photo-left',.15);
+watchInView('.split-photo-right',.15);
+
+/* Flavors heading */
+const fh=$('#flavorsHeading');
+if(fh){
+  const o=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        fh.classList.add('in-view');
+        $$('.flavors-stars svg').forEach((s,i)=>setTimeout(()=>s.classList.add('in-view'),300+i*90));
+        o.disconnect();
+      }
+    });
+  },{threshold:.2});
+  o.observe(fh);
+}
+
+/* Carousel */
+let ci=0;
+function getV(){return window.innerWidth<600?1:window.innerWidth<900?2:3;}
+function updateC(){
+  const cards=$$('.flavor-card',document);
+  const v=getV(),max=cards.length-v;
+  ci=Math.max(0,Math.min(ci,max));
+  gsap.to('#flavorsCarousel',{x:`-${(100/v)*ci}%`,duration:.48,ease:'power2.out'});
+}
+$('#carouselPrev').addEventListener('click',()=>{ci--;updateC();});
+$('#carouselNext').addEventListener('click',()=>{ci++;updateC();});
+
+/* Subscribe */
+const so=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      $$('.sub-line').forEach((l,i)=>setTimeout(()=>l.classList.add('in-view'),i*130));
+      const r=$('.subscribe-rocket'),b=$('.bubble-badge');
+      if(r)setTimeout(()=>r.classList.add('in-view'),200);
+      if(b)setTimeout(()=>b.classList.add('in-view'),420);
+      so.disconnect();
+    }
+  });
+},{threshold:.12});
+const ss=$('#subscribe');
+if(ss)so.observe(ss);
+
+/* GSAP extras */
+gsap.from('.flavor-card',{opacity:0,y:60,stagger:.13,duration:.7,ease:'power2.out',scrollTrigger:{trigger:'#flavorsCarousel',start:'top 82%'}});
+$$('.footer-col').forEach((c,i)=>gsap.from(c,{opacity:0,y:28,duration:.6,delay:i*.1,scrollTrigger:{trigger:c,start:'top 92%'}}));
+gsap.from('.footer-brand',{opacity:0,x:-30,duration:.7,scrollTrigger:{trigger:'.footer-brand',start:'top 92%'}});
+</script>
+</body>
+</html>

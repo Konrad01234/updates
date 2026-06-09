@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AV8 — Organic Energy Drink</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Announcement Bar -->
+  <div class="announce-bar" id="announceBar">
+    <div class="announce-track">
+      <span>FREE SHIPPING ON ALL ORDERS OVER $50 &nbsp;★&nbsp; CANADA WIDE &nbsp;★&nbsp; FREE SHIPPING ON ALL ORDERS OVER $50 &nbsp;★&nbsp; CANADA WIDE &nbsp;★&nbsp; FREE SHIPPING ON ALL ORDERS OVER $50 &nbsp;★&nbsp; CANADA WIDE &nbsp;★&nbsp;</span>
+      <span aria-hidden="true">FREE SHIPPING ON ALL ORDERS OVER $50 &nbsp;★&nbsp; CANADA WIDE &nbsp;★&nbsp; FREE SHIPPING ON ALL ORDERS OVER $50 &nbsp;★&nbsp; CANADA WIDE &nbsp;★&nbsp; FREE SHIPPING ON ALL ORDERS OVER $50 &nbsp;★&nbsp; CANADA WIDE &nbsp;★&nbsp;</span>
+    </div>
+    <button class="announce-close" id="announceClose" aria-label="Close">✕</button>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="nav" id="mainNav">
+    <a href="#" class="nav-logo">AV8</a>
+    <ul class="nav-links">
+      <li><a href="#flavors">Shop <span class="nav-arrow">▾</span></a></li>
+      <li><a href="#benefits">Learn <span class="nav-arrow">▾</span></a></li>
+      <li><a href="#subscribe">Subscription</a></li>
+    </ul>
+    <div class="nav-icons">
+      <button aria-label="Account">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      </button>
+      <button aria-label="Cart" class="cart-btn">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero" id="hero">
+    <!-- Floating SVG illustrations -->
+    <div class="hero-illustrations" id="heroIllustrations">
+      <!-- Star burst -->
+      <svg class="illus illus-star" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="60,5 72,45 115,45 80,70 93,110 60,85 27,110 40,70 5,45 48,45" fill="#f0c040"/>
+      </svg>
+      <!-- Basketball -->
+      <svg class="illus illus-ball" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="40" cy="40" r="38" fill="#3d6b3a"/>
+        <path d="M40 2 Q55 20 55 40 Q55 60 40 78" fill="none" stroke="#fff" stroke-width="2.5"/>
+        <path d="M40 2 Q25 20 25 40 Q25 60 40 78" fill="none" stroke="#fff" stroke-width="2.5"/>
+        <line x1="2" y1="40" x2="78" y2="40" stroke="#fff" stroke-width="2.5"/>
+      </svg>
+      <!-- Flower left -->
+      <svg class="illus illus-flower-l" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <g transform="translate(50,50)">
+          <ellipse rx="18" ry="30" fill="#e8734a" transform="rotate(0)"/>
+          <ellipse rx="18" ry="30" fill="#e8734a" transform="rotate(60)"/>
+          <ellipse rx="18" ry="30" fill="#e8734a" transform="rotate(120)"/>
+          <circle r="14" fill="#fff"/>
+          <circle r="7" fill="#e8734a"/>
+        </g>
+      </svg>
+      <!-- Flower right -->
+      <svg class="illus illus-flower-r" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+        <g transform="translate(40,40)">
+          <ellipse rx="14" ry="22" fill="#e8734a" transform="rotate(0)"/>
+          <ellipse rx="14" ry="22" fill="#e8734a" transform="rotate(72)"/>
+          <ellipse rx="14" ry="22" fill="#e8734a" transform="rotate(144)"/>
+          <ellipse rx="14" ry="22" fill="#e8734a" transform="rotate(216)"/>
+          <ellipse rx="14" ry="22" fill="#e8734a" transform="rotate(288)"/>
+          <circle r="12" fill="#fff"/>
+          <circle r="6" fill="#f0c040"/>
+        </g>
+      </svg>
+      <!-- Leaf cluster -->
+      <svg class="illus illus-leaf" viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+        <path d="M45 80 Q10 50 30 10 Q50 30 45 80Z" fill="#2e5c2a"/>
+        <path d="M45 80 Q80 50 60 10 Q40 30 45 80Z" fill="#3d6b3a"/>
+        <line x1="45" y1="80" x2="45" y2="15" stroke="#2e5c2a" stroke-width="1.5"/>
+      </svg>
+      <!-- Cloud oval -->
+      <svg class="illus illus-cloud" viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="80" cy="60" rx="76" ry="54" fill="#5b8fe8" opacity="0.85"/>
+        <ellipse cx="55" cy="55" rx="25" ry="20" fill="#fff"/>
+        <ellipse cx="80" cy="50" rx="30" ry="22" fill="#fff"/>
+        <ellipse cx="105" cy="58" rx="22" ry="18" fill="#fff"/>
+      </svg>
+      <!-- Small star -->
+      <svg class="illus illus-star2" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+        <path d="M30 5 L34 22 L52 22 L38 33 L43 50 L30 40 L17 50 L22 33 L8 22 L26 22Z" fill="#f0c040"/>
+      </svg>
+      <!-- Watermelon slice -->
+      <svg class="illus illus-melon" viewBox="0 0 80 60" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5 55 Q40 0 75 55Z" fill="#f0c040"/>
+        <path d="M12 55 Q40 10 68 55Z" fill="#8eba5b"/>
+        <circle cx="30" cy="45" r="3" fill="#2e5c2a"/>
+        <circle cx="45" cy="40" r="3" fill="#2e5c2a"/>
+        <circle cx="38" cy="50" r="3" fill="#2e5c2a"/>
+      </svg>
+      <!-- Hat -->
+      <svg class="illus illus-hat" viewBox="0 0 80 70" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="40" cy="60" rx="38" ry="9" fill="#2e5c2a"/>
+        <rect x="22" y="15" width="36" height="46" rx="5" fill="#3d6b3a"/>
+        <rect x="18" y="38" width="44" height="8" fill="#f0c040"/>
+      </svg>
+    </div>
+
+    <!-- Product Can -->
+    <div class="hero-center">
+      <div class="hero-can" id="heroCan">
+        <div class="can-placeholder">
+          <div class="can-label">
+            <span class="can-brand">AV8</span>
+            <span class="can-sub">ORGANIC ENERGY INFUSION</span>
+            <span class="can-flavor-tag">YERBA MATÉ</span>
+            <span class="can-flavor-name">MELON & MINT</span>
+            <span class="can-size">355 ml</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-controls">
+        <button class="hero-btn hero-prev" id="heroPrev" aria-label="Previous flavor">←</button>
+        <button class="hero-flavor-pill" id="heroFlavorPill">Melon &amp; Mint</button>
+        <button class="hero-btn hero-next" id="heroNext" aria-label="Next flavor">→</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Benefits Section -->
+  <section class="benefits" id="benefits">
+    <div class="benefits-inner">
+      <div class="benefit-card" data-animate="fade-up">
+        <div class="benefit-icon">
+          <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="40" cy="40" r="38" fill="#3d6b3a"/>
+            <path d="M25 55 Q40 20 55 55 Q40 42 25 55Z" fill="#f0c040"/>
+            <circle cx="40" cy="28" r="5" fill="#f0c040"/>
+          </svg>
+        </div>
+        <h3>NATURAL CAFFEINE</h3>
+        <p>This certified organic caffeine comes from the Yerba Maté plant. A gift from Mother Nature.</p>
+      </div>
+      <div class="benefit-card" data-animate="fade-up" style="transition-delay:.12s">
+        <div class="benefit-icon">
+          <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="40" cy="40" r="38" fill="#8eba5b"/>
+            <path d="M40 15 Q55 30 55 45 Q55 62 40 68 Q25 62 25 45 Q25 30 40 15Z" fill="#fff"/>
+            <path d="M40 22 Q50 33 50 45 Q50 58 40 63 Q30 58 30 45 Q30 33 40 22Z" fill="#3d6b3a"/>
+          </svg>
+        </div>
+        <h3>CERTIFIED ORGANIC</h3>
+        <p>Every ingredient is 100% organic and carefully sourced. Clean energy you can feel good about.</p>
+      </div>
+      <div class="benefit-card" data-animate="fade-up" style="transition-delay:.24s">
+        <div class="benefit-icon">
+          <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="40" cy="40" r="38" fill="#e8734a"/>
+            <line x1="20" y1="20" x2="60" y2="60" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
+            <text x="50%" y="52%" text-anchor="middle" dominant-baseline="middle" font-size="28" font-weight="bold" fill="#fff" font-family="Bebas Neue, sans-serif">0g</text>
+          </svg>
+        </div>
+        <h3>ZERO ADDED SUGAR</h3>
+        <p>No refined sugars, no artificial sweeteners. Just pure natural flavour and energy.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Split Photos Section -->
+  <section class="split-photos" id="splitPhotos">
+    <div class="split-photo split-photo-left" data-animate="slide-right">
+      <div class="photo-placeholder photo-ph-left">
+        <span>LIFESTYLE PHOTO 1</span>
+      </div>
+    </div>
+    <div class="split-photo split-photo-right" data-animate="slide-left">
+      <div class="photo-placeholder photo-ph-right">
+        <span>LIFESTYLE PHOTO 2</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Flavors Section -->
+  <section class="flavors-section" id="flavors">
+    <div class="flavors-heading-wrap">
+      <h2 class="flavors-big" id="flavorsHeading">FLAVORS</h2>
+      <div class="flavors-stars">
+        <svg viewBox="0 0 24 24"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" fill="#111"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" fill="#111"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" fill="#111"/></svg>
+      </div>
+    </div>
+    <div class="flavors-top-bar">
+      <button class="see-all-btn">See all our products</button>
+      <span class="recommended-label">Recommended products</span>
+    </div>
+    <div class="flavors-carousel-wrapper">
+      <button class="carousel-btn carousel-prev" id="carouselPrev" aria-label="Previous">←</button>
+      <div class="flavors-carousel" id="flavorsCarousel">
+        <!-- Flavor Card 1 -->
+        <div class="flavor-card" style="--card-bg:#8eba5b">
+          <h3>MELON &amp; MINT</h3>
+          <div class="flavor-can">
+            <div class="can-mini" style="--can-color:#8eba5b">
+              <span>AV8</span>
+              <small>MELON &amp; MINT</small>
+            </div>
+          </div>
+          <div class="flavor-hover-overlay">
+            <a href="#" class="discover-btn">Discover this product</a>
+            <button class="add-btn" aria-label="Add to cart">＋</button>
+          </div>
+        </div>
+        <!-- Flavor Card 2 -->
+        <div class="flavor-card" style="--card-bg:#f0c040">
+          <h3>GRAPEFRUIT</h3>
+          <div class="flavor-can">
+            <div class="can-mini" style="--can-color:#e8734a">
+              <span>AV8</span>
+              <small>GRAPEFRUIT</small>
+            </div>
+          </div>
+          <div class="flavor-hover-overlay">
+            <a href="#" class="discover-btn">Discover this product</a>
+            <button class="add-btn" aria-label="Add to cart">＋</button>
+          </div>
+        </div>
+        <!-- Flavor Card 3 -->
+        <div class="flavor-card" style="--card-bg:#5b8fe8">
+          <h3>BLACKBERRY &amp; HIBISCUS</h3>
+          <div class="flavor-can">
+            <div class="can-mini" style="--can-color:#5b8fe8">
+              <span>AV8</span>
+              <small>BLACKBERRY</small>
+            </div>
+          </div>
+          <div class="flavor-hover-overlay">
+            <a href="#" class="discover-btn">Discover this product</a>
+            <button class="add-btn" aria-label="Add to cart">＋</button>
+          </div>
+        </div>
+        <!-- Flavor Card 4 -->
+        <div class="flavor-card" style="--card-bg:#e8734a">
+          <h3>PASSION FRUIT</h3>
+          <div class="flavor-can">
+            <div class="can-mini" style="--can-color:#c94f22">
+              <span>AV8</span>
+              <small>PASSION FRUIT</small>
+            </div>
+          </div>
+          <div class="flavor-hover-overlay">
+            <a href="#" class="discover-btn">Discover this product</a>
+            <button class="add-btn" aria-label="Add to cart">＋</button>
+          </div>
+        </div>
+      </div>
+      <button class="carousel-btn carousel-next" id="carouselNext" aria-label="Next">→</button>
+    </div>
+  </section>
+
+  <!-- Subscription CTA -->
+  <section class="subscribe-section" id="subscribe">
+    <div class="subscribe-bg-text">
+      <span class="sub-line sub-line1" id="subLine1">YOU WOOED IT</span>
+      <span class="sub-line sub-line2" id="subLine2">DRINK IT</span>
+      <span class="sub-line sub-line3" id="subLine3">EVERY DAY?</span>
+    </div>
+    <div class="subscribe-content">
+      <div class="subscribe-rocket">
+        <!-- Rocket SVG -->
+        <svg viewBox="0 0 160 220" xmlns="http://www.w3.org/2000/svg">
+          <g transform="rotate(-20, 80, 110)">
+            <path d="M80 10 Q105 50 105 110 L80 130 L55 110 Q55 50 80 10Z" fill="#1a2744"/>
+            <path d="M80 10 Q92 45 92 110 L80 120 L68 110 Q68 45 80 10Z" fill="#5b8fe8"/>
+            <ellipse cx="80" cy="60" rx="14" ry="14" fill="#aee4f8"/>
+            <path d="M55 110 Q35 120 38 145 L55 130Z" fill="#e8734a"/>
+            <path d="M105 110 Q125 120 122 145 L105 130Z" fill="#e8734a"/>
+            <path d="M65 130 Q80 160 95 130 Q80 145 65 130Z" fill="#f0c040" opacity="0.9"/>
+            <path d="M70 145 Q80 185 90 145 Q80 165 70 145Z" fill="#e8734a" opacity="0.8"/>
+          </g>
+        </svg>
+      </div>
+      <div class="subscribe-text">
+        <p>Sign up for automatic delivery* and save <strong>10%</strong>.</p>
+        <a href="#" class="subscribe-btn">Subscribe</a>
+      </div>
+    </div>
+    <!-- Bubble badge -->
+    <div class="bubble-badge">
+      <svg viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg">
+        <path d="M65 5 C90 5 125 25 125 65 C125 95 105 125 65 125 C30 125 5 100 5 65 C5 30 35 5 65 5Z" fill="#f5c0d0"/>
+        <path d="M65 10 C88 10 120 28 120 65 C120 93 101 120 65 120 C32 120 10 97 10 65 C10 33 38 10 65 10Z" fill="#e8a0b8"/>
+      </svg>
+      <div class="bubble-text">WE HAVE<br/>WHAT<br/>YOU NEED</div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <span class="footer-logo">AV8</span>
+        <p>Organic Energy Infusion.<br/>Feel the difference.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Shop</h4>
+          <ul>
+            <li><a href="#">All Products</a></li>
+            <li><a href="#">Melon &amp; Mint</a></li>
+            <li><a href="#">Grapefruit</a></li>
+            <li><a href="#">Blackberry &amp; Hibiscus</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Learn</h4>
+          <ul>
+            <li><a href="#">About Yerba Maté</a></li>
+            <li><a href="#">Ingredients</a></li>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">FAQ</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">Wholesale</a></li>
+            <li><a href="#">Careers</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 AV8. All rights reserved.</p>
+      <div class="footer-social">
+        <a href="#" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>
+        </a>
+        <a href="#" aria-label="TikTok">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M19.6 3h-3.2v11.4c0 1.8-1.5 3.3-3.3 3.3s-3.3-1.5-3.3-3.3 1.5-3.3 3.3-3.3c.3 0 .6 0 .9.1V7.9c-.3 0-.6-.1-.9-.1C8.8 7.8 5.6 11 5.6 15s3.2 7.2 7.2 7.2 7.2-3.2 7.2-7.2V8.2c1.1.8 2.5 1.3 3.9 1.3V6c-2.1 0-3.9-1.3-4.3-3z"/></svg>
+        </a>
+        <a href="#" aria-label="Facebook">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- GSAP CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

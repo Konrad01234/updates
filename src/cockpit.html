@@ -136,11 +136,14 @@ button{cursor:pointer}
 
 /* plan editor */
 .acts{display:grid;gap:8px}
-.act{display:grid;grid-template-columns:auto minmax(0,1.2fr) minmax(0,1fr) 92px auto;gap:8px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--panel-2)}
-.act input{width:100%}
+.act{display:grid;grid-template-columns:auto minmax(0,1.2fr) minmax(0,1fr) 150px auto;gap:8px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--panel-2)}
+.act input,.act select{width:100%}
+.slots{grid-column:1/-1;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.slot{border:1px solid var(--line);border-radius:6px;padding:5px;display:grid;gap:4px;align-content:start;min-width:0}
+.slot.on{border-color:color-mix(in srgb,var(--cyan) 55%,var(--line))}
+.slot input{font:500 12px/1.2 var(--mono);padding:4px 5px;border-radius:5px;width:100%}
 .colorbtn{width:26px;height:26px;border-radius:50%;border:2px solid var(--panel)}
-.days{grid-column:2/-1;display:flex;gap:4px;flex-wrap:wrap}
-.dchip{border:1px solid var(--line-2);background:transparent;border-radius:5px;padding:4px 0;width:38px;font:600 11px/1 var(--display);letter-spacing:.08em;color:var(--muted)}
+.dchip{border:1px solid var(--line-2);background:transparent;border-radius:5px;padding:5px 0;width:100%;font:600 11px/1 var(--display);letter-spacing:.08em;color:var(--muted)}
 .dchip[aria-pressed="true"]{background:var(--cyan);border-color:var(--cyan);color:var(--ground)}
 .x{border:0;background:transparent;color:var(--faint);font-size:20px;line-height:1;padding:4px 6px}
 .x:hover{color:var(--bad)}
@@ -149,6 +152,28 @@ button{cursor:pointer}
 .wg-h{font:600 11px/1 var(--display);letter-spacing:.12em;color:var(--muted);padding:4px 2px 6px;border-bottom:1px solid var(--line)}
 .wg-item{font-size:13px;padding:6px 8px;border-radius:6px;background:var(--panel-2);border-left:3px solid;line-height:1.3}
 .wg-item span{display:block;font:500 11px/1.3 var(--mono);color:var(--muted)}
+.wg-item.fixed,.task.fixed{background:transparent;border-style:dashed}
+.task.fixed{border-color:var(--line-2)}
+.task.fixed .t b{font-weight:500;color:var(--muted)}
+.fixtag{font:600 10px/1 var(--display);letter-spacing:.12em;color:var(--faint);text-transform:uppercase;padding-inline:4px}
+.covered{font-size:12px;color:var(--good)}
+.linkbtn{display:block;margin-top:2px;border:0;background:none;padding:0;color:var(--cyan);font-size:13px;text-decoration:underline;text-underline-offset:2px}
+
+/* homework */
+.hw-form{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,2fr) 150px auto;gap:8px;align-items:end}
+.hw-group{margin-top:16px}
+.hw-group h3{margin:0 0 6px;font:600 11px/1.2 var(--display);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.hw-group.overdue h3{color:var(--bad)}
+.hw{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel-2);margin-bottom:6px}
+.hw .body{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;min-width:0}
+.hw .txt{flex:1 1 200px;min-width:0;overflow-wrap:anywhere}
+.hw .subj{font:600 11px/1 var(--display);letter-spacing:.08em;text-transform:uppercase;padding:5px 7px;border-radius:4px;background:color-mix(in srgb,var(--cyan) 18%,transparent);color:var(--cyan);white-space:nowrap}
+.hw .due{font:500 12px/1 var(--mono);color:var(--muted);white-space:nowrap}
+.hw.late{border-color:color-mix(in srgb,var(--bad) 45%,var(--line))}
+.hw.late .due{color:var(--bad)}
+.hw.done .txt{text-decoration:line-through;color:var(--muted)}
+.hw .chk{width:28px;height:28px}
+.hw .chk svg{width:15px;height:15px}
 .scroll-x{overflow-x:auto}
 
 /* settings */
@@ -178,7 +203,11 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
   .tab{flex:1;padding-inline:6px}
   .form{grid-template-columns:1fr}
   .act{grid-template-columns:auto minmax(0,1fr) auto}
-  .act .goal,.act .time{grid-column:2/-1}
+  .act .goal,.act .kind{grid-column:2/-1}
+  .act .x{grid-column:3;grid-row:1}
+  .slots{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .hw-form{grid-template-columns:1fr 1fr}
+  .hw-form .hw-text{grid-column:1/-1;order:-1}
   .week{grid-template-columns:repeat(7,minmax(0,1fr))}
   .wk-nav{display:none}
   .inst .big{font-size:30px}
@@ -192,6 +221,7 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
     <span class="sync" id="sync"><i></i><span>lokal</span></span>
     <nav class="tabs" role="tablist">
       <button class="tab" role="tab" data-tab="cockpit" aria-selected="true">Cockpit</button>
+      <button class="tab" role="tab" data-tab="hw" aria-selected="false">Hausaufg.</button>
       <button class="tab" role="tab" data-tab="plan" aria-selected="false">Plan</button>
       <button class="tab" role="tab" data-tab="setup" aria-selected="false">Setup</button>
     </nav>
@@ -279,20 +309,38 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
     </div>
   </section>
 
+  <!-- HOMEWORK -->
+  <section id="view-hw" hidden>
+    <div class="main" style="grid-template-columns:1fr">
+      <div class="panel">
+        <div class="panel-h"><h2>Hausaufgaben</h2><span class="label" id="hw-count"></span></div>
+        <form class="hw-form" id="hw-form" autocomplete="off">
+          <div class="field"><label for="hw-subj">Fach</label><input class="inp" id="hw-subj" list="hw-subjects" placeholder="Mathe" required></div>
+          <div class="field hw-text"><label for="hw-text">Aufgabe</label><input class="inp" id="hw-text" placeholder="S. 54 Nr. 3–7" required></div>
+          <div class="field"><label for="hw-due">Fällig am</label><input class="inp num" id="hw-due" type="date" required></div>
+          <button class="btn primary" type="submit">Eintragen</button>
+          <datalist id="hw-subjects"></datalist>
+        </form>
+        <p class="hint">„Alle Hausaufgaben erledigt“ kannst du erst abhaken, wenn nichts mehr offen ist, das bis morgen fällig ist.</p>
+        <div id="hw-lists"></div>
+      </div>
+    </div>
+  </section>
+
   <!-- PLAN -->
   <section id="view-plan" hidden>
     <div class="main" style="grid-template-columns:1fr">
       <div class="panel">
+        <div class="panel-h"><h2>Wochenplan</h2><span class="label" id="plan-sum"></span></div>
+        <div class="scroll-x"><div class="weekgrid" id="weekgrid"></div></div>
+      </div>
+      <div class="panel">
         <div class="panel-h">
-          <h2>Aktivitäten</h2>
+          <h2>Aktivitäten bearbeiten</h2>
           <button class="btn primary" id="add-act">+ Aktivität</button>
         </div>
         <div class="acts" id="acts"></div>
-        <p class="hint">Änderungen gelten ab heute. Gelöschte Aktivitäten bleiben in der Vergangenheit gezählt.</p>
-      </div>
-      <div class="panel">
-        <div class="panel-h"><h2>Wochenplan</h2><span class="label">so sieht jede Woche aus</span></div>
-        <div class="scroll-x"><div class="weekgrid" id="weekgrid"></div></div>
+        <p class="hint">Tag antippen, um ihn an- oder auszuschalten. Darunter Start- und Endzeit. „Fester Termin“ (z.&nbsp;B. Schule) steht im Kalender, zählt aber nicht als Aufgabe. Änderungen gelten ab heute.</p>
       </div>
     </div>
   </section>
@@ -385,7 +433,9 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
 (() => {
   const LS_KEY = "progress-cockpit-v1";
   const DOC_PATH = "tracker/main";
+  const PLAN_VERSION = 2;
   const COLORS = ["#f2b544","#5cc8e0","#4fd18b","#c792ea","#f0645a","#8fb3ff","#e0a37a"];
+  const FIXED_COLOR = "#7d9196";
   const WD = ["MO","DI","MI","DO","FR","SA","SO"];
   const WD_LONG = ["Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag","Sonntag"];
   const MONTHS = ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
@@ -400,22 +450,45 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
   const monthOf = k => k.slice(0,7);
   const mondayOf = k => addDays(k, -wdOf(k));
   const fmtEUR = v => `${Math.round(v).toLocaleString("de-DE")} €`;
+  const shortDate = k => { const d = parse(k); return `${WD[wdOf(k)].charAt(0)+WD[wdOf(k)].charAt(1).toLowerCase()} ${d.getDate()}.${d.getMonth()+1}.`; };
+  const uid = () => Math.random().toString(36).slice(2,9);
 
-  // ---------- default state ----------
+  // ---------- the plan ----------
+  // sched: { weekday(0=Mo): { s:"HH:MM", e:"HH:MM", note } }
+  function buildPlan(created){
+    const act = (name, goal, color, sched, extra={}) => ({ id: uid(), name, goal, color, kind:"task", sched, created, removed:null, ...extra });
+    const sl = (s, e, note="") => ({ s, e, note });
+    const schule = act("Schule", "", FIXED_COLOR, {
+      0: sl("08:00","13:20"), 1: sl("08:00","14:15"), 2: sl("08:00","14:15"), 3: sl("08:00","14:15"), 4: sl("08:00","13:20")
+    }, { kind:"fixed" });
+    const jog = act("Joggen", "", COLORS[0], {
+      1: sl("17:30","18:00","locker, 30 min"), 4: sl("17:30","18:00","locker, 30 min"), 5: sl("10:00","11:00","lange Runde, 45–60 min")
+    });
+    return [
+      schule,
+      act("Schwimmen", "", COLORS[1], { 1: sl("05:45","07:00"), 3: sl("05:45","07:00") }),
+      act("Hockeytraining", "", COLORS[4], { 3: sl("19:15","20:30") }),
+      act("Gym", "", COLORS[3], {
+        0: sl("14:30","15:45","Oberkörper"), 2: sl("15:00","16:15","Beine"), 4: sl("14:30","15:45","Oberkörper"), 6: sl("11:00","12:15","Ganzkörper")
+      }),
+      jog,
+      act("Alle Hausaufgaben erledigt", "", COLORS[5], {
+        0: sl("16:00","17:30"), 1: sl("15:00","17:00"), 2: sl("16:30","18:00"), 3: sl("15:00","17:00"),
+        4: sl("16:00","17:00"), 5: sl("15:00","16:00","Rest der Woche"), 6: sl("17:00","18:00","Woche vorbereiten")
+      }, { gate:"homework" }),
+      act("10.000 Schritte", "", COLORS[2], Object.fromEntries([0,1,2,3,4,5,6].map(i => [i, sl("","","über den Tag")])), { coveredBy:[jog.id] }),
+      act("Lesen", "20 Seiten", COLORS[6], Object.fromEntries([0,1,2,3,4,5,6].map(i => [i, sl("22:15","22:45")]))),
+      act("Schlafen", "Licht aus, Handy weg", "#8fb3ff", Object.fromEntries([0,1,2,3,4,5,6].map(i => [i, sl("23:00","")]))),
+    ];
+  }
   function freshState(){
     const t = todayKey();
-    const a = (name, goal, time, days, color) => ({ id: Math.random().toString(36).slice(2,9), name, goal, time, days, color, created: t, removed: null });
     return {
-      v: 1,
+      v: 1, planVersion: PLAN_VERSION,
       startDate: t,
-      settings: { budget:150, penalty:10, mode:"task", editWindow:1, app:"TikTok", screenLimit:60, screenPenalty:5 },
-      activities: [
-        a("Laufen", "5 km", "07:00", [0,2,4], COLORS[0]),
-        a("Schwimmen", "30 min", "18:00", [1,3], COLORS[1]),
-        a("Golf", "9 Loch / Range", "10:00", [5], COLORS[2]),
-        a("Hausaufgaben", "alles für morgen", "16:00", [0,1,2,3,4], COLORS[3]),
-        a("Cold Calling", "20 Anrufe", "11:00", [0,1,2,3,4], COLORS[4]),
-      ],
+      settings: { budget:150, penalty:10, mode:"task", editWindow:1, app:"TikTok", screenLimit:45, screenPenalty:5 },
+      activities: buildPlan(t),
+      homework: [],
       log: {}
     };
   }
@@ -457,7 +530,11 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
     docRef = db.doc(DOC_PATH);
     try {
       const snap = await docRef.get();
-      if (snap.exists) { state = normalize(snap.data()); saveLocal(); render(); }
+      if (snap.exists) {
+        const raw = snap.data();
+        state = normalize(raw); saveLocal(); render();
+        if (JSON.stringify(state) !== JSON.stringify(raw)) persist(); // migrated
+      }
       else { await docRef.set(JSON.parse(JSON.stringify(state))); }
       setSync();
       docRef.onSnapshot(s => {
@@ -474,23 +551,45 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
     out.startDate = out.startDate || base.startDate;
     out.settings = Object.assign({}, base.settings, out.settings || {});
     out.activities = Array.isArray(out.activities) ? out.activities : base.activities;
+    out.homework = Array.isArray(out.homework) ? out.homework : [];
     out.log = out.log && typeof out.log === "object" ? out.log : {};
+    // older format: days[] + time → sched
+    out.activities.forEach(a => {
+      if (!a.sched) { a.sched = {}; (a.days || []).forEach(d => a.sched[d] = { s: a.time || "", e: "", note: "" }); delete a.days; delete a.time; }
+      a.kind = a.kind || "task";
+    });
+    // switch to the weekly plan built together
+    if ((out.planVersion || 1) < PLAN_VERSION) {
+      const t = todayKey();
+      out.activities = out.activities.filter(a => a.created < t).map(a => ({ ...a, removed: a.removed || t }));
+      out.activities.push(...buildPlan(t));
+      out.settings.screenLimit = 45;
+      out.planVersion = PLAN_VERSION;
+    }
     return out;
   }
 
   // ---------- rules ----------
-  const scheduledOn = k => state.activities
-    .filter(a => a.days.includes(wdOf(k)) && k >= a.created && (!a.removed || k < a.removed))
-    .sort((x,y) => (x.time||"99").localeCompare(y.time||"99"));
+  const slotOf = (a, k) => a.sched && a.sched[wdOf(k)];
+  const activeOn = (a, k) => !!slotOf(a, k) && k >= a.created && (!a.removed || k < a.removed);
+  const byTime = k => (x, y) => ((slotOf(x,k).s || "99") ).localeCompare(slotOf(y,k).s || "99");
+  const agendaOn = k => state.activities.filter(a => activeOn(a, k)).sort(byTime(k));
+  const scheduledOn = k => agendaOn(k).filter(a => a.kind !== "fixed");
   const dayLog = k => state.log[k] || { done:{}, screen:null };
-  const isDone = (k, id) => !!(state.log[k] && state.log[k].done && state.log[k].done[id]);
+  const checked = (k, id) => !!(state.log[k] && state.log[k].done && state.log[k].done[id]);
+  function coverer(k, a){
+    if (!a.coveredBy) return null;
+    return state.activities.find(o => a.coveredBy.includes(o.id) && activeOn(o, k) && checked(k, o.id)) || null;
+  }
+  const isDone = (k, a) => checked(k, a.id) || !!coverer(k, a);
   function dayStats(k){
-    const s = scheduledOn(k); const done = s.filter(a => isDone(k, a.id)).length;
+    const s = scheduledOn(k); const done = s.filter(a => isDone(k, a)).length;
     return { total: s.length, done, missed: s.length - done };
   }
   const tracked = k => k >= state.startDate;
   const overLimit = k => { const m = dayLog(k).screen; return m != null && m > state.settings.screenLimit; };
   const editable = k => { const t = todayKey(); return k <= t && k >= addDays(t, -state.settings.editWindow) && tracked(k); };
+  const hwBlocking = k => state.homework.filter(h => !h.done && h.due <= addDays(k, 1));
 
   function monthLedger(ym){
     const t = todayKey(); const S = state.settings;
@@ -521,6 +620,7 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
   // ---------- rendering helpers ----------
   const $ = id => document.getElementById(id);
   const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const timeText = sl => !sl ? "" : sl.s && sl.e ? `${sl.s}–${sl.e}` : sl.s ? `${sl.s} Uhr` : "";
   function ring(svg, frac, color, label){
     const r = 40, C = 2*Math.PI*r, f = Math.max(0, Math.min(1, frac));
     let ticks = "";
@@ -534,7 +634,13 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
   }
   const CHECK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>`;
   let toastT;
-  function toast(msg){ const el = $("toast"); el.textContent = msg; el.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(()=>el.classList.remove("show"), 2200); }
+  function toast(msg){ const el = $("toast"); el.textContent = msg; el.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(()=>el.classList.remove("show"), 2600); }
+  function showTab(name){
+    document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === name));
+    ["cockpit","hw","plan","setup"].forEach(v => $("view-"+v).hidden = v !== name);
+    try { sessionStorage.setItem("pc-tab", name); } catch {}
+    window.scrollTo(0, 0);
+  }
 
   function render(){
     const t = todayKey(); const S = state.settings;
@@ -566,7 +672,7 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
       : sm >= lim*0.8 && lim > 0 ? `<div class="alert warn">▲ Fast am Limit</div>` : "";
 
     renderWeek(); renderDay(); renderHeat(ym, L); renderLedger(L);
-    renderPlan(); renderSetup();
+    renderHomework(); renderPlan(); renderSetup();
   }
 
   function renderWeek(){
@@ -574,7 +680,7 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
     let html = `<button class="wk-nav" data-wk="-7" aria-label="Vorige Woche">‹</button>`;
     for (let i=0;i<7;i++){
       const k = addDays(weekStart, i); const s = scheduledOn(k); const past = k < t;
-      const pips = s.slice(0,6).map(a => `<i class="${isDone(k,a.id) ? "on" : past && tracked(k) ? "miss" : ""}"></i>`).join("");
+      const pips = s.slice(0,8).map(a => `<i class="${isDone(k,a) ? "on" : past && tracked(k) ? "miss" : ""}"></i>`).join("");
       html += `<button class="day${k===t?" today":""}" data-day="${k}" aria-pressed="${k===selected}" aria-label="${WD_LONG[i]} ${parse(k).getDate()}.">
         <span class="dn">${WD[i]}</span><span class="dd">${parse(k).getDate()}</span><span class="pips">${pips}</span></button>`;
     }
@@ -588,13 +694,25 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
     const st = dayStats(k);
     $("day-meta").textContent = st.total ? `${st.done} von ${st.total}` : "";
     const can = editable(k);
-    const s = scheduledOn(k);
-    $("tasks").innerHTML = s.length ? s.map(a => {
-      const done = isDone(k,a.id); const missed = !done && k < t && tracked(k);
+    const items = agendaOn(k);
+    $("tasks").innerHTML = items.length ? items.map(a => {
+      const sl = slotOf(a, k); const time = timeText(sl);
+      const meta = [time, sl.note || a.goal].filter(Boolean).map(esc).join(" · ");
+      if (a.kind === "fixed") {
+        return `<div class="task fixed"><span class="sw" style="background:${a.color}"></span>
+          <div class="t"><b>${esc(a.name)}</b><span class="num">${meta}</span></div><span class="fixtag">fest</span></div>`;
+      }
+      const cov = coverer(k, a); const done = isDone(k, a); const missed = !done && k < t && tracked(k);
+      let extra = "";
+      if (cov) extra = `<div class="covered">✓ durch ${esc(cov.name)} erledigt</div>`;
+      else if (a.gate === "homework") {
+        const open = hwBlocking(k).length;
+        extra = open ? `<button class="linkbtn" data-goto="hw">${open} Hausaufgabe${open>1?"n":""} bis morgen offen</button>` : "";
+      }
       return `<div class="task${done?" done":""}${missed?" missed":""}">
         <span class="sw" style="background:${a.color}"></span>
-        <div class="t"><b>${esc(a.name)}</b><span class="num">${esc(a.time||"")}${a.time&&a.goal?" · ":""}</span><span>${esc(a.goal||"")}</span></div>
-        <button class="chk" role="checkbox" aria-checked="${done}" aria-label="${esc(a.name)} erledigt" data-act="${a.id}" ${can?"":"disabled"}>${CHECK}</button>
+        <div class="t"><b>${esc(a.name)}</b><span class="num">${meta}</span>${extra}</div>
+        <button class="chk" role="checkbox" aria-checked="${done}" aria-label="${esc(a.name)} erledigt" data-act="${a.id}" ${can && !cov ? "" : "disabled"}>${CHECK}</button>
       </div>`; }).join("")
       : `<div class="empty">Keine Aktivitäten geplant.</div>`;
     $("lockline").textContent = !tracked(k) ? "Vor deinem Start – zählt nicht."
@@ -634,7 +752,7 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
       [S.mode === "week" ? `Wochen mit Verpasstem (${L.missedWeeks} × ${S.penalty} €)` : `Verpasste Aufgaben (${L.missedTasks} × ${S.penalty} €)`, L.taskPenalty ? `−${L.taskPenalty} €` : "0 €", L.taskPenalty ? "neg" : ""],
       [`Tage über ${S.app}-Limit (${L.overDays} × ${S.screenPenalty} €)`, L.screenPenalty ? `−${L.screenPenalty} €` : "0 €", L.screenPenalty ? "neg" : ""],
     ];
-    $("ledger").innerHTML = rows.map(r => `<tr><td>${r[0]}</td><td class="${r[2]}">${r[1]}</td></tr>`).join("")
+    $("ledger").innerHTML = rows.map(r => `<tr><td>${esc(r[0])}</td><td class="${r[2]}">${r[1]}</td></tr>`).join("")
       + `<tr class="total"><td>Freigegeben zum Ausgeben</td><td class="pos">${fmtEUR(L.available)}</td></tr>`;
     const open = dayStats(todayKey()).missed;
     $("risk").innerHTML = open && S.mode === "task"
@@ -642,8 +760,46 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
       : !open && dayStats(todayKey()).total ? `<div class="alert ok" style="margin-top:10px">● Heute sicher – kein Abzug</div>` : "";
   }
 
+  // ---------- homework ----------
+  function nextSchoolDay(k){
+    const school = state.activities.filter(a => a.kind === "fixed" && /schule/i.test(a.name));
+    for (let i=1;i<=7;i++){ const d = addDays(k,i); if (!school.length || school.some(a => activeOn(a,d))) return d; }
+    return addDays(k,1);
+  }
+  function renderHomework(){
+    const t = todayKey();
+    const hw = state.homework;
+    const open = hw.filter(h => !h.done).sort((a,b) => a.due.localeCompare(b.due));
+    const doneRecent = hw.filter(h => h.done && h.doneAt >= addDays(t,-7)).sort((a,b) => b.doneAt.localeCompare(a.doneAt));
+    $("hw-count").textContent = open.length ? `${open.length} offen` : "alles erledigt";
+    const subjects = [...new Set(hw.map(h => h.subject))].sort();
+    $("hw-subjects").innerHTML = subjects.map(s => `<option value="${esc(s)}">`).join("");
+    const dueInp = $("hw-due"); if (!dueInp.value) dueInp.value = nextSchoolDay(t);
+    const row = h => {
+      const late = !h.done && h.due < t;
+      const dueTxt = h.due === t ? "heute" : h.due === addDays(t,1) ? "morgen" : shortDate(h.due);
+      return `<div class="hw${h.done?" done":""}${late?" late":""}">
+        <button class="chk" role="checkbox" aria-checked="${!!h.done}" aria-label="${esc(h.subject)}: ${esc(h.text)} erledigt" data-hw="${h.id}">${CHECK}</button>
+        <div class="body"><span class="subj">${esc(h.subject)}</span><span class="txt">${esc(h.text)}</span><span class="due">bis ${dueTxt}</span></div>
+        <button class="x" data-hwdel="${h.id}" aria-label="Löschen">×</button></div>`;
+    };
+    const groups = [
+      ["Überfällig", open.filter(h => h.due < t), "overdue"],
+      ["Bis morgen", open.filter(h => h.due >= t && h.due <= addDays(t,1)), ""],
+      ["Später", open.filter(h => h.due > addDays(t,1)), ""],
+      ["Erledigt (letzte 7 Tage)", doneRecent, ""],
+    ].filter(g => g[1].length);
+    $("hw-lists").innerHTML = groups.length
+      ? groups.map(g => `<div class="hw-group ${g[2]}"><h3>${g[0]}</h3>${g[1].map(row).join("")}</div>`).join("")
+      : `<div class="empty" style="margin-top:14px">Noch nichts eingetragen. Trag nach der Schule alles ein, was aufgegeben wurde.</div>`;
+  }
+
+  // ---------- plan ----------
   function renderPlan(){
-    const live = state.activities.filter(a => !a.removed || a.removed > todayKey());
+    const t = todayKey();
+    const live = state.activities.filter(a => !a.removed || a.removed > t);
+    const tasksPerWeek = live.filter(a => a.kind !== "fixed").reduce((n,a) => n + Object.keys(a.sched).length, 0);
+    $("plan-sum").textContent = `${tasksPerWeek} Aufgaben pro Woche`;
     const acts = $("acts");
     if (!acts.contains(document.activeElement)) {
       acts.innerHTML = live.map(a => `
@@ -651,14 +807,26 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
           <button class="colorbtn" style="background:${a.color}" data-color aria-label="Farbe wechseln"></button>
           <input class="inp" data-f="name" value="${esc(a.name)}" aria-label="Name" placeholder="Aktivität">
           <input class="inp goal" data-f="goal" value="${esc(a.goal||"")}" aria-label="Ziel" placeholder="Ziel, z. B. 5 km">
-          <input class="inp num time" data-f="time" type="time" value="${esc(a.time||"")}" aria-label="Uhrzeit">
+          <select class="inp kind" data-f="kind" aria-label="Art">
+            <option value="task"${a.kind!=="fixed"?" selected":""}>Aufgabe (abhaken)</option>
+            <option value="fixed"${a.kind==="fixed"?" selected":""}>Fester Termin</option>
+          </select>
           <button class="x" data-del aria-label="${esc(a.name)} löschen">×</button>
-          <div class="days">${WD.map((w,i)=>`<button class="dchip" data-wd="${i}" aria-pressed="${a.days.includes(i)}">${w}</button>`).join("")}</div>
+          <div class="slots">${WD.map((w,i) => { const sl = a.sched[i]; return `
+            <div class="slot${sl?" on":""}">
+              <button class="dchip" data-wd="${i}" aria-pressed="${!!sl}">${w}</button>
+              ${sl ? `<input class="inp" type="time" data-wdt="${i}" data-se="s" value="${esc(sl.s)}" aria-label="${WD_LONG[i]} Start">
+                      <input class="inp" type="time" data-wdt="${i}" data-se="e" value="${esc(sl.e)}" aria-label="${WD_LONG[i]} Ende">` : ""}
+            </div>`; }).join("")}</div>
         </div>`).join("") || `<div class="empty">Noch keine Aktivitäten.</div>`;
     }
     $("weekgrid").innerHTML = WD.map((w,i) => {
-      const items = live.filter(a => a.days.includes(i)).sort((x,y)=>(x.time||"99").localeCompare(y.time||"99"));
-      return `<div class="wg-col"><div class="wg-h">${WD_LONG[i]}</div>${items.map(a=>`<div class="wg-item" style="border-left-color:${a.color}">${esc(a.name)}<span>${esc(a.time||"")} ${esc(a.goal||"")}</span></div>`).join("")}</div>`;
+      const k = addDays(mondayOf(t), i);
+      const items = live.filter(a => a.sched[i]).sort((x,y) => (x.sched[i].s||"99").localeCompare(y.sched[i].s||"99"));
+      return `<div class="wg-col"><div class="wg-h">${WD_LONG[i]}</div>${items.map(a => {
+        const sl = a.sched[i];
+        return `<div class="wg-item${a.kind==="fixed"?" fixed":""}" style="border-left-color:${a.color}">${esc(a.name)}<span>${esc(timeText(sl) || "ganzer Tag")}${sl.note||a.goal ? " · "+esc(sl.note||a.goal) : ""}</span></div>`;
+      }).join("")}</div>`;
     }).join("");
   }
 
@@ -672,10 +840,9 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
     const prev = monthOf(addDays(`${ym}-01`, -1));
     const usePrev = prev >= monthOf(state.startDate);
     const L = monthLedger(usePrev ? prev : ym);
-    const [py, pm] = (usePrev ? prev : ym).split("-").map(Number);
+    const [, pm] = (usePrev ? prev : ym).split("-").map(Number);
     $("tr-lbl").textContent = usePrev ? `Verdient im ${MONTHS[pm-1]} – jetzt überweisen` : `Stand ${MONTHS[pm-1]} (läuft noch)`;
     $("tr-amount").textContent = fmtEUR(L.available);
-    // history
     let rows = ""; let m = ym;
     while (m >= monthOf(state.startDate)) {
       const l = monthLedger(m); const [yy,mm] = m.split("-").map(Number);
@@ -688,25 +855,36 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
   // ---------- events ----------
   document.addEventListener("click", e => {
     const tab = e.target.closest(".tab");
-    if (tab) {
-      document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected", b === tab));
-      ["cockpit","plan","setup"].forEach(v => $("view-"+v).hidden = v !== tab.dataset.tab);
-      try { sessionStorage.setItem("pc-tab", tab.dataset.tab); } catch {}
-      return;
-    }
+    if (tab) { showTab(tab.dataset.tab); return; }
+    const go = e.target.closest("[data-goto]");
+    if (go) { showTab(go.dataset.goto); return; }
     const day = e.target.closest("[data-day]");
     if (day) { selected = day.dataset.day; render(); return; }
     const wk = e.target.closest("[data-wk]");
     if (wk) { weekStart = addDays(weekStart, +wk.dataset.wk); selected = addDays(selected, +wk.dataset.wk); render(); return; }
     const chk = e.target.closest(".chk[data-act]");
     if (chk && !chk.disabled) {
-      const k = selected; const L = state.log[k] = state.log[k] || { done:{}, screen:null };
+      const k = selected; const a = state.activities.find(x => x.id === chk.dataset.act);
+      const L = state.log[k] = state.log[k] || { done:{}, screen:null };
       L.done = L.done || {};
-      if (L.done[chk.dataset.act]) delete L.done[chk.dataset.act]; else L.done[chk.dataset.act] = true;
+      if (L.done[a.id]) delete L.done[a.id];
+      else {
+        const block = a.gate === "homework" ? hwBlocking(k) : [];
+        if (block.length) { toast(`Erst ${block.length} offene Hausaufgabe${block.length>1?"n":""} abhaken`); return; }
+        L.done[a.id] = true;
+      }
       persist(); render();
       if (dayStats(k).missed === 0 && dayStats(k).total) toast("Alles erledigt für den Tag.");
       return;
     }
+    const hwc = e.target.closest("[data-hw]");
+    if (hwc) {
+      const h = state.homework.find(x => x.id === hwc.dataset.hw); if (!h) return;
+      h.done = !h.done; h.doneAt = h.done ? todayKey() : null;
+      persist(); render(); return;
+    }
+    const hwd = e.target.closest("[data-hwdel]");
+    if (hwd) { state.homework = state.homework.filter(x => x.id !== hwd.dataset.hwdel); persist(); render(); return; }
     const add = e.target.closest("[data-add]");
     if (add) { const inp = $("screen-input"); inp.value = (+inp.value || 0) + (+add.dataset.add); return; }
     if (e.target.id === "screen-save") { saveScreen(); return; }
@@ -720,13 +898,14 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
         else a.removed = todayKey();
       }
       else if (e.target.closest("[data-wd]")) {
-        const i = +e.target.closest("[data-wd]").dataset.wd;
-        a.days = a.days.includes(i) ? a.days.filter(x => x !== i) : [...a.days, i].sort();
+        const i = e.target.closest("[data-wd]").dataset.wd;
+        if (a.sched[i]) delete a.sched[i];
+        else { const any = Object.values(a.sched)[0]; a.sched[i] = { s: any ? any.s : "", e: any ? any.e : "", note: "" }; }
       } else return;
       persist(); document.activeElement.blur(); render(); return;
     }
     if (e.target.id === "add-act") {
-      state.activities.push({ id: Math.random().toString(36).slice(2,9), name:"Neue Aktivität", goal:"", time:"", days:[0,1,2,3,4], color: COLORS[state.activities.length % COLORS.length], created: todayKey(), removed:null });
+      state.activities.push({ id: uid(), name:"Neue Aktivität", goal:"", kind:"task", sched:{0:{s:"",e:"",note:""}}, color: COLORS[state.activities.length % COLORS.length], created: todayKey(), removed:null });
       persist(); render();
       const inputs = $("acts").querySelectorAll('[data-f="name"]'); const last = inputs[inputs.length-1];
       if (last) { last.focus(); last.select(); }
@@ -743,7 +922,19 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
     }
     if (e.target.id === "bk-reset") { $("reset-confirm").hidden = false; return; }
     if (e.target.id === "reset-no") { $("reset-confirm").hidden = true; return; }
-    if (e.target.id === "reset-yes") { const acts = state.activities; state = freshState(); state.activities = acts.filter(a=>!a.removed).map(a=>({...a, created: state.startDate})); persist(); render(); $("reset-confirm").hidden = true; toast("Zurückgesetzt – Start ist heute"); return; }
+    if (e.target.id === "reset-yes") {
+      const t = todayKey(); const keep = state.activities.filter(a => !a.removed).map(a => ({ ...a, created: t }));
+      state = freshState(); state.activities = keep; persist(); render(); $("reset-confirm").hidden = true; toast("Zurückgesetzt – Start ist heute"); return;
+    }
+  });
+
+  $("hw-form").addEventListener("submit", e => {
+    e.preventDefault();
+    const subject = $("hw-subj").value.trim(), text = $("hw-text").value.trim(), due = $("hw-due").value;
+    if (!subject || !text || !due) return;
+    state.homework.push({ id: uid(), subject, text, due, done:false, doneAt:null, added: todayKey() });
+    $("hw-text").value = ""; $("hw-text").focus();
+    persist(); render(); toast(`${subject} eingetragen`);
   });
 
   function monthLedgerForTransfer(){
@@ -751,10 +942,9 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
     return monthLedger(prev >= monthOf(state.startDate) ? prev : ym).available;
   }
   function copy(text, msg){
-    const done = () => toast(msg);
-    try { navigator.clipboard.writeText(text).then(done, () => fallbackCopy(text, msg)); } catch { fallbackCopy(text, msg); }
+    try { navigator.clipboard.writeText(text).then(() => toast(msg), () => fallbackCopy(text)); } catch { fallbackCopy(text); }
   }
-  function fallbackCopy(text, msg){
+  function fallbackCopy(text){
     $("bk-area").hidden = false; const ta = $("bk-text"); ta.value = text; ta.focus(); ta.select();
     toast("Text markiert – jetzt kopieren");
   }
@@ -769,9 +959,14 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
 
   document.addEventListener("change", e => {
     const actEl = e.target.closest(".act");
-    if (actEl && e.target.dataset.f) {
+    if (actEl) {
       const a = state.activities.find(x => x.id === actEl.dataset.id); if (!a) return;
-      a[e.target.dataset.f] = e.target.value.trim() || (e.target.dataset.f === "name" ? "Aktivität" : "");
+      if (e.target.dataset.wdt != null) {
+        const sl = a.sched[e.target.dataset.wdt]; if (sl) sl[e.target.dataset.se] = e.target.value;
+      } else if (e.target.dataset.f) {
+        const f = e.target.dataset.f;
+        a[f] = e.target.value.trim() || (f === "name" ? "Aktivität" : f === "kind" ? "task" : "");
+      } else return;
       persist(); render(); return;
     }
     const map = { "s-budget":["budget",Number], "s-penalty":["penalty",Number], "s-mode":["mode",String], "s-edit":["editWindow",Number], "s-app":["app",String], "s-limit":["screenLimit",Number], "s-spen":["screenPenalty",Number] };
@@ -788,9 +983,11 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
   setInterval(() => { const t = todayKey(); if (t !== lastDay) { if (selected === lastDay) { selected = t; weekStart = mondayOf(t); } lastDay = t; render(); } }, 60000);
 
   // ---------- boot ----------
-  state = normalize(loadLocal() || freshState());
-  try { const tb = sessionStorage.getItem("pc-tab"); if (tb && tb !== "cockpit") document.querySelector(`.tab[data-tab="${tb}"]`)?.click(); } catch {}
+  const local = loadLocal();
+  state = normalize(local || freshState());
+  if (local && JSON.stringify(state) !== JSON.stringify(local)) saveLocal();
   render(); setSync();
+  try { const tb = sessionStorage.getItem("pc-tab"); if (tb && tb !== "cockpit" && $("view-"+tb)) showTab(tb); } catch {}
   connectCloud();
 })();
 </script>

@@ -181,6 +181,18 @@ button{cursor:pointer}
 .task.evrow .sw{background:var(--amber)}
 .evtag{font:600 10px/1 var(--display);letter-spacing:.12em;color:var(--amber);text-transform:uppercase}
 
+/* review */
+.rv-sum{margin:0 0 10px;font-size:14px;color:var(--muted)}
+.rv-sum b{color:var(--text)}
+.rv-list h3{margin:0 0 6px;font:600 11px/1.2 var(--display);letter-spacing:.14em;text-transform:uppercase;color:var(--bad)}
+.rv-list ul{margin:0 0 14px;padding:0;list-style:none;display:grid;gap:5px;font-size:14px}
+.rv-list li{padding:7px 10px;border:1px solid color-mix(in srgb,var(--bad) 35%,var(--line));border-radius:7px}
+.rv-list li .num{color:var(--muted);margin-right:6px}
+.rv-list i{color:var(--amber);font-style:normal}
+.rv-list .alert{margin-bottom:14px}
+.rv-fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.rv-fields textarea.inp{font:14px/1.45 var(--body);min-height:130px;resize:vertical}
+
 /* week balance */
 .wb{display:grid;gap:9px}
 .wb-row{display:grid;grid-template-columns:minmax(0,1fr) 54px;gap:4px 10px;align-items:center;font-size:14px}
@@ -235,6 +247,7 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
   .slots{grid-template-columns:repeat(4,minmax(0,1fr))}
   .hw-form{grid-template-columns:repeat(2,minmax(0,1fr))}
   .ev-form{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .rv-fields{grid-template-columns:minmax(0,1fr)}
   .ev-form .ev-title{grid-column:1/-1}
   .hw-form .hw-text{grid-column:1/-1;order:-1}
   .week{grid-template-columns:repeat(7,minmax(0,1fr))}
@@ -369,6 +382,17 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
           <span><i style="border:1px dashed var(--line-2)"></i>fester Termin</span>
         </div>
       </div>
+      <div class="panel" id="review-panel">
+        <div class="panel-h"><h2>Wochenrückblick</h2><span class="label" id="rv-lbl"></span></div>
+        <p class="rv-sum" id="rv-sum"></p>
+        <div class="rv-list" id="rv-list"></div>
+        <div class="rv-fields">
+          <div class="field"><label for="rv-good">Was lief gut?</label><textarea class="inp" id="rv-good" placeholder="z. B. 4× Gym geschafft, jeden Tag gelesen"></textarea></div>
+          <div class="field"><label for="rv-why">Was hab ich nicht gemacht – und warum?</label><textarea class="inp" id="rv-why" placeholder="z. B. Joggen Freitag ausgelassen, weil zu spät mit Hausaufgaben fertig"></textarea></div>
+          <div class="field"><label for="rv-next">Was mache ich nächste Woche anders?</label><textarea class="inp" id="rv-next" placeholder="z. B. Hausaufgaben direkt nach Cold Calling anfangen"></textarea></div>
+        </div>
+        <p class="hint">Wird automatisch gespeichert. „Wochenrückblick“ kannst du erst abhaken, wenn hier etwas steht.</p>
+      </div>
     </div>
   </section>
 
@@ -466,7 +490,7 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
 (() => {
   const LS_KEY = "progress-cockpit-v1";
   const DOC_PATH = "tracker/main";
-  const PLAN_VERSION = 2;
+  const PLAN_VERSION = 3;
   const COLORS = ["#f2b544","#5cc8e0","#4fd18b","#c792ea","#f0645a","#8fb3ff","#e0a37a"];
   const FIXED_COLOR = "#7d9196";
   const WD = ["MO","DI","MI","DO","FR","SA","SO"];
@@ -494,23 +518,29 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
       0: sl("08:00","13:20"), 1: sl("08:00","14:15"), 2: sl("08:00","14:15"), 3: sl("08:00","14:15"), 4: sl("08:00","13:20")
     }, { kind:"fixed" });
     const jog = act("Joggen", "", COLORS[0], {
-      1: sl("17:30","18:00","locker, 30 min"), 4: sl("17:30","18:00","locker, 30 min"), 5: sl("10:00","11:00","lange Runde, 45–60 min")
+      1: sl("18:30","19:00","locker, 30 min"), 4: sl("18:45","19:15","locker, 30 min"), 5: sl("10:00","11:00","lange Runde, 45–60 min")
     });
+    const daily = (s, e, note) => Object.fromEntries([0,1,2,3,4,5,6].map(i => [i, sl(s, e, note)]));
     return [
       schule,
       act("Schwimmen", "", COLORS[1], { 1: sl("05:45","07:00"), 3: sl("05:45","07:00") }),
+      act("Cold Calling", "1,5–2 Std.", "#f07fb0", {
+        0: sl("13:45","15:45"), 1: sl("14:45","16:30"), 2: sl("14:45","16:30"), 3: sl("14:45","16:30"), 4: sl("13:45","15:45")
+      }),
       act("Hockeytraining", "", COLORS[4], { 3: sl("19:15","20:30") }),
       act("Gym", "", COLORS[3], {
-        0: sl("14:30","15:45","Oberkörper"), 2: sl("15:00","16:15","Beine"), 4: sl("14:30","15:45","Oberkörper"), 6: sl("11:00","12:15","Ganzkörper")
+        0: sl("16:00","17:15","Oberkörper"), 2: sl("16:45","18:00","Beine"), 4: sl("16:00","17:15","Oberkörper"), 6: sl("11:00","12:15","Ganzkörper")
       }),
       jog,
       act("Alle Hausaufgaben erledigt", "", COLORS[5], {
-        0: sl("16:00","17:30"), 1: sl("15:00","17:00"), 2: sl("16:30","18:00"), 3: sl("15:00","17:00"),
-        4: sl("16:00","17:00"), 5: sl("15:00","16:00","Rest der Woche"), 6: sl("17:00","18:00","Woche vorbereiten")
+        0: sl("17:30","19:00"), 1: sl("16:45","18:15"), 2: sl("18:15","19:45"), 3: sl("16:45","18:30"),
+        4: sl("17:30","18:30"), 5: sl("15:00","16:00","Rest der Woche"), 6: sl("16:30","17:30","Woche vorbereiten")
       }, { gate:"homework" }),
-      act("10.000 Schritte", "", COLORS[2], Object.fromEntries([0,1,2,3,4,5,6].map(i => [i, sl("","","über den Tag")])), { coveredBy:[jog.id] }),
-      act("Lesen", "20 Seiten", COLORS[6], Object.fromEntries([0,1,2,3,4,5,6].map(i => [i, sl("22:15","22:45")]))),
-      act("Schlafen", "Licht aus, Handy weg", "#8fb3ff", Object.fromEntries([0,1,2,3,4,5,6].map(i => [i, sl("23:00","")]))),
+      act("Wochenrückblick", "was lief, was nicht, was ändere ich", "#b8a4ff", { 6: sl("18:00","18:45") }, { gate:"review" }),
+      act("10.000 Schritte", "", COLORS[2], daily("","","über den Tag"), { coveredBy:[jog.id] }),
+      act("Handy aus dem Zimmer", "", "#9aa7ad", daily("22:30","")),
+      act("Lesen", "20 Seiten, ohne Handy", COLORS[6], daily("22:30","23:00")),
+      act("Schlafen", "Licht aus", "#8fb3ff", daily("23:00","")),
     ];
   }
   function freshState(){
@@ -593,21 +623,31 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
       if (!a.sched) { a.sched = {}; (a.days || []).forEach(d => a.sched[d] = { s: a.time || "", e: "", note: "" }); delete a.days; delete a.time; }
       a.kind = a.kind || "task";
     });
-    // switch to the weekly plan built together
-    if ((out.planVersion || 1) < PLAN_VERSION) {
-      const t = todayKey();
+    out.reviews = out.reviews && typeof out.reviews === "object" ? out.reviews : {};
+    const t = todayKey();
+    // v1 → sample plan replaced by the weekly plan built together
+    if ((out.planVersion || 1) < 2) {
       out.activities = out.activities.filter(a => a.created < t).map(a => ({ ...a, removed: a.removed || t }));
       out.activities.push(...buildPlan(t));
       out.settings.screenLimit = 45;
-      out.planVersion = PLAN_VERSION;
     }
+    // v2 → v3: new times (Cold Calling after school), review and phone-away added; keeps ids and history
+    else if (out.planVersion < 3) {
+      buildPlan(t).forEach(tpl => {
+        const cur = out.activities.find(a => !a.removed && a.name === tpl.name);
+        if (cur) { cur.sched = tpl.sched; cur.goal = tpl.goal; if (tpl.gate) cur.gate = tpl.gate; }
+        else out.activities.push(tpl);
+      });
+    }
+    out.planVersion = PLAN_VERSION;
     return out;
   }
 
   // ---------- rules ----------
   const slotOf = (a, k) => a.sched && a.sched[wdOf(k)];
   const activeOn = (a, k) => !!slotOf(a, k) && k >= a.created && (!a.removed || k < a.removed);
-  const byTime = k => (x, y) => ((slotOf(x,k).s || "99") ).localeCompare(slotOf(y,k).s || "99");
+  // by start time; at the same start, a point in time (no end) comes first
+  const byTime = k => (x, y) => (slotOf(x,k).s || "99").localeCompare(slotOf(y,k).s || "99") || (slotOf(x,k).e || "").localeCompare(slotOf(y,k).e || "");
   // one-off calendar entries behave like a single-day activity
   const eventAct = ev => ({ id: ev.id, name: ev.title, goal: "", color: "var(--amber)", kind: ev.check ? "task" : "fixed", isEvent: true,
     sched: { [wdOf(ev.date)]: { s: ev.s, e: ev.e || "", note: "" } }, created: ev.date, removed: addDays(ev.date, 1) });
@@ -757,6 +797,9 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
       const cov = coverer(k, a); const done = isDone(k, a); const missed = !done && k < t && tracked(k);
       let extra = "";
       if (cov) extra = `<div class="covered">✓ durch ${esc(cov.name)} erledigt</div>`;
+      else if (a.gate === "review") {
+        extra = `<button class="linkbtn" data-goto="review">${reviewFilled(k) ? "Rückblick ansehen" : "Rückblick schreiben"}</button>`;
+      }
       else if (a.gate === "homework") {
         const open = hwBlocking(k).length;
         extra = open ? `<button class="linkbtn" data-goto="hw">${open} Hausaufgabe${open>1?"n":""} bis morgen offen</button>` : "";
@@ -833,7 +876,7 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
         return `<div class="wg-item${x.isEvent?" ev":x.kind==="fixed"?" fixed":""}" style="border-left-color:${x.color}">${esc(x.name)}<span>${esc(timeText(sl) || "ganzer Tag")}${note ? " · "+esc(note) : ""}</span>${x.isEvent?`<button class="x" data-evdel="${x.id}" aria-label="${esc(x.name)} löschen">×</button>`:""}</div>`;
       }).join("")}</div>`;
     }).join("");
-    checkOverlap();
+    checkOverlap(); renderReview();
   }
   function checkOverlap(){
     const k = $("ev-date").value, s = $("ev-s").value, e = $("ev-e").value;
@@ -845,6 +888,33 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
       ? `<div class="alert warn" style="margin-top:10px">▲ Überschneidet sich mit ${hits.map(h => esc(h.a.name)+" "+toHM(h.s)+"–"+toHM(h.e)).join(", ")}</div>`
       : `<div class="alert ok" style="margin-top:10px">● Passt – da bist du frei</div>`;
   }
+  // ---------- weekly review ----------
+  const RV_FIELDS = { "rv-good":"good", "rv-why":"missed", "rv-next":"next" };
+  const reviewFilled = k => { const r = state.reviews[mondayOf(k)]; return !!r && Object.values(r).some(v => String(v||"").trim()); };
+  function renderReview(){
+    const t = todayKey(); const mon = calStart; const sun = addDays(mon, 6);
+    $("rv-lbl").textContent = `${parse(mon).getDate()}.${parse(mon).getMonth()+1}. – ${parse(sun).getDate()}.${parse(sun).getMonth()+1}.`;
+    const st = periodStats(mon, sun < t ? sun : t);
+    $("rv-sum").innerHTML = st.total ? `<b class="num">${st.done}/${st.total}</b> erledigt (${Math.round(st.done/st.total*100)} %)` : "Für diese Woche gibt es noch nichts auszuwerten.";
+    const rows = [];
+    for (let k = mon; k <= sun && k <= t; k = addDays(k,1)) {
+      if (!tracked(k)) continue;
+      const open = scheduledOn(k).filter(a => !isDone(k, a));
+      if (open.length) rows.push(`<li><span class="num">${shortDate(k)}</span> ${k === t ? "<i>heute noch offen:</i> " : ""}${open.map(a => esc(a.name)).join(", ")}</li>`);
+    }
+    $("rv-list").innerHTML = rows.length ? `<h3>Nicht geschafft</h3><ul>${rows.join("")}</ul>` : st.total ? `<div class="alert ok">● Bisher alles geschafft</div>` : "";
+    const r = state.reviews[mon] || {};
+    Object.entries(RV_FIELDS).forEach(([id, f]) => { const el = $(id); if (document.activeElement !== el) el.value = r[f] || ""; });
+  }
+  function openReview(mon){
+    showTab("cal"); calStart = mon; renderCalendar();
+    $("review-panel").scrollIntoView({ block: "start" });
+  }
+  Object.entries(RV_FIELDS).forEach(([id, f]) => $(id).addEventListener("input", e => {
+    const r = state.reviews[calStart] = state.reviews[calStart] || {};
+    r[f] = e.target.value; persist();
+  }));
+
   function openNewEvent(k, s, e){
     showTab("cal");
     $("ev-date").value = k; $("ev-s").value = s; $("ev-e").value = e || "";
@@ -934,7 +1004,7 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
     const tab = e.target.closest(".tab");
     if (tab) { showTab(tab.dataset.tab); return; }
     const go = e.target.closest("[data-goto]");
-    if (go) { showTab(go.dataset.goto); return; }
+    if (go) { if (go.dataset.goto === "review") openReview(mondayOf(selected)); else showTab(go.dataset.goto); return; }
     const day = e.target.closest("[data-day]");
     if (day) { selected = day.dataset.day; render(); return; }
     const wk = e.target.closest("[data-wk]");
@@ -946,6 +1016,7 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
       L.done = L.done || {};
       if (L.done[a.id]) delete L.done[a.id];
       else {
+        if (a.gate === "review" && !reviewFilled(k)) { toast("Erst den Rückblick ausfüllen"); openReview(mondayOf(k)); return; }
         const block = a.gate === "homework" ? hwBlocking(k) : [];
         if (block.length) { toast(`Erst ${block.length} offene Hausaufgabe${block.length>1?"n":""} abhaken`); return; }
         L.done[a.id] = true;

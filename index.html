@@ -497,7 +497,7 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
 (() => {
   const LS_KEY = "progress-cockpit-v1";
   const DOC_PATH = "tracker/main";
-  const PLAN_VERSION = 3;
+  const PLAN_VERSION = 4;
   const COLORS = ["#f2b544","#5cc8e0","#4fd18b","#c792ea","#f0645a","#8fb3ff","#e0a37a"];
   const FIXED_COLOR = "#7d9196";
   const WD = ["MO","DI","MI","DO","FR","SA","SO"];
@@ -539,6 +539,9 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
         0: sl("16:00","17:15","Oberkörper"), 2: sl("16:45","18:00","Beine"), 4: sl("16:00","17:15","Oberkörper"), 6: sl("11:00","12:15","Ganzkörper")
       }),
       jog,
+      act("Fahrradfahren", "", "#9ad0ff", {
+        0: sl("19:15","20:15","locker, 1 Std."), 5: sl("13:00","14:30","längere Tour"), 6: sl("13:30","14:30","locker, 1 Std.")
+      }),
       act("Alle Hausaufgaben erledigt", "", COLORS[5], {
         0: sl("17:30","19:00"), 1: sl("16:45","18:15"), 2: sl("18:15","19:45"), 3: sl("16:45","18:30"),
         4: sl("17:30","18:30"), 5: sl("15:00","16:00","Rest der Woche"), 6: sl("16:30","17:30","Woche vorbereiten")
@@ -641,13 +644,17 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
       out.activities.push(...buildPlan(t));
       out.settings.screenLimit = 45;
     }
-    // v2 → v3: new times (Cold Calling after school), review and phone-away added; keeps ids and history
-    else if (out.planVersion < 3) {
-      buildPlan(t).forEach(tpl => {
-        const cur = out.activities.find(a => !a.removed && a.name === tpl.name);
-        if (cur) { cur.sched = tpl.sched; cur.goal = tpl.goal; if (tpl.gate) cur.gate = tpl.gate; }
-        else out.activities.push(tpl);
+    else {
+      const tpl = buildPlan(t);
+      const live = name => out.activities.find(a => !a.removed && a.name === name);
+      // v2 → v3: new times (Cold Calling after school), review and phone-away added; keeps ids and history
+      if (out.planVersion < 3) tpl.forEach(n => {
+        const cur = live(n.name);
+        if (cur) { cur.sched = n.sched; cur.goal = n.goal; if (n.gate) cur.gate = n.gate; }
+        else out.activities.push(n);
       });
+      // v3 → v4: cycling added; own changes to the rest of the plan stay untouched
+      if (out.planVersion < 4) tpl.filter(n => n.name === "Fahrradfahren" && !live(n.name)).forEach(n => out.activities.push(n));
     }
     out.planVersion = PLAN_VERSION;
     return out;

@@ -660,7 +660,8 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
     const mv = !a.isEvent && state.moves[k] && state.moves[k][a.id];
     return mv ? { ...base, s: mv.s, e: mv.e, moved: true, orig: base } : base;
   }
-  const activeOn = (a, k) => !!slotOf(a, k) && k >= a.created && (!a.removed || k < a.removed);
+  // days before the start show the current plan (for orientation only, they never count)
+  const activeOn = (a, k) => !!slotOf(a, k) && (k < state.startDate ? !a.removed : k >= a.created && (!a.removed || k < a.removed));
   // by start time; at the same start, a point in time (no end) comes first
   const byTime = k => (x, y) => (slotOf(x,k).s || "99").localeCompare(slotOf(y,k).s || "99") || (slotOf(x,k).e || "").localeCompare(slotOf(y,k).e || "");
   // one-off calendar entries behave like a single-day activity
@@ -869,7 +870,7 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
         <div class="right">${mvBtns(a)}<button class="chk" role="checkbox" aria-checked="${done}" aria-label="${esc(a.name)} erledigt" data-act="${a.id}" ${can && !cov ? "" : "disabled"}>${CHECK}</button></div>
       </div>`; }).join("")
       : `<div class="empty">Keine Aktivitäten geplant.</div>`;
-    $("lockline").textContent = !tracked(k) ? "Vor deinem Start – zählt nicht."
+    $("lockline").textContent = !tracked(k) ? "Vor deinem Start – nur zur Ansicht, zählt nicht."
       : k > t ? "Noch nicht dran – abhaken geht erst am Tag selbst."
       : can ? "" : "Gesperrt – nachträglich abhaken geht nicht mehr.";
 

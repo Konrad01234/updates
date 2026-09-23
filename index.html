@@ -106,6 +106,12 @@ button{cursor:pointer}
 .task .t{min-width:0}
 .task .t b{display:block;font-weight:600}
 .task .t span{font-size:13px;color:var(--muted)}
+.task .right{display:flex;align-items:center;gap:8px}
+.mv{display:grid;gap:2px}
+.mv button{width:28px;height:17px;border:1px solid var(--line-2);background:transparent;border-radius:4px;font-size:8px;line-height:1;color:var(--muted);padding:0}
+.mv button:hover:not(:disabled){color:var(--amber);border-color:var(--amber)}
+.mv button:disabled{opacity:.25;cursor:default}
+.movednote{font-size:12px;color:var(--amber)}
 .chk{width:34px;height:34px;border-radius:8px;border:1.5px solid var(--line-2);background:transparent;display:grid;place-items:center;color:transparent;transition:background .15s,border-color .15s}
 .chk svg{width:18px;height:18px}
 .chk[aria-checked="true"]{background:var(--good);border-color:var(--good);color:var(--ground)}
@@ -304,10 +310,11 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
       <div class="panel">
         <div class="panel-h">
           <h2 id="day-title">Heute</h2>
-          <span class="label" id="day-meta"></span>
+          <div class="screen-row"><button class="linkbtn" id="day-reset" hidden>Zeiten zurücksetzen</button><span class="label" id="day-meta"></span></div>
         </div>
         <div class="week" id="week"></div>
         <div class="tasks" id="tasks"></div>
+        <p class="hint" id="mv-hint">Mit ▲ ▼ tauschst du eine Aufgabe mit dem Block davor oder danach, auch mit „frei“. Die Uhrzeiten passen sich an, gelöscht wird nichts.</p>
         <div class="lockline" id="lockline"></div>
 
         <div style="margin-top:18px">
@@ -624,6 +631,9 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
       a.kind = a.kind || "task";
     });
     out.reviews = out.reviews && typeof out.reviews === "object" ? out.reviews : {};
+    // per-day time changes; older than 30 days are dropped to keep the save small
+    out.moves = out.moves && typeof out.moves === "object" ? out.moves : {};
+    Object.keys(out.moves).forEach(k => { if (k < addDays(todayKey(), -30)) delete out.moves[k]; });
     const t = todayKey();
     // v1 → sample plan replaced by the weekly plan built together
     if ((out.planVersion || 1) < 2) {
@@ -644,7 +654,12 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
   }
 
   // ---------- rules ----------
-  const slotOf = (a, k) => a.sched && a.sched[wdOf(k)];
+  function slotOf(a, k){
+    const base = a.sched && a.sched[wdOf(k)];
+    if (!base) return undefined;
+    const mv = !a.isEvent && state.moves[k] && state.moves[k][a.id];
+    return mv ? { ...base, s: mv.s, e: mv.e, moved: true, orig: base } : base;
+  }
   const activeOn = (a, k) => !!slotOf(a, k) && k >= a.created && (!a.removed || k < a.removed);
   // by start time; at the same start, a point in time (no end) comes first
   const byTime = k => (x, y) => (slotOf(x,k).s || "99").localeCompare(slotOf(y,k).s || "99") || (slotOf(x,k).e || "").localeCompare(slotOf(y,k).e || "");
@@ -690,6 +705,41 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
     if (end - cur >= 30) gaps.push({ s: cur, e: end });
     return gaps.filter(g => g.e - g.s >= 30).map(g => ({ s: toHM(g.s), e: toHM(g.e) }));
   }
+  // ---------- moving things within a day ----------
+  // Timed blocks and free gaps in order. Swapping two neighbours keeps the
+  // span they cover, so nothing new overlaps and the times update themselves.
+  function blocksOn(k){
+    // the evening routine from 22:00 (phone away, reading, sleep) stays put
+    const list = busyOn(k).map(b => ({ id: b.a.id, a: b.a, s: b.s, e: b.e, movable: (b.a.kind !== "fixed" || !!b.a.isEvent) && b.s < 22*60 }));
+    freeGaps(k).forEach(g => list.push({ id: "gap:" + g.s, gap: true, s: toMin(g.s), e: toMin(g.e), movable: true }));
+    return list.sort((x,y) => x.s - y.s);
+  }
+  function neighbours(k, id){
+    const bl = blocksOn(k); const i = bl.findIndex(b => b.id === id);
+    if (i < 0) return {};
+    if (!bl[i].movable) return {};
+    const ok = b => b && b.movable ? b : null;
+    return { self: bl[i], up: ok(bl[i-1]), down: ok(bl[i+1]) };
+  }
+  function setTime(k, b, s, e){
+    if (b.gap) return;
+    const S = toHM(s), E = toHM(e);
+    if (b.a.isEvent) { const ev = state.events.find(x => x.id === b.id); if (ev) { ev.s = S; ev.e = E; } return; }
+    const base = b.a.sched[wdOf(k)];
+    const day = state.moves[k] = state.moves[k] || {};
+    if (base.s === S && base.e === E) delete day[b.id]; else day[b.id] = { s: S, e: E };
+    if (!Object.keys(day).length) delete state.moves[k];
+  }
+  function swap(k, id, dir){
+    const n = neighbours(k, id); const other = n[dir];
+    if (!n.self || !other) return false;
+    const [X, Y] = dir === "up" ? [other, n.self] : [n.self, other];
+    const between = Y.s - X.e, dX = X.e - X.s, dY = Y.e - Y.s;
+    const yS = X.s, yE = X.s + dY, xS = yE + between, xE = xS + dX;
+    setTime(k, Y, yS, yE); setTime(k, X, xS, xE);
+    return true;
+  }
+
   function periodStats(from, to){
     let done = 0, total = 0;
     for (let k = from; k <= to; k = addDays(k,1)) { if (!tracked(k)) continue; const st = dayStats(k); done += st.done; total += st.total; }
@@ -782,6 +832,15 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
     const st = dayStats(k);
     $("day-meta").textContent = st.total ? `${st.done} von ${st.total}` : "";
     const can = editable(k);
+    const canMove = k >= t;
+    const mvBtns = a => {
+      if (!canMove) return "";
+      const n = neighbours(k, a.id); if (!n.self) return "";
+      return `<div class="mv"><button data-mv="up|${a.id}" aria-label="${esc(a.name)} früher" ${n.up?"":"disabled"}>▲</button><button data-mv="down|${a.id}" aria-label="${esc(a.name)} später" ${n.down?"":"disabled"}>▼</button></div>`;
+    };
+    const movedNote = sl => sl.moved ? `<div class="movednote">verschoben · sonst ${esc(timeText(sl.orig))}</div>` : "";
+    $("day-reset").hidden = !(canMove && state.moves[k]);
+    $("mv-hint").hidden = !canMove;
     const items = agendaOn(k).map(a => ({ a, at: slotOf(a,k).s || "99" }));
     if (k >= t) freeGaps(k).forEach(g => items.push({ gap: g, at: g.s }));
     items.sort((x,y) => x.at.localeCompare(y.at));
@@ -792,7 +851,7 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
       const meta = [time, sl.note || a.goal].filter(Boolean).map(esc).join(" · ");
       if (a.kind === "fixed") {
         return `<div class="task fixed"><span class="sw" style="background:${a.color}"></span>
-          <div class="t"><b>${esc(a.name)}</b><span class="num">${meta}</span></div><span class="${a.isEvent?"evtag":"fixtag"}">${a.isEvent?"Termin":"fest"}</span></div>`;
+          <div class="t"><b>${esc(a.name)}</b><span class="num">${meta}</span></div><div class="right"><span class="${a.isEvent?"evtag":"fixtag"}">${a.isEvent?"Termin":"fest"}</span>${a.isEvent ? mvBtns(a) : ""}</div></div>`;
       }
       const cov = coverer(k, a); const done = isDone(k, a); const missed = !done && k < t && tracked(k);
       let extra = "";
@@ -806,8 +865,8 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
       }
       return `<div class="task${done?" done":""}${missed?" missed":""}${a.isEvent?" evrow":""}">
         <span class="sw" style="background:${a.color}"></span>
-        <div class="t"><b>${esc(a.name)}</b><span class="num">${meta}</span>${extra}</div>
-        <button class="chk" role="checkbox" aria-checked="${done}" aria-label="${esc(a.name)} erledigt" data-act="${a.id}" ${can && !cov ? "" : "disabled"}>${CHECK}</button>
+        <div class="t"><b>${esc(a.name)}</b><span class="num">${meta}</span>${movedNote(sl)}${extra}</div>
+        <div class="right">${mvBtns(a)}<button class="chk" role="checkbox" aria-checked="${done}" aria-label="${esc(a.name)} erledigt" data-act="${a.id}" ${can && !cov ? "" : "disabled"}>${CHECK}</button></div>
       </div>`; }).join("")
       : `<div class="empty">Keine Aktivitäten geplant.</div>`;
     $("lockline").textContent = !tracked(k) ? "Vor deinem Start – zählt nicht."
@@ -873,7 +932,7 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
         if (gap) return `<button class="gap" data-newev="${k}|${gap.s}|${gap.e}">+ frei ${gap.s}–${gap.e}</button>`;
         const sl = slotOf(x, k);
         const note = sl.note || x.goal;
-        return `<div class="wg-item${x.isEvent?" ev":x.kind==="fixed"?" fixed":""}" style="border-left-color:${x.color}">${esc(x.name)}<span>${esc(timeText(sl) || "ganzer Tag")}${note ? " · "+esc(note) : ""}</span>${x.isEvent?`<button class="x" data-evdel="${x.id}" aria-label="${esc(x.name)} löschen">×</button>`:""}</div>`;
+        return `<div class="wg-item${x.isEvent?" ev":x.kind==="fixed"?" fixed":""}" style="border-left-color:${x.color}">${esc(x.name)}<span>${esc(timeText(sl) || "ganzer Tag")}${note ? " · "+esc(note) : ""}${sl.moved ? " · verschoben" : ""}</span>${x.isEvent?`<button class="x" data-evdel="${x.id}" aria-label="${esc(x.name)} löschen">×</button>`:""}</div>`;
       }).join("")}</div>`;
     }).join("");
     checkOverlap(); renderReview();
@@ -1025,6 +1084,13 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
       if (dayStats(k).missed === 0 && dayStats(k).total) toast("Alles erledigt für den Tag.");
       return;
     }
+    const mv = e.target.closest("[data-mv]");
+    if (mv && !mv.disabled) {
+      const [dir, id] = mv.dataset.mv.split("|");
+      if (swap(selected, id, dir)) { persist(); render(); }
+      return;
+    }
+    if (e.target.id === "day-reset") { delete state.moves[selected]; persist(); render(); toast("Tag wieder wie im Plan"); return; }
     const nev = e.target.closest("[data-newev]");
     if (nev) { const [k, s, en] = nev.dataset.newev.split("|"); openNewEvent(k, s, en); return; }
     const evd = e.target.closest("[data-evdel]");

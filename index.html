@@ -140,11 +140,6 @@ button{cursor:pointer}
 .legend span{display:inline-flex;align-items:center;gap:5px}
 .legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
 
-/* ledger */
-.ledger{width:100%;border-collapse:collapse;font-size:14px}
-.ledger td{padding:7px 0;border-bottom:1px solid var(--line)}
-.ledger td:last-child{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
-.ledger tr.total td{border-bottom:0;font-weight:600;padding-top:10px}
 .neg{color:var(--bad)} .pos{color:var(--good)}
 
 /* plan editor */
@@ -172,6 +167,27 @@ button{cursor:pointer}
 .covered{font-size:12px;color:var(--good)}
 .linkbtn{display:block;margin-top:2px;border:0;background:none;padding:0;color:var(--cyan);font-size:13px;text-decoration:underline;text-underline-offset:2px}
 
+/* calendar */
+.ev-form{display:grid;grid-template-columns:minmax(0,2fr) 150px 110px 110px auto;gap:8px;align-items:end}
+.ev-check{grid-column:1/-1;display:flex;gap:8px;align-items:center;font-size:14px;color:var(--muted)}
+.ev-check input{width:18px;height:18px;accent-color:var(--amber)}
+.wg-h.today{color:var(--amber)}
+.wg-item.ev{border-left-color:var(--amber);background:color-mix(in srgb,var(--amber) 12%,var(--panel-2));position:relative;padding-right:24px}
+.wg-item.ev .x{position:absolute;top:2px;right:0;font-size:16px}
+.gap{display:block;width:100%;text-align:left;border:1px dashed color-mix(in srgb,var(--good) 55%,var(--line));background:transparent;border-radius:6px;padding:5px 8px;font:500 11px/1.3 var(--mono);color:var(--good)}
+.gap:hover{background:color-mix(in srgb,var(--good) 10%,transparent)}
+.task.gaprow{padding:6px 12px;background:transparent;border-style:dashed;border-color:color-mix(in srgb,var(--good) 45%,var(--line))}
+.task.gaprow .t span{color:var(--good)}
+.task.evrow .sw{background:var(--amber)}
+.evtag{font:600 10px/1 var(--display);letter-spacing:.12em;color:var(--amber);text-transform:uppercase}
+
+/* week balance */
+.wb{display:grid;gap:9px}
+.wb-row{display:grid;grid-template-columns:minmax(0,1fr) 54px;gap:4px 10px;align-items:center;font-size:14px}
+.wb-row .num{text-align:right;font-size:13px;color:var(--muted)}
+.wb-bar{grid-column:1/-1;height:6px;border-radius:3px;background:var(--panel-2);overflow:hidden}
+.wb-bar i{display:block;height:100%}
+
 /* homework */
 .hw-form{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,2fr) 150px auto;gap:8px;align-items:end}
 .hw-group{margin-top:16px}
@@ -193,7 +209,7 @@ button{cursor:pointer}
 .form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 16px}
 .field{display:grid;gap:5px}
 .field label{font-size:13px;color:var(--muted)}
-.field .inp{width:100%}
+.field .inp{width:100%;min-width:0}
 .hint{font-size:13px;color:var(--muted);margin:6px 0 0}
 .guide{display:grid;gap:14px}
 .guide h3{margin:0 0 4px;font:600 15px/1.3 var(--display);letter-spacing:.03em}
@@ -201,25 +217,25 @@ button{cursor:pointer}
 .guide p{margin:0;font-size:14px;max-width:70ch;color:var(--muted)}
 .guide b{color:var(--text)}
 .tag{display:inline-block;font:600 10px/1 var(--display);letter-spacing:.12em;text-transform:uppercase;padding:4px 6px;border-radius:4px;border:1px solid var(--line-2);color:var(--muted);vertical-align:middle;margin-left:6px}
-.transfer{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:12px;border:1px solid var(--amber);border-radius:8px;margin-top:10px}
-.transfer .num{font-size:22px;font-weight:600}
 textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--text);color:var(--ground);padding:9px 14px;border-radius:7px;font-size:14px;font-weight:500;opacity:0;pointer-events:none;transition:opacity .2s}
 .toast.show{opacity:1}
 
 @media (max-width:900px){
-  .instruments{grid-template-columns:1fr}
-  .main{grid-template-columns:1fr}
+  .instruments{grid-template-columns:minmax(0,1fr)}
+  .main{grid-template-columns:minmax(0,1fr)}
 }
 @media (max-width:560px){
-  .tabs{margin-left:0;width:100%}
-  .tab{flex:1;padding-inline:6px}
+  .tabs{margin-left:0;width:100%;display:grid;grid-template-columns:repeat(5,minmax(0,1fr))}
+  .tab{padding:8px 2px;font-size:10px;letter-spacing:.03em}
   .form{grid-template-columns:1fr}
   .act{grid-template-columns:auto minmax(0,1fr) auto}
   .act .goal,.act .kind{grid-column:2/-1}
   .act .x{grid-column:3;grid-row:1}
   .slots{grid-template-columns:repeat(4,minmax(0,1fr))}
-  .hw-form{grid-template-columns:1fr 1fr}
+  .hw-form{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ev-form{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ev-form .ev-title{grid-column:1/-1}
   .hw-form .hw-text{grid-column:1/-1;order:-1}
   .week{grid-template-columns:repeat(7,minmax(0,1fr))}
   .wk-nav{display:none}
@@ -234,6 +250,7 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
     <span class="sync" id="sync"><i></i><span>lokal</span></span>
     <nav class="tabs" role="tablist">
       <button class="tab" role="tab" data-tab="cockpit" aria-selected="true">Cockpit</button>
+      <button class="tab" role="tab" data-tab="cal" aria-selected="false">Kalender</button>
       <button class="tab" role="tab" data-tab="hw" aria-selected="false">Hausaufg.</button>
       <button class="tab" role="tab" data-tab="plan" aria-selected="false">Plan</button>
       <button class="tab" role="tab" data-tab="setup" aria-selected="false">Setup</button>
@@ -252,11 +269,11 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
         </div>
       </div>
       <div class="inst">
-        <div class="label">Ausgabe-Budget <span id="budget-month"></span></div>
-        <svg class="gauge" id="g-budget" viewBox="0 0 100 100" aria-hidden="true"></svg>
+        <div class="label">Diese Woche</div>
+        <svg class="gauge" id="g-week" viewBox="0 0 100 100" aria-hidden="true"></svg>
         <div>
-          <div class="big num" id="budget-now">0 €</div>
-          <div class="sub" id="budget-sub">–</div>
+          <div class="big num" id="week-count">0<small>/0</small></div>
+          <div class="sub" id="week-sub">–</div>
         </div>
       </div>
       <div class="inst">
@@ -312,11 +329,44 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
         </div>
         <div class="panel">
           <div class="panel-h">
-            <h2>Abrechnung</h2>
-            <span class="label" id="ledger-lbl"></span>
+            <h2>Wochenbilanz</h2>
+            <span class="label" id="wb-lbl"></span>
           </div>
-          <table class="ledger" id="ledger"></table>
-          <div id="risk"></div>
+          <div class="wb" id="wb"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CALENDAR -->
+  <section id="view-cal" hidden>
+    <div class="main" style="grid-template-columns:minmax(0,1fr)">
+      <div class="panel">
+        <div class="panel-h"><h2>Neuer Eintrag</h2><span class="label">in deiner freien Zeit</span></div>
+        <form class="ev-form" id="ev-form" autocomplete="off">
+          <div class="field ev-title"><label for="ev-title">Was?</label><input class="inp" id="ev-title" placeholder="z. B. Treffen mit Jonas, Arzt, Nachhilfe" required></div>
+          <div class="field"><label for="ev-date">Datum</label><input class="inp num" id="ev-date" type="date" required></div>
+          <div class="field"><label for="ev-s">Von</label><input class="inp num" id="ev-s" type="time" required></div>
+          <div class="field"><label for="ev-e">Bis</label><input class="inp num" id="ev-e" type="time"></div>
+          <button class="btn primary" type="submit">Eintragen</button>
+          <label class="ev-check"><input type="checkbox" id="ev-check" checked> zum Abhaken (zählt als Aufgabe)</label>
+        </form>
+        <div id="ev-warn"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-h">
+          <h2 id="cal-title">Woche</h2>
+          <div class="screen-row">
+            <button class="btn" data-calwk="-7" aria-label="Vorige Woche">‹</button>
+            <button class="btn" data-calwk="0">Heute</button>
+            <button class="btn" data-calwk="7" aria-label="Nächste Woche">›</button>
+          </div>
+        </div>
+        <div class="scroll-x"><div class="weekgrid calgrid" id="calgrid"></div></div>
+        <div class="legend">
+          <span><i style="border:1px dashed var(--good)"></i>frei – antippen zum Eintragen</span>
+          <span><i style="background:var(--amber)"></i>Extra-Eintrag</span>
+          <span><i style="border:1px dashed var(--line-2)"></i>fester Termin</span>
         </div>
       </div>
     </div>
@@ -324,7 +374,7 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
 
   <!-- HOMEWORK -->
   <section id="view-hw" hidden>
-    <div class="main" style="grid-template-columns:1fr">
+    <div class="main" style="grid-template-columns:minmax(0,1fr)">
       <div class="panel">
         <div class="panel-h"><h2>Hausaufgaben</h2><span class="label" id="hw-count"></span></div>
         <form class="hw-form" id="hw-form" autocomplete="off">
@@ -342,7 +392,7 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
 
   <!-- PLAN -->
   <section id="view-plan" hidden>
-    <div class="main" style="grid-template-columns:1fr">
+    <div class="main" style="grid-template-columns:minmax(0,1fr)">
       <div class="panel">
         <div class="panel-h"><h2>Wochenplan</h2><span class="label" id="plan-sum"></span></div>
         <div class="scroll-x"><div class="weekgrid" id="weekgrid"></div></div>
@@ -363,29 +413,16 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
     <div class="main">
       <div class="stack">
         <div class="panel">
-          <div class="panel-h"><h2>Geld-Regeln</h2></div>
+          <div class="panel-h"><h2>Regeln</h2></div>
           <div class="form">
-            <div class="field"><label for="s-budget">Monatsbudget (€)</label><input class="inp num" id="s-budget" type="number" min="0" step="5"></div>
-            <div class="field"><label for="s-penalty">Abzug pro Verstoß (€)</label><input class="inp num" id="s-penalty" type="number" min="0" step="1"></div>
-            <div class="field"><label for="s-mode">Abzug zählt</label>
-              <select class="inp" id="s-mode">
-                <option value="task">pro verpasster Aufgabe</option>
-                <option value="week">pro Woche mit Verpasstem</option>
-              </select></div>
+            <div class="field"><label for="s-app">App mit Limit</label><input class="inp" id="s-app" type="text"></div>
+            <div class="field"><label for="s-limit">Tageslimit (min)</label><input class="inp num" id="s-limit" type="number" min="0" step="5"></div>
             <div class="field"><label for="s-edit">Nachträglich abhaken erlaubt</label>
               <select class="inp" id="s-edit">
                 <option value="0">nur heute</option>
                 <option value="1">heute + gestern</option>
                 <option value="2">bis 2 Tage zurück</option>
               </select></div>
-          </div>
-        </div>
-        <div class="panel">
-          <div class="panel-h"><h2>Bildschirmzeit-Regeln</h2></div>
-          <div class="form">
-            <div class="field"><label for="s-app">App</label><input class="inp" id="s-app" type="text"></div>
-            <div class="field"><label for="s-limit">Tageslimit (min)</label><input class="inp num" id="s-limit" type="number" min="0" step="5"></div>
-            <div class="field"><label for="s-spen">Abzug pro Tag über Limit (€)</label><input class="inp num" id="s-spen" type="number" min="0" step="1"></div>
           </div>
           <p class="hint">Stell dasselbe Limit auch am iPhone ein, damit die App wirklich zugeht.</p>
         </div>
@@ -408,9 +445,8 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
       </div>
 
       <div class="panel guide">
-        <div class="panel-h" style="margin-bottom:0"><h2>Anbindung</h2></div>
+        <div class="panel-h" style="margin-bottom:0"><h2>TikTok-Sperre einrichten</h2></div>
         <div>
-          <h3>TikTok automatisch sperren <span class="tag">iPhone</span></h3>
           <p>Eine Web-App darf die Bildschirmzeit nicht steuern. Das iPhone kann es aber selbst, und zwar so, dass du es nicht einfach wegklickst:</p>
           <ol>
             <li>Einstellungen → <b>Bildschirmzeit</b> → <b>App-Limits</b> → Limit hinzufügen → TikTok → <b id="g-limit">60 min</b>.</li>
@@ -419,23 +455,7 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
             <li>Optional: Kurzbefehle → Automation → <b>App → TikTok wird geöffnet</b> → „URL öffnen“ mit dem Cockpit-Link. Dann siehst du beim Öffnen zuerst deinen Stand.</li>
           </ol>
         </div>
-        <div>
-          <h3>Geld sperren <span class="tag">Bank</span></h3>
-          <p>Deutsche Banken lassen Apps über ihre Schnittstellen nur Umsätze lesen, nicht dein Konto sperren. Was funktioniert, ist ein getrenntes Ausgabe-Konto:</p>
-          <ol>
-            <li>Leg ein <b>Unterkonto mit eigener Karte</b> an (z.&nbsp;B. N26 Spaces, Revolut Pockets oder ein kostenloses Zweitkonto). Nur mit dieser Karte gibst du Freizeitgeld aus.</li>
-            <li>Das restliche Geld bleibt auf einem Konto ohne Karte, am besten Tagesgeld.</li>
-            <li>Am Monatsende zeigt dir das Cockpit den <b>verdienten Betrag</b>. Nur diesen überweist du aufs Ausgabe-Konto. Die Abzüge bleiben gespart.</li>
-          </ol>
-          <div class="transfer">
-            <div><div class="label" id="tr-lbl">Freigabe</div><div class="num" id="tr-amount">–</div></div>
-            <button class="btn" id="tr-copy">Betrag kopieren</button>
-          </div>
-        </div>
-        <div>
-          <h3>Monatsverlauf</h3>
-          <table class="ledger" id="history"></table>
-        </div>
+
       </div>
     </div>
   </section>
@@ -462,7 +482,6 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
   const todayKey = () => keyOf(new Date());
   const monthOf = k => k.slice(0,7);
   const mondayOf = k => addDays(k, -wdOf(k));
-  const fmtEUR = v => `${Math.round(v).toLocaleString("de-DE")} €`;
   const shortDate = k => { const d = parse(k); return `${WD[wdOf(k)].charAt(0)+WD[wdOf(k)].charAt(1).toLowerCase()} ${d.getDate()}.${d.getMonth()+1}.`; };
   const uid = () => Math.random().toString(36).slice(2,9);
 
@@ -499,9 +518,10 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
     return {
       v: 1, planVersion: PLAN_VERSION,
       startDate: t,
-      settings: { budget:150, penalty:10, mode:"task", editWindow:1, app:"TikTok", screenLimit:45, screenPenalty:5 },
+      settings: { editWindow:1, app:"TikTok", screenLimit:45 },
       activities: buildPlan(t),
       homework: [],
+      events: [],
       log: {}
     };
   }
@@ -565,6 +585,8 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
     out.settings = Object.assign({}, base.settings, out.settings || {});
     out.activities = Array.isArray(out.activities) ? out.activities : base.activities;
     out.homework = Array.isArray(out.homework) ? out.homework : [];
+    out.events = Array.isArray(out.events) ? out.events : [];
+    ["budget","penalty","mode","screenPenalty"].forEach(f => delete out.settings[f]);
     out.log = out.log && typeof out.log === "object" ? out.log : {};
     // older format: days[] + time → sched
     out.activities.forEach(a => {
@@ -586,7 +608,11 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
   const slotOf = (a, k) => a.sched && a.sched[wdOf(k)];
   const activeOn = (a, k) => !!slotOf(a, k) && k >= a.created && (!a.removed || k < a.removed);
   const byTime = k => (x, y) => ((slotOf(x,k).s || "99") ).localeCompare(slotOf(y,k).s || "99");
-  const agendaOn = k => state.activities.filter(a => activeOn(a, k)).sort(byTime(k));
+  // one-off calendar entries behave like a single-day activity
+  const eventAct = ev => ({ id: ev.id, name: ev.title, goal: "", color: "var(--amber)", kind: ev.check ? "task" : "fixed", isEvent: true,
+    sched: { [wdOf(ev.date)]: { s: ev.s, e: ev.e || "", note: "" } }, created: ev.date, removed: addDays(ev.date, 1) });
+  const agendaOn = k => [...state.activities.filter(a => activeOn(a, k)), ...state.events.filter(ev => ev.date === k).map(eventAct)].sort(byTime(k));
+  const findAct = (k, id) => agendaOn(k).find(a => a.id === id) || state.activities.find(a => a.id === id);
   const scheduledOn = k => agendaOn(k).filter(a => a.kind !== "fixed");
   const dayLog = k => state.log[k] || { done:{}, screen:null };
   const checked = (k, id) => !!(state.log[k] && state.log[k].done && state.log[k].done[id]);
@@ -604,30 +630,36 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
   const editable = k => { const t = todayKey(); return k <= t && k >= addDays(t, -state.settings.editWindow) && tracked(k); };
   const hwBlocking = k => state.homework.filter(h => !h.done && h.due <= addDays(k, 1));
 
-  function monthLedger(ym){
-    const t = todayKey(); const S = state.settings;
-    const [y,m] = ym.split("-").map(Number);
-    const first = `${ym}-01`; const last = keyOf(new Date(y, m, 0));
-    let missedTasks = 0, missedWeeks = 0, overDays = 0, doneTasks = 0, totalTasks = 0;
-    for (let k = first; k <= last; k = addDays(k,1)) {
-      if (!tracked(k)) continue;
-      if (k <= t && overLimit(k)) overDays++;
-      if (k >= t) continue; // today still open
-      const st = dayStats(k); missedTasks += st.missed; doneTasks += st.done; totalTasks += st.total;
+  const toMin = hm => { const [h,m] = hm.split(":").map(Number); return h*60 + m; };
+  const toHM = m => `${pad(Math.floor(m/60))}:${pad(m%60)}`;
+  function busyOn(k){
+    return agendaOn(k).map(a => ({ a, sl: slotOf(a, k) }))
+      .filter(x => x.sl.s && x.sl.e && x.sl.e > x.sl.s)
+      .map(x => ({ a: x.a, s: toMin(x.sl.s), e: toMin(x.sl.e), way: x.a.kind === "fixed" && !x.a.isEvent ? 15 : 0 }))
+      .sort((x,y) => x.s - y.s);
+  }
+  // free time: 08:00 (weekend 09:00) until reading time 22:15; gaps of 30 min or more
+  function freeGaps(k){
+    const start = wdOf(k) >= 5 ? 9*60 : 8*60, end = 22*60 + 15;
+    const gaps = []; let cur = start;
+    for (const b of busyOn(k)) {
+      if (b.s - cur >= 30 && b.s > start) gaps.push({ s: cur, e: Math.min(b.s, end) });
+      cur = Math.max(cur, b.e + b.way); // way home after school
+      if (cur >= end) break;
     }
-    if (S.mode === "week") {
-      // a week is billed in the month its Sunday falls in, once the week is over
-      for (let mon = mondayOf(first); mon <= last; mon = addDays(mon,7)) {
-        const sun = addDays(mon,6);
-        if (monthOf(sun) !== ym || sun >= t) continue;
-        let miss = 0; for (let k = mon; k <= sun; k = addDays(k,1)) if (tracked(k)) miss += dayStats(k).missed;
-        if (miss > 0) missedWeeks++;
-      }
-    }
-    const taskPenalty = (S.mode === "week" ? missedWeeks : missedTasks) * S.penalty;
-    const screenPenalty = overDays * S.screenPenalty;
-    const available = Math.max(0, S.budget - taskPenalty - screenPenalty);
-    return { missedTasks, missedWeeks, overDays, doneTasks, totalTasks, taskPenalty, screenPenalty, available, closed: last < t };
+    if (end - cur >= 30) gaps.push({ s: cur, e: end });
+    return gaps.filter(g => g.e - g.s >= 30).map(g => ({ s: toHM(g.s), e: toHM(g.e) }));
+  }
+  function periodStats(from, to){
+    let done = 0, total = 0;
+    for (let k = from; k <= to; k = addDays(k,1)) { if (!tracked(k)) continue; const st = dayStats(k); done += st.done; total += st.total; }
+    return { done, total };
+  }
+  function streak(){
+    const t = todayKey(); let n = 0;
+    let k = dayStats(t).total && dayStats(t).missed === 0 ? t : addDays(t,-1);
+    while (tracked(k)) { const st = dayStats(k); if (st.total && st.missed) break; if (st.total) n++; k = addDays(k,-1); }
+    return n;
   }
 
   // ---------- rendering helpers ----------
@@ -650,9 +682,13 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
   function toast(msg){ const el = $("toast"); el.textContent = msg; el.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(()=>el.classList.remove("show"), 2600); }
   function showTab(name){
     document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === name));
-    ["cockpit","hw","plan","setup"].forEach(v => $("view-"+v).hidden = v !== name);
+    ["cockpit","cal","hw","plan","setup"].forEach(v => $("view-"+v).hidden = v !== name);
     try { sessionStorage.setItem("pc-tab", name); } catch {}
     window.scrollTo(0, 0);
+    if (name === "cal") {
+      const h = document.querySelector("#calgrid .wg-h.today");
+      if (h) $("calgrid").parentElement.scrollLeft = h.parentElement.offsetLeft - $("calgrid").offsetLeft;
+    }
   }
 
   function render(){
@@ -667,25 +703,24 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
     $("today-count").innerHTML = `${ts.done}<small>/${ts.total}</small>`;
     $("today-sub").innerHTML = ts.total === 0 ? "Heute steht nichts an." : ts.missed ? `Noch <b>${ts.missed}</b> offen` : "<b>Alles erledigt.</b> Stark.";
 
-    // budget gauge
-    const ym = monthOf(t); const L = monthLedger(ym);
-    $("budget-month").textContent = MONTHS[now.getMonth()];
-    ring($("g-budget"), S.budget ? L.available/S.budget : 0, L.available >= S.budget*0.7 ? "var(--good)" : L.available >= S.budget*0.4 ? "var(--amber)" : "var(--bad)", Math.round(S.budget ? L.available/S.budget*100 : 0)+"%");
-    $("budget-now").innerHTML = `${Math.round(L.available)}<small> / ${S.budget} €</small>`;
-    const lost = L.taskPenalty + L.screenPenalty;
-    $("budget-sub").innerHTML = lost ? `<b class="neg">−${fmtEUR(lost)}</b> gespart durch Verstöße` : "Noch kein Abzug diesen Monat";
+    // week gauge
+    const mon = mondayOf(t); const W = periodStats(mon, t); const wkAll = periodStats(mon, addDays(mon,6));
+    ring($("g-week"), W.total ? W.done/W.total : 1, W.total && W.done/W.total < 0.6 ? "var(--amber)" : "var(--good)", W.total ? Math.round(W.done/W.total*100)+"%" : "–");
+    $("week-count").innerHTML = `${W.done}<small>/${wkAll.total}</small>`;
+    const sk = streak();
+    $("week-sub").innerHTML = sk ? `Serie: <b>${sk} Tag${sk>1?"e":""}</b> alles erledigt` : "Heute alles schaffen = Serie starten";
 
     // screen gauge
     const sm = dayLog(t).screen ?? 0; const lim = S.screenLimit;
     ring($("g-screen"), lim ? sm/lim : 0, sm > lim ? "var(--bad)" : sm >= lim*0.8 ? "var(--amber)" : "var(--cyan)", lim ? Math.min(999,Math.round(sm/lim*100))+"%" : "–");
     $("screen-now").innerHTML = `${sm}<small> / ${lim} min</small>`;
-    $("screen-sub").innerHTML = sm > lim ? `<b class="neg">${sm-lim} min drüber</b>, −${S.screenPenalty} €` : `Noch <b>${Math.max(0, lim-sm)} min</b> übrig`;
+    $("screen-sub").innerHTML = sm > lim ? `<b class="neg">${sm-lim} min drüber</b>` : `Noch <b>${Math.max(0, lim-sm)} min</b> übrig`;
     $("screen-alert").innerHTML = sm >= lim && lim > 0
       ? `<div class="alert bad">■ Limit erreicht: ${esc(S.app)} ist ab jetzt zu</div>`
       : sm >= lim*0.8 && lim > 0 ? `<div class="alert warn">▲ Fast am Limit</div>` : "";
 
-    renderWeek(); renderDay(); renderHeat(ym, L); renderLedger(L);
-    renderHomework(); renderPlan(); renderSetup();
+    renderWeek(); renderDay(); renderHeat(monthOf(t)); renderBalance();
+    renderCalendar(); renderHomework(); renderPlan(); renderSetup();
   }
 
   function renderWeek(){
@@ -707,13 +742,17 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
     const st = dayStats(k);
     $("day-meta").textContent = st.total ? `${st.done} von ${st.total}` : "";
     const can = editable(k);
-    const items = agendaOn(k);
-    $("tasks").innerHTML = items.length ? items.map(a => {
+    const items = agendaOn(k).map(a => ({ a, at: slotOf(a,k).s || "99" }));
+    if (k >= t) freeGaps(k).forEach(g => items.push({ gap: g, at: g.s }));
+    items.sort((x,y) => x.at.localeCompare(y.at));
+    $("tasks").innerHTML = items.length ? items.map(({ a, gap }) => {
+      if (gap) return `<div class="task gaprow"><span></span><div class="t"><span class="num">frei ${gap.s}–${gap.e}</span></div>
+        <button class="linkbtn" data-newev="${k}|${gap.s}|${gap.e}">+ eintragen</button></div>`;
       const sl = slotOf(a, k); const time = timeText(sl);
       const meta = [time, sl.note || a.goal].filter(Boolean).map(esc).join(" · ");
       if (a.kind === "fixed") {
         return `<div class="task fixed"><span class="sw" style="background:${a.color}"></span>
-          <div class="t"><b>${esc(a.name)}</b><span class="num">${meta}</span></div><span class="fixtag">fest</span></div>`;
+          <div class="t"><b>${esc(a.name)}</b><span class="num">${meta}</span></div><span class="${a.isEvent?"evtag":"fixtag"}">${a.isEvent?"Termin":"fest"}</span></div>`;
       }
       const cov = coverer(k, a); const done = isDone(k, a); const missed = !done && k < t && tracked(k);
       let extra = "";
@@ -722,7 +761,7 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
         const open = hwBlocking(k).length;
         extra = open ? `<button class="linkbtn" data-goto="hw">${open} Hausaufgabe${open>1?"n":""} bis morgen offen</button>` : "";
       }
-      return `<div class="task${done?" done":""}${missed?" missed":""}">
+      return `<div class="task${done?" done":""}${missed?" missed":""}${a.isEvent?" evrow":""}">
         <span class="sw" style="background:${a.color}"></span>
         <div class="t"><b>${esc(a.name)}</b><span class="num">${meta}</span>${extra}</div>
         <button class="chk" role="checkbox" aria-checked="${done}" aria-label="${esc(a.name)} erledigt" data-act="${a.id}" ${can && !cov ? "" : "disabled"}>${CHECK}</button>
@@ -730,7 +769,7 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
       : `<div class="empty">Keine Aktivitäten geplant.</div>`;
     $("lockline").textContent = !tracked(k) ? "Vor deinem Start – zählt nicht."
       : k > t ? "Noch nicht dran – abhaken geht erst am Tag selbst."
-      : can ? "" : "Gesperrt – dieser Tag ist abgerechnet.";
+      : can ? "" : "Gesperrt – nachträglich abhaken geht nicht mehr.";
 
     const sm = dayLog(k).screen; const lim = state.settings.screenLimit;
     const inp = $("screen-input"); inp.value = sm ?? ""; inp.disabled = !can;
@@ -739,10 +778,11 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
     const bar = $("screen-bar"); bar.style.width = Math.min(100, lim ? (sm||0)/lim*100 : 0) + "%"; bar.className = (sm||0) > lim ? "over" : "";
   }
 
-  function renderHeat(ym, L){
+  function renderHeat(ym){
     const t = todayKey(); const [y,m] = ym.split("-").map(Number);
     $("month-title").textContent = `${MONTHS[m-1]} ${y}`;
-    $("month-rate").textContent = L.totalTasks ? `${Math.round(L.doneTasks/L.totalTasks*100)} % erledigt` : "";
+    const M = periodStats(`${ym}-01`, t);
+    $("month-rate").textContent = M.total ? `${Math.round(M.done/M.total*100)} % erledigt` : "";
     const first = `${ym}-01`; const days = new Date(y, m, 0).getDate();
     let html = WD.map(w => `<div class="h">${w}</div>`).join("");
     for (let i=0;i<wdOf(first);i++) html += `<div></div>`;
@@ -757,20 +797,59 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
     $("heat").innerHTML = html;
   }
 
-  function renderLedger(L){
-    const S = state.settings;
-    $("ledger-lbl").textContent = S.mode === "week" ? "pro Woche" : "pro Aufgabe";
-    const rows = [
-      ["Monatsbudget", `${S.budget} €`, ""],
-      [S.mode === "week" ? `Wochen mit Verpasstem (${L.missedWeeks} × ${S.penalty} €)` : `Verpasste Aufgaben (${L.missedTasks} × ${S.penalty} €)`, L.taskPenalty ? `−${L.taskPenalty} €` : "0 €", L.taskPenalty ? "neg" : ""],
-      [`Tage über ${S.app}-Limit (${L.overDays} × ${S.screenPenalty} €)`, L.screenPenalty ? `−${L.screenPenalty} €` : "0 €", L.screenPenalty ? "neg" : ""],
-    ];
-    $("ledger").innerHTML = rows.map(r => `<tr><td>${esc(r[0])}</td><td class="${r[2]}">${r[1]}</td></tr>`).join("")
-      + `<tr class="total"><td>Freigegeben zum Ausgeben</td><td class="pos">${fmtEUR(L.available)}</td></tr>`;
-    const open = dayStats(todayKey()).missed;
-    $("risk").innerHTML = open && S.mode === "task"
-      ? `<div class="alert warn" style="margin-top:10px">▲ Heute noch ${open} offen = −${open*S.penalty} € um Mitternacht</div>`
-      : !open && dayStats(todayKey()).total ? `<div class="alert ok" style="margin-top:10px">● Heute sicher – kein Abzug</div>` : "";
+  function renderBalance(){
+    const t = todayKey(); const mon = mondayOf(t); const sun = addDays(mon,6);
+    const rows = new Map();
+    for (let k = mon; k <= sun; k = addDays(k,1)) {
+      if (!tracked(k)) continue;
+      scheduledOn(k).forEach(a => {
+        const key = a.isEvent ? "__ev" : a.id;
+        const r = rows.get(key) || { name: a.isEvent ? "Extra-Einträge" : a.name, color: a.isEvent ? "var(--amber)" : a.color, done: 0, total: 0 };
+        r.total++; if (isDone(k, a)) r.done++; rows.set(key, r);
+      });
+    }
+    $("wb-lbl").textContent = `${parse(mon).getDate()}.${parse(mon).getMonth()+1}. – ${parse(sun).getDate()}.${parse(sun).getMonth()+1}.`;
+    $("wb").innerHTML = [...rows.values()].map(r => `<div class="wb-row"><span>${esc(r.name)}</span><span class="num">${r.done}/${r.total}</span>
+      <div class="wb-bar"><i style="width:${r.total ? r.done/r.total*100 : 0}%;background:${r.color}"></i></div></div>`).join("")
+      || `<div class="empty">Diese Woche ist nichts geplant.</div>`;
+  }
+
+  // ---------- calendar ----------
+  let calStart = mondayOf(todayKey());
+  function renderCalendar(){
+    const t = todayKey(); const end = addDays(calStart, 6);
+    const a = parse(calStart), b = parse(end);
+    $("cal-title").textContent = `${a.getDate()}. ${MONTHS[a.getMonth()].slice(0,3)} – ${b.getDate()}. ${MONTHS[b.getMonth()].slice(0,3)}`;
+    const dateInp = $("ev-date"); if (!dateInp.value) dateInp.value = t;
+    $("calgrid").innerHTML = WD.map((w,i) => {
+      const k = addDays(calStart, i); const d = parse(k);
+      const items = agendaOn(k).map(x => ({ x, at: slotOf(x,k).s || "99" }));
+      if (k >= t) freeGaps(k).forEach(g => items.push({ gap: g, at: g.s }));
+      items.sort((p,q) => p.at.localeCompare(q.at));
+      return `<div class="wg-col"><div class="wg-h${k===t?" today":""}">${WD_LONG[i]} ${d.getDate()}.${d.getMonth()+1}.</div>${items.map(({ x, gap }) => {
+        if (gap) return `<button class="gap" data-newev="${k}|${gap.s}|${gap.e}">+ frei ${gap.s}–${gap.e}</button>`;
+        const sl = slotOf(x, k);
+        const note = sl.note || x.goal;
+        return `<div class="wg-item${x.isEvent?" ev":x.kind==="fixed"?" fixed":""}" style="border-left-color:${x.color}">${esc(x.name)}<span>${esc(timeText(sl) || "ganzer Tag")}${note ? " · "+esc(note) : ""}</span>${x.isEvent?`<button class="x" data-evdel="${x.id}" aria-label="${esc(x.name)} löschen">×</button>`:""}</div>`;
+      }).join("")}</div>`;
+    }).join("");
+    checkOverlap();
+  }
+  function checkOverlap(){
+    const k = $("ev-date").value, s = $("ev-s").value, e = $("ev-e").value;
+    const box = $("ev-warn");
+    if (!k || !s) { box.innerHTML = ""; return; }
+    const S = toMin(s), E = e && e > s ? toMin(e) : S + 1;
+    const hits = busyOn(k).filter(b => b.s < E && S < b.e);
+    box.innerHTML = hits.length
+      ? `<div class="alert warn" style="margin-top:10px">▲ Überschneidet sich mit ${hits.map(h => esc(h.a.name)+" "+toHM(h.s)+"–"+toHM(h.e)).join(", ")}</div>`
+      : `<div class="alert ok" style="margin-top:10px">● Passt – da bist du frei</div>`;
+  }
+  function openNewEvent(k, s, e){
+    showTab("cal");
+    $("ev-date").value = k; $("ev-s").value = s; $("ev-e").value = e || "";
+    calStart = mondayOf(k); renderCalendar();
+    $("ev-title").focus();
   }
 
   // ---------- homework ----------
@@ -846,23 +925,8 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
   function renderSetup(){
     const S = state.settings;
     const set = (id, v) => { const el = $(id); if (document.activeElement !== el) el.value = v; };
-    set("s-budget", S.budget); set("s-penalty", S.penalty); set("s-mode", S.mode); set("s-edit", String(S.editWindow));
-    set("s-app", S.app); set("s-limit", S.screenLimit); set("s-spen", S.screenPenalty);
+    set("s-edit", String(S.editWindow)); set("s-app", S.app); set("s-limit", S.screenLimit);
     $("g-limit").textContent = `${S.screenLimit} min`;
-    const t = todayKey(); const ym = monthOf(t);
-    const prev = monthOf(addDays(`${ym}-01`, -1));
-    const usePrev = prev >= monthOf(state.startDate);
-    const L = monthLedger(usePrev ? prev : ym);
-    const [, pm] = (usePrev ? prev : ym).split("-").map(Number);
-    $("tr-lbl").textContent = usePrev ? `Verdient im ${MONTHS[pm-1]} – jetzt überweisen` : `Stand ${MONTHS[pm-1]} (läuft noch)`;
-    $("tr-amount").textContent = fmtEUR(L.available);
-    let rows = ""; let m = ym;
-    while (m >= monthOf(state.startDate)) {
-      const l = monthLedger(m); const [yy,mm] = m.split("-").map(Number);
-      rows += `<tr><td>${MONTHS[mm-1]} ${yy}${l.closed?"":" <span class='tag'>läuft</span>"}</td><td><span class="neg">${l.taskPenalty+l.screenPenalty ? "−"+(l.taskPenalty+l.screenPenalty)+" € · " : ""}</span>${fmtEUR(l.available)}</td></tr>`;
-      m = monthOf(addDays(`${m}-01`, -1));
-    }
-    $("history").innerHTML = rows;
   }
 
   // ---------- events ----------
@@ -877,7 +941,7 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
     if (wk) { weekStart = addDays(weekStart, +wk.dataset.wk); selected = addDays(selected, +wk.dataset.wk); render(); return; }
     const chk = e.target.closest(".chk[data-act]");
     if (chk && !chk.disabled) {
-      const k = selected; const a = state.activities.find(x => x.id === chk.dataset.act);
+      const k = selected; const a = findAct(k, chk.dataset.act); if (!a) return;
       const L = state.log[k] = state.log[k] || { done:{}, screen:null };
       L.done = L.done || {};
       if (L.done[a.id]) delete L.done[a.id];
@@ -890,6 +954,12 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
       if (dayStats(k).missed === 0 && dayStats(k).total) toast("Alles erledigt für den Tag.");
       return;
     }
+    const nev = e.target.closest("[data-newev]");
+    if (nev) { const [k, s, en] = nev.dataset.newev.split("|"); openNewEvent(k, s, en); return; }
+    const evd = e.target.closest("[data-evdel]");
+    if (evd) { state.events = state.events.filter(x => x.id !== evd.dataset.evdel); persist(); render(); toast("Eintrag gelöscht"); return; }
+    const cw = e.target.closest("[data-calwk]");
+    if (cw) { calStart = +cw.dataset.calwk ? addDays(calStart, +cw.dataset.calwk) : mondayOf(todayKey()); renderCalendar(); return; }
     const hwc = e.target.closest("[data-hw]");
     if (hwc) {
       const h = state.homework.find(x => x.id === hwc.dataset.hw); if (!h) return;
@@ -924,7 +994,6 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
       if (last) { last.focus(); last.select(); }
       return;
     }
-    if (e.target.id === "tr-copy") { copy(String(Math.round(monthLedgerForTransfer())), "Betrag kopiert"); return; }
     if (e.target.id === "bk-copy") { copy(JSON.stringify(state), "Backup kopiert"); return; }
     if (e.target.id === "bk-load") { $("bk-area").hidden = false; $("bk-text").focus(); return; }
     if (e.target.id === "bk-cancel") { $("bk-area").hidden = true; return; }
@@ -941,6 +1010,18 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
     }
   });
 
+  $("ev-form").addEventListener("submit", e => {
+    e.preventDefault();
+    const title = $("ev-title").value.trim(), date = $("ev-date").value, s = $("ev-s").value, en = $("ev-e").value;
+    if (!title || !date || !s) return;
+    if (en && en <= s) { toast("„Bis“ muss nach „Von“ liegen"); return; }
+    state.events.push({ id: "ev" + uid(), title, date, s, e: en, check: $("ev-check").checked });
+    $("ev-title").value = ""; $("ev-s").value = ""; $("ev-e").value = "";
+    calStart = mondayOf(date);
+    persist(); render(); toast(`${title} eingetragen`);
+  });
+  ["ev-date","ev-s","ev-e"].forEach(id => $(id).addEventListener("input", checkOverlap));
+
   $("hw-form").addEventListener("submit", e => {
     e.preventDefault();
     const subject = $("hw-subj").value.trim(), text = $("hw-text").value.trim(), due = $("hw-due").value;
@@ -950,10 +1031,6 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
     persist(); render(); toast(`${subject} eingetragen`);
   });
 
-  function monthLedgerForTransfer(){
-    const ym = monthOf(todayKey()); const prev = monthOf(addDays(`${ym}-01`, -1));
-    return monthLedger(prev >= monthOf(state.startDate) ? prev : ym).available;
-  }
   function copy(text, msg){
     try { navigator.clipboard.writeText(text).then(() => toast(msg), () => fallbackCopy(text)); } catch { fallbackCopy(text); }
   }
@@ -982,7 +1059,7 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
       } else return;
       persist(); render(); return;
     }
-    const map = { "s-budget":["budget",Number], "s-penalty":["penalty",Number], "s-mode":["mode",String], "s-edit":["editWindow",Number], "s-app":["app",String], "s-limit":["screenLimit",Number], "s-spen":["screenPenalty",Number] };
+    const map = { "s-edit":["editWindow",Number], "s-app":["app",String], "s-limit":["screenLimit",Number] };
     const m = map[e.target.id];
     if (m) {
       let v = m[1](e.target.value); if (m[1] === Number) v = Math.max(0, isFinite(v) ? v : 0);

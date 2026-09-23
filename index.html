@@ -112,6 +112,12 @@ button{cursor:pointer}
 .mv button:hover:not(:disabled){color:var(--amber);border-color:var(--amber)}
 .mv button:disabled{opacity:.25;cursor:default}
 .movednote{font-size:12px;color:var(--amber)}
+.dur{display:flex;gap:6px;margin-top:5px}
+.dur button{border:1px solid var(--line-2);background:transparent;border-radius:5px;padding:3px 8px;font:500 12px/1.2 var(--mono);color:var(--muted)}
+.dur button:hover:not(:disabled){color:var(--amber);border-color:var(--amber)}
+.dur button:disabled{opacity:.3;cursor:default}
+.urlbox{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px}
+.urlbox code{font:500 13px/1.4 var(--mono);background:var(--panel-2);border:1px solid var(--line);border-radius:6px;padding:7px 9px;overflow-wrap:anywhere;user-select:all;flex:1 1 220px}
 .chk{width:34px;height:34px;border-radius:8px;border:1.5px solid var(--line-2);background:transparent;display:grid;place-items:center;color:transparent;transition:background .15s,border-color .15s}
 .chk svg{width:18px;height:18px}
 .chk[aria-checked="true"]{background:var(--good);border-color:var(--good);color:var(--ground)}
@@ -314,7 +320,7 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
         </div>
         <div class="week" id="week"></div>
         <div class="tasks" id="tasks"></div>
-        <p class="hint" id="mv-hint">Mit ▲ ▼ tauschst du eine Aufgabe mit dem Block davor oder danach, auch mit „frei“. Die Uhrzeiten passen sich an, gelöscht wird nichts.</p>
+        <p class="hint" id="mv-hint">Mit ▲ ▼ tauschst du eine Aufgabe mit dem Block davor oder danach, auch mit „frei“. Fahrradfahren kannst du mit +30 min verlängern. Die Uhrzeiten passen sich an, gelöscht wird nichts.</p>
         <div class="lockline" id="lockline"></div>
 
         <div style="margin-top:18px">
@@ -443,6 +449,16 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
   <section id="view-setup" hidden>
     <div class="main">
       <div class="stack">
+        <div class="panel guide">
+          <div class="panel-h" style="margin-bottom:0"><h2>Aufs Handy holen</h2><span class="label" id="sync-state"></span></div>
+          <ol>
+            <li>Diesen Link auf dem iPhone in <b>Safari</b> öffnen:
+              <div class="urlbox"><code id="app-url"></code><button class="btn" id="url-copy">Kopieren</button></div></li>
+            <li>Mit <b>demselben Claude-Konto</b> anmelden wie hier.</li>
+            <li>Teilen-Symbol → <b>„Zum Home-Bildschirm“</b>. Dann liegt das Cockpit wie eine App auf deinem Handy.</li>
+            <li>Steht oben links <b>„gespeichert“ mit grünem Punkt</b>, sind Handy und Computer synchron: Was du auf dem einen abhakst, siehst du auf dem anderen.</li>
+          </ol>
+        </div>
         <div class="panel">
           <div class="panel-h"><h2>Regeln</h2></div>
           <div class="form">
@@ -497,7 +513,8 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
 (() => {
   const LS_KEY = "progress-cockpit-v1";
   const DOC_PATH = "tracker/main";
-  const PLAN_VERSION = 4;
+  const PLAN_VERSION = 5;
+  const APP_URL = "https://claude.ai/artifact/FSnRH8TTMQ68viKziX1H7F";
   const COLORS = ["#f2b544","#5cc8e0","#4fd18b","#c792ea","#f0645a","#8fb3ff","#e0a37a"];
   const FIXED_COLOR = "#7d9196";
   const WD = ["MO","DI","MI","DO","FR","SA","SO"];
@@ -540,11 +557,11 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
       }),
       jog,
       act("Fahrradfahren", "", "#9ad0ff", {
-        0: sl("19:15","20:15","locker, 1 Std."), 5: sl("13:00","14:30","längere Tour"), 6: sl("13:30","14:30","locker, 1 Std.")
-      }),
+        0: sl("19:15","20:15","locker, 1 Std."), 5: sl("12:30","15:30","lange Tour, 2–3 Std."), 6: sl("13:30","14:30","locker, 1 Std.")
+      }, { flex:true }),
       act("Alle Hausaufgaben erledigt", "", COLORS[5], {
         0: sl("17:30","19:00"), 1: sl("16:45","18:15"), 2: sl("18:15","19:45"), 3: sl("16:45","18:30"),
-        4: sl("17:30","18:30"), 5: sl("15:00","16:00","Rest der Woche"), 6: sl("16:30","17:30","Woche vorbereiten")
+        4: sl("17:30","18:30"), 5: sl("16:00","17:00","Rest der Woche"), 6: sl("16:30","17:30","Woche vorbereiten")
       }, { gate:"homework" }),
       act("Wochenrückblick", "was lief, was nicht, was ändere ich", "#b8a4ff", { 6: sl("18:00","18:45") }, { gate:"review" }),
       act("10.000 Schritte", "", COLORS[2], daily("","","über den Tag"), { coveredBy:[jog.id] }),
@@ -655,6 +672,12 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
       });
       // v3 → v4: cycling added; own changes to the rest of the plan stay untouched
       if (out.planVersion < 4) tpl.filter(n => n.name === "Fahrradfahren" && !live(n.name)).forEach(n => out.activities.push(n));
+      // v4 → v5: Saturday becomes the long ride, rides can be made longer per day; only unchanged slots are updated
+      if (out.planVersion < 5) {
+        const bike = live("Fahrradfahren"), hw = live("Alle Hausaufgaben erledigt");
+        if (bike) { bike.flex = true; const sa = bike.sched[5]; if (sa && sa.s === "13:00" && sa.e === "14:30") bike.sched[5] = { s:"12:30", e:"15:30", note:"lange Tour, 2–3 Std." }; }
+        if (hw) { const sa = hw.sched[5]; if (sa && sa.s === "15:00" && sa.e === "16:00") hw.sched[5] = { ...sa, s:"16:00", e:"17:00" }; }
+      }
     }
     out.planVersion = PLAN_VERSION;
     return out;
@@ -846,7 +869,16 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
       const n = neighbours(k, a.id); if (!n.self) return "";
       return `<div class="mv"><button data-mv="up|${a.id}" aria-label="${esc(a.name)} früher" ${n.up?"":"disabled"}>▲</button><button data-mv="down|${a.id}" aria-label="${esc(a.name)} später" ${n.down?"":"disabled"}>▼</button></div>`;
     };
-    const movedNote = sl => sl.moved ? `<div class="movednote">verschoben · sonst ${esc(timeText(sl.orig))}</div>` : "";
+    // flexible activities (cycling) can be made longer or shorter for one day
+    const durBtns = a => {
+      if (!canMove || !a.flex) return "";
+      const bl = blocksOn(k); const i = bl.findIndex(b => b.id === a.id); if (i < 0) return "";
+      const me = bl[i], nx = bl[i+1];
+      const limit = Math.min(22*60 + 15, !nx ? Infinity : nx.gap ? nx.e : nx.s);
+      const canLonger = me.e + 30 <= limit, canShorter = me.e - me.s - 30 >= 30;
+      return `<div class="dur"><button data-dur="-30|${a.id}" ${canShorter?"":"disabled"}>−30 min</button><button data-dur="30|${a.id}" ${canLonger?"":"disabled"}>+30 min</button></div>`;
+    };
+    const movedNote = sl => sl.moved ? `<div class="movednote">geändert · sonst ${esc(timeText(sl.orig))}</div>` : "";
     $("day-reset").hidden = !(canMove && state.moves[k]);
     $("mv-hint").hidden = !canMove;
     const items = agendaOn(k).map(a => ({ a, at: slotOf(a,k).s || "99" }));
@@ -873,7 +905,7 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
       }
       return `<div class="task${done?" done":""}${missed?" missed":""}${a.isEvent?" evrow":""}">
         <span class="sw" style="background:${a.color}"></span>
-        <div class="t"><b>${esc(a.name)}</b><span class="num">${meta}</span>${movedNote(sl)}${extra}</div>
+        <div class="t"><b>${esc(a.name)}</b><span class="num">${meta}</span>${movedNote(sl)}${durBtns(a)}${extra}</div>
         <div class="right">${mvBtns(a)}<button class="chk" role="checkbox" aria-checked="${done}" aria-label="${esc(a.name)} erledigt" data-act="${a.id}" ${can && !cov ? "" : "disabled"}>${CHECK}</button></div>
       </div>`; }).join("")
       : `<div class="empty">Keine Aktivitäten geplant.</div>`;
@@ -1062,6 +1094,8 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
   function renderSetup(){
     const S = state.settings;
     const set = (id, v) => { const el = $(id); if (document.activeElement !== el) el.value = v; };
+    $("app-url").textContent = APP_URL;
+    $("sync-state").textContent = db ? "synchron" : "nur dieses Gerät";
     set("s-edit", String(S.editWindow)); set("s-app", S.app); set("s-limit", S.screenLimit);
     $("g-limit").textContent = `${S.screenLimit} min`;
   }
@@ -1090,6 +1124,13 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
       }
       persist(); render();
       if (dayStats(k).missed === 0 && dayStats(k).total) toast("Alles erledigt für den Tag.");
+      return;
+    }
+    const du = e.target.closest("[data-dur]");
+    if (du && !du.disabled) {
+      const [delta, id] = du.dataset.dur.split("|");
+      const b = blocksOn(selected).find(x => x.id === id);
+      if (b) { setTime(selected, b, b.s, b.e + +delta); persist(); render(); }
       return;
     }
     const mv = e.target.closest("[data-mv]");
@@ -1139,6 +1180,7 @@ textarea.inp{width:100%;min-height:90px;font-family:var(--mono);font-size:12px}
       if (last) { last.focus(); last.select(); }
       return;
     }
+    if (e.target.id === "url-copy") { copy(APP_URL, "Link kopiert"); return; }
     if (e.target.id === "bk-copy") { copy(JSON.stringify(state), "Backup kopiert"); return; }
     if (e.target.id === "bk-load") { $("bk-area").hidden = false; $("bk-text").focus(); return; }
     if (e.target.id === "bk-cancel") { $("bk-area").hidden = true; return; }

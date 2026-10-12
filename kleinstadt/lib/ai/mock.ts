@@ -31,6 +31,9 @@ export function registerDefaultMocks() {
       const id = Number(/\[(\d+)\]/.exec(req.user)?.[1] ?? 1);
       return { insights: [{ content: "Ich sollte mehr auf die Leute um mich herum achten (Mock).", importance: 6, evidence_memory_ids: [id] }] };
     }
+    if (tag === "founding") {
+      return { found: true, name: "Blumen Lange", type: "shop", description: "Kleiner Blumenladen mit Sträußen vom Feld (Mock)", price: 8 };
+    }
     throw new Error(`no mock for ${tag}`);
   });
 }

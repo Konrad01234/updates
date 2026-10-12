@@ -7,6 +7,13 @@ export interface Location {
   description: string;
   open_hour: number;
   close_hour: number;
+  /** Phase 3 economy */
+  owner_id: string | null;
+  balance: number;
+  price: number;
+  daily_cost: number;
+  days_in_loss: number;
+  status: "open" | "closed";
 }
 
 export interface PlanEntry {
@@ -27,7 +34,30 @@ export interface Resident {
   daily_plan: PlanEntry[];
   current_location_id: string | null;
   current_action: string;
+  /** Phase 3 economy */
+  balance: number;
+  daily_wage: number;
+  employer_id: string | null;
 }
+
+export type Weather = "sonnig" | "bewölkt" | "Regen";
+
+export interface World {
+  sim_day: number;
+  weather: Weather;
+  temperature: number;
+}
+
+export interface Transaction {
+  id: number;
+  sim_day: number;
+  from_id: string;
+  to_id: string;
+  amount: number;
+  reason: string;
+}
+
+export const CITY_ACCOUNT = "stadt";
 
 export type MemoryKind = "observation" | "conversation" | "reflection";
 
@@ -51,7 +81,7 @@ export interface Relationship {
   updated_day: number;
 }
 
-export type EventType = "move" | "talk" | "action" | "reflect";
+export type EventType = "move" | "talk" | "action" | "reflect" | "economy" | "weather";
 
 export interface Turn {
   speaker: string;
@@ -92,7 +122,7 @@ export interface Position {
 export interface Snapshot {
   sim_day: number;
   created_at: string;
-  data: { residents: Resident[]; relationships: Relationship[]; positions: Position[]; max_memory_id: number };
+  data: { residents: Resident[]; relationships: Relationship[]; positions: Position[]; max_memory_id: number; locations?: Location[] };
 }
 
 export const DAY_START = 6;

@@ -22,6 +22,12 @@ async function main() {
   for (const e of events.filter((e) => e.type !== "move").slice(0, 25)) {
     console.log(`Tag ${e.sim_day} ${String(e.sim_hour).padStart(2, "0")}:00  ${e.summary}`);
   }
+  console.log("\nWirtschaft und Wetter:");
+  for (const e of events.filter((e) => e.type === "economy" || e.type === "weather")) console.log(`Tag ${e.sim_day} ${String(e.sim_hour).padStart(2, "0")}:00  ${e.summary}`);
+  const world = await store.getWorld((await store.getState()).sim_day - 1);
+  const residents = await store.listResidents();
+  console.log("\nKontostände:", residents.map((r) => `${r.name.split(" ")[0]} ${Math.round(r.balance)} €`).join(", "));
+  if (world) console.log("Letztes Wetter:", world.weather, world.temperature, "Grad");
   const state = await store.getState();
   console.log(`\nStand: Tag ${state.sim_day}, ${state.sim_hour}:${String(state.sim_minute).padStart(2, "0")} Uhr`);
 }

@@ -7,7 +7,7 @@ export function targetLocation(r: Resident, hour: number, locations: Map<string,
   const entry = r.daily_plan.find((p) => p.hour === hour) ?? r.daily_plan.filter((p) => p.hour < hour).at(-1);
   if (!entry) return { id: r.home_id, activity: "zu Hause" };
   const loc = locations.get(entry.location_id);
-  const open = loc && hour >= loc.open_hour && hour < loc.close_hour;
+  const open = loc && loc.status !== "closed" && hour >= loc.open_hour && hour < loc.close_hour;
   return open ? { id: entry.location_id, activity: entry.activity } : { id: r.home_id, activity: "zu Hause (Ort geschlossen)" };
 }
 
@@ -27,14 +27,14 @@ export function tie(score: number | undefined, label: string | undefined): keyof
  * Picks at most one talking pair among the residents at a location.
  * Candidates are weighted by relationship strength; the chosen pair then talks with that probability.
  */
-export function choosePair(present: Resident[], relationships: Map<string, Relationship>, rng: Rng): [Resident, Resident] | null {
+export function choosePair(present: Resident[], relationships: Map<string, Relationship>, rng: Rng, bonus = 0): [Resident, Resident] | null {
   if (present.length < 2) return null;
   const candidates: { pair: [Resident, Resident]; p: number }[] = [];
   for (let i = 0; i < present.length; i++) {
     for (let j = i + 1; j < present.length; j++) {
       const a = present[i], b = present[j];
       const rel = relationships.get(`${a.id}->${b.id}`);
-      candidates.push({ pair: [a, b], p: PAIR_PROBABILITY[tie(rel?.score, rel?.label)] });
+      candidates.push({ pair: [a, b], p: Math.min(1, PAIR_PROBABILITY[tie(rel?.score, rel?.label)] + bonus) });
     }
   }
   const total = candidates.reduce((s, c) => s + c.p, 0);

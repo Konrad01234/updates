@@ -26,7 +26,7 @@ describe("engine", () => {
     await engine.stepDay();
     const events = await store.listEvents(5000);
     expect(events.filter((e) => e.type === "talk").length).toBeGreaterThan(0);
-    expect(events.filter((e) => e.type === "reflect").length).toBe(8);
+    expect(events.filter((e) => e.type === "reflect").length).toBe(16);
     const rels = await store.listRelationships();
     expect(rels.some((r) => r.updated_day === 1)).toBe(true);
     const leon = await store.listMemories("leon");

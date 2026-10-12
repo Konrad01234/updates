@@ -73,11 +73,13 @@ export async function snapshot() {
     store.getState(), store.listResidents(), store.listLocations(), store.listEvents(150), store.listRelationships(),
     store.listPositions(), store.listSnapshots(), eng.getMap(),
   ]);
+  const world = await store.getWorld(state.sim_day);
+  const transactions = (await store.listTransactions(state.sim_day)).slice(-30).reverse();
   const memories = Object.fromEntries(
     await Promise.all(residents.map(async (r) => [r.id, (await store.listMemories(r.id)).slice(-10).reverse()])),
   );
   return {
-    state, residents, locations, events, relationships, memories, positions,
+    state, residents, locations, events, relationships, memories, positions, world, transactions,
     snapshots: snapshots.map((s) => s.sim_day), running: busy, speed, error: lastError,
     map: { width: map.width, height: map.height, cells: map.cells, places: map.places },
   };

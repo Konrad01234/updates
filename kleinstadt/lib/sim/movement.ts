@@ -39,9 +39,9 @@ export function maybeDepart(map: TownMap, pos: Position, from: Point, targetId: 
 }
 
 /** Advances one tick along the path. Returns the location id on arrival, else null. */
-export function walk(map: TownMap, pos: Position): string | null {
+export function walk(map: TownMap, pos: Position, speedFactor = 1): string | null {
   if (pos.paused_ticks > 0) { pos.paused_ticks--; return null; }
-  let budget = CELLS_PER_TICK;
+  let budget = CELLS_PER_TICK * speedFactor;
   while (pos.path.length && budget > 0) {
     const next = pos.path.shift()!;
     pos.x = next.x; pos.y = next.y;

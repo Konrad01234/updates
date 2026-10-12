@@ -1,10 +1,16 @@
-import type { Location, Memory, Position, Relationship, Resident, SimEvent, SimState, Snapshot } from "@/lib/types";
+import type { Location, Memory, Position, Relationship, Resident, SimEvent, SimState, Snapshot, Transaction, World } from "@/lib/types";
 
 /** Storage abstraction: in-memory for tests and dry runs, Supabase in production. */
 export interface Store {
   getState(): Promise<SimState>;
   setState(state: SimState): Promise<void>;
   listLocations(): Promise<Location[]>;
+  updateLocation(id: string, patch: Partial<Location>): Promise<void>;
+  addLocation(l: Location): Promise<void>;
+  getWorld(day: number): Promise<World | null>;
+  setWorld(w: World): Promise<void>;
+  addTransaction(t: Omit<Transaction, "id">): Promise<void>;
+  listTransactions(day?: number): Promise<Transaction[]>;
   listResidents(): Promise<Resident[]>;
   updateResident(id: string, patch: Partial<Resident>): Promise<void>;
   listMemories(residentId: string): Promise<Memory[]>;
@@ -26,6 +32,8 @@ export interface Store {
 export class InMemoryStore implements Store {
   private state: SimState = { sim_day: 1, sim_hour: 6, sim_minute: 0, ai_calls_today: 0 };
   private positions = new Map<string, Position>();
+  private worlds = new Map<number, World>();
+  private transactions: Transaction[] = [];
   private snapshots = new Map<number, Snapshot>();
   private locations: Location[] = [];
   private residents: Resident[] = [];
@@ -37,6 +45,16 @@ export class InMemoryStore implements Store {
   async getState() { return { ...this.state }; }
   async setState(state: SimState) { this.state = { ...state }; }
   async listLocations() { return this.locations.map((l) => ({ ...l })); }
+  async updateLocation(id: string, patch: Partial<Location>) {
+    const l = this.locations.find((x) => x.id === id);
+    if (!l) throw new Error(`location ${id} not found`);
+    Object.assign(l, patch);
+  }
+  async addLocation(l: Location) { this.locations.push({ ...l }); }
+  async getWorld(day: number) { const w = this.worlds.get(day); return w ? { ...w } : null; }
+  async setWorld(w: World) { this.worlds.set(w.sim_day, { ...w }); }
+  async addTransaction(t: Omit<Transaction, "id">) { this.transactions.push({ ...t, id: this.nextId++ }); }
+  async listTransactions(day?: number) { return this.transactions.filter((t) => day === undefined || t.sim_day === day).map((t) => ({ ...t })); }
   async listResidents() { return this.residents.map((r) => ({ ...r })); }
   async updateResident(id: string, patch: Partial<Resident>) {
     const r = this.residents.find((x) => x.id === id);
@@ -75,6 +93,9 @@ export class InMemoryStore implements Store {
     this.events = this.events.filter((e) => e.sim_day < day);
     for (const d of [...this.snapshots.keys()]) if (d > day) this.snapshots.delete(d);
     this.residents = structuredClone(snap.data.residents);
+    if (snap.data.locations) this.locations = structuredClone(snap.data.locations);
+    this.transactions = this.transactions.filter((t) => t.sim_day < day);
+    for (const d of [...this.worlds.keys()]) if (d > day) this.worlds.delete(d);
     this.relationships = new Map(snap.data.relationships.map((r) => [`${r.resident_id}->${r.other_id}`, { ...r }]));
     this.positions = new Map(snap.data.positions.map((p) => [p.resident_id, structuredClone(p)]));
     this.state = { sim_day: day, sim_hour: 6, sim_minute: 0, ai_calls_today: 0 };
@@ -84,6 +105,8 @@ export class InMemoryStore implements Store {
     this.state = { sim_day: 1, sim_hour: 6, sim_minute: 0, ai_calls_today: 0 };
     this.positions = new Map();
     this.snapshots = new Map();
+    this.worlds = new Map();
+    this.transactions = [];
     this.locations = seed.locations.map((l) => ({ ...l }));
     this.residents = seed.residents.map((r) => ({ ...r }));
     this.relationships = new Map();

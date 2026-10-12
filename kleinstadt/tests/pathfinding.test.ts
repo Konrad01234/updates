@@ -17,7 +17,7 @@ describe("map and pathfinding", () => {
   });
 
   it("finds a path between every pair of places without crossing a building", () => {
-    const ids = Object.keys(map.places);
+    const ids = Object.keys(map.places).filter((id) => !id.startsWith("__"));
     let pairs = 0;
     for (let i = 0; i < ids.length; i++) for (let j = i + 1; j < ids.length; j++) {
       const path = findPath(map, map.places[ids[i]].entrance, map.places[ids[j]].entrance);
@@ -29,7 +29,7 @@ describe("map and pathfinding", () => {
   });
 
   it("longest trip home -> school takes under an hour", () => {
-    const path = findPath(map, map.places.home_martha.entrance, map.places.schule.entrance)!;
+    const path = findPath(map, map.places.home_vogt.entrance, map.places.schule.entrance)!;
     expect(path.length).toBeGreaterThan(30);
     expect(travelTicks(map, path)).toBeLessThanOrEqual(6);
   });

@@ -8,7 +8,12 @@ import { choosePair, perceive, relKey, targetLocation, tie, type Rng } from "./a
 import { runConversation } from "./conversation";
 import { mostImportant, remember } from "./memory";
 import { reflect } from "./reflection";
-import { buildMap, type TownMap } from "./map";
+import { buildMap, placeNewBuilding, type TownMap } from "./map";
+import { rollWorld, weatherEffects, weatherSentence } from "./weather";
+import { FOUNDING_CAPITAL, isShop, payVisit, settleDay, wantsToFound } from "./economy";
+import { FoundingSchema } from "@/lib/ai/schemas";
+import { foundingPrompt } from "@/lib/ai/prompts/founding";
+import type { World } from "@/lib/types";
 import { adjacent } from "./pathfinding";
 import { entranceOf, initialPosition, isWalking, maybeDepart, ticksPerHour, walk } from "./movement";
 
@@ -29,6 +34,9 @@ export class Engine {
   private budget: AiBudget;
   private skipAi: boolean;
   private map: TownMap | null = null;
+  private world: World | null = null;
+  private visits = new Map<string, number>();
+  private visitStreak = new Map<string, number[]>();
 
   constructor(private store: Store, opts: EngineOptions = {}) {
     this.rng = opts.rng ?? Math.random;
@@ -75,8 +83,17 @@ export class Engine {
 
     if (hour === DAY_START && minute === 0) {
       await this.snapshot(day, residents);
+      const prev = this.world;
+      this.world = await rollWorld(this.store, day, this.rng);
+      this.visits = new Map();
+      if (!prev || prev.weather !== this.world.weather) {
+        await this.store.addEvent({ sim_day: day, sim_hour: hour, type: "weather", resident_ids: [], location_id: null, summary: `Wetter: ${weatherSentence(this.world)}`, transcript: null });
+      }
+      for (const r of residents) await remember(this.store, r.id, "observation", weatherSentence(this.world), 1, day, hour);
       if (!this.skipAi) { await this.planDay(residents, [...locations.values()], day); residents = await this.store.listResidents(); }
     }
+    if (!this.world) this.world = await rollWorld(this.store, day, this.rng);
+    const fx = weatherEffects(this.world);
 
     const positions = new Map((await this.store.listPositions()).map((p) => [p.resident_id, p]));
     for (const r of residents) {
@@ -103,10 +120,15 @@ export class Engine {
         }
       }
       if (isWalking(pos)) {
-        const arrived = walk(map, pos);
+        const arrived = walk(map, pos, fx.speed);
         if (arrived) {
           r.current_location_id = arrived;
           r.current_action = targetLocation(r, nextHour, locations).activity;
+          const shop = locations.get(arrived)!;
+          if (isShop(shop) && !(await payVisit(this.store, r, shop, day, this.visits))) {
+            r.current_action = `kann sich ${shop.name} nicht leisten`;
+            await remember(this.store, r.id, "observation", `Ich wollte zu ${shop.name}, aber ich kann mir das gerade nicht leisten.`, 4, day, hour);
+          }
           await this.store.addEvent({ sim_day: day, sim_hour: hour, type: "move", resident_ids: [r.id], location_id: arrived,
             summary: `${r.name} kommt in ${locations.get(arrived)?.name} an`, transcript: null });
         } else {
@@ -129,7 +151,7 @@ export class Engine {
       if (talking.has(a.id) || talking.has(b.id) || pa.street_talks_this_trip > 0 || pb.street_talks_this_trip > 0) continue;
       if (!adjacent(pa, pb) || map.cells[pa.y][pa.x] !== "road" || map.cells[pb.y][pb.x] !== "road") continue;
       const rel = relationships.get(relKey(a.id, b.id));
-      if (this.rng() >= STREET_PROBABILITY[tie(rel?.score, rel?.label)]) continue;
+      if (this.rng() >= STREET_PROBABILITY[tie(rel?.score, rel?.label)] * fx.streetTalk) continue;
       const near = this.nearestPlace(map, pa, locations);
       const street: Location = { ...near, id: near.id, name: `auf der Straße bei ${near.name}`, description: "Begegnung unterwegs" };
       await this.talk(a, b, street, day, hour, relationships, STREET_MAX_TURNS, "street");
@@ -143,7 +165,7 @@ export class Engine {
       const byLocation = new Map<string, Resident[]>();
       for (const r of residents) if (r.current_location_id) byLocation.set(r.current_location_id, [...(byLocation.get(r.current_location_id) ?? []), r]);
       for (const [locId, present] of byLocation) {
-        const pair = choosePair(present.filter((r) => !talking.has(r.id)), relationships, this.rng);
+        const pair = choosePair(present.filter((r) => !talking.has(r.id)), relationships, this.rng, locations.get(locId)?.type === "park" ? fx.parkBonus : 0);
         if (!pair) continue;
         await this.talk(pair[0], pair[1], locations.get(locId)!, day, hour, relationships, 8, "place");
         talking.add(pair[0].id); talking.add(pair[1].id);
@@ -155,7 +177,12 @@ export class Engine {
           + ` ${perceive(r, loc, hour, byLocation.get(loc.id) ?? [])}`;
         await remember(this.store, r.id, "observation", text, 1 + Math.floor(this.rng() * 3), day, hour);
       }
-      if (hour === DAY_END && !this.skipAi) for (const r of residents) await reflect(this.store, r, day, this.budget);
+      if (hour === DAY_END) {
+        if (!this.skipAi) for (const r of residents) await reflect(this.store, r, day, this.budget);
+        const notes = await settleDay(this.store, day, this.visits, this.visitStreak);
+        for (const n of notes) await this.store.addEvent({ sim_day: day, sim_hour: hour, type: "economy", resident_ids: [], location_id: null, summary: n, transcript: null });
+        if (!this.skipAi) await this.foundings(day);
+      }
     }
 
     for (const pos of positions.values()) await this.store.setPosition(pos);
@@ -173,6 +200,7 @@ export class Engine {
   private nearestPlace(map: TownMap, p: Position, locations: Map<string, Location>): Location {
     let best: Location | null = null, bestD = Infinity;
     for (const [id, place] of Object.entries(map.places)) {
+      if (id.startsWith("__")) continue;
       const loc = locations.get(id);
       if (!loc || loc.type === "home") continue;
       const d = Math.abs(place.entrance.x - p.x) + Math.abs(place.entrance.y - p.y);
@@ -185,13 +213,36 @@ export class Engine {
     const [relationships, positions] = await Promise.all([this.store.listRelationships(), this.store.listPositions()]);
     let maxId = 0;
     for (const r of residents) for (const m of await this.store.listMemories(r.id)) maxId = Math.max(maxId, m.id);
-    await this.store.saveSnapshot({ sim_day: day, created_at: new Date().toISOString(), data: { residents, relationships, positions, max_memory_id: maxId } });
+    const locations = await this.store.listLocations();
+    await this.store.saveSnapshot({ sim_day: day, created_at: new Date().toISOString(), data: { residents, relationships, positions, max_memory_id: maxId, locations } });
+  }
+
+  /** After reflection: residents with capital and a shop-related goal may open a business (director model). */
+  private async foundings(day: number) {
+    const locations = await this.store.listLocations();
+    const map = await this.getMap();
+    for (const r of await this.store.listResidents()) {
+      if (!wantsToFound(r, locations)) continue;
+      const all = await this.store.listMemories(r.id);
+      const res = await callJson("founding", { role: "director", ...foundingPrompt(r, mostImportant(all, day, 7, 10), locations.filter(isShop), day) }, FoundingSchema, this.budget);
+      if (!res.found) continue;
+      const id = `shop_${r.id}_${day}`;
+      if (!placeNewBuilding(map, id)) { await remember(this.store, r.id, "observation", "Es gibt gerade kein freies Grundstück für meinen Laden.", 5, day, DAY_END); continue; }
+      const shop: Location = { id, name: res.name, type: res.type, description: res.description, open_hour: 9, close_hour: 18,
+        owner_id: r.id, balance: FOUNDING_CAPITAL, price: res.price, daily_cost: 90, days_in_loss: 0, status: "open" };
+      await this.store.addLocation(shop);
+      locations.push(shop);
+      await this.store.updateResident(r.id, { balance: r.balance - FOUNDING_CAPITAL, work_id: id, employer_id: null, daily_wage: 0 });
+      await this.store.addTransaction({ sim_day: day, from_id: r.id, to_id: id, amount: FOUNDING_CAPITAL, reason: `Gründung ${res.name}` });
+      await remember(this.store, r.id, "observation", `Ich habe heute ${res.name} gegründet. 1500 Euro Startkapital, jetzt muss es laufen.`, 9, day, DAY_END);
+      await this.store.addEvent({ sim_day: day, sim_hour: DAY_END, type: "economy", resident_ids: [r.id], location_id: id, summary: `${r.name} eröffnet ${res.name}`, transcript: null });
+    }
   }
 
   private async planDay(residents: Resident[], locations: Location[], day: number) {
     for (const r of residents) {
       const all = await this.store.listMemories(r.id);
-      const res = await callJson("plan", { role: "resident", ...dailyPlanPrompt(r, locations, mostImportant(all, day, 1, 5), day) }, PlanSchema, this.budget);
+      const res = await callJson("plan", { role: "resident", ...dailyPlanPrompt(r, locations, mostImportant(all, day, 1, 5), day, this.world ? weatherSentence(this.world) : "") }, PlanSchema, this.budget);
       await this.store.updateResident(r.id, { daily_plan: res.plan });
     }
   }

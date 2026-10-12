@@ -33,3 +33,12 @@ export const ReflectionSchema = z.object({
   })).min(1).max(3),
 });
 export type ReflectionResponse = z.infer<typeof ReflectionSchema>;
+
+export const FoundingSchema = z.object({
+  found: z.boolean(),
+  name: z.string().min(1).max(40),
+  type: z.enum(["shop", "cafe"]),
+  description: z.string().max(200),
+  price: z.number().min(1).max(60),
+});
+export type FoundingResponse = z.infer<typeof FoundingSchema>;

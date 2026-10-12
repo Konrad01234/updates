@@ -5,7 +5,10 @@ import type { Location, Relationship, Resident } from "@/lib/types";
 const resident = (id: string): Resident => ({
   id, name: id, age: 30, job: "", home_id: "home", work_id: null, personality: "", goals: [],
   daily_plan: [], current_location_id: null, current_action: "",
+  balance: 0, daily_wage: 0, employer_id: null,
 });
+
+const economy = { owner_id: null, balance: 0, price: 0, daily_cost: 0, days_in_loss: 0, status: "open" as const };
 
 function lcg(seed: number) {
   let s = seed;
@@ -42,8 +45,8 @@ describe("pair selection", () => {
 
 describe("targetLocation", () => {
   const locs = new Map<string, Location>([
-    ["cafe", { id: "cafe", name: "Café", type: "cafe", description: "", open_hour: 7, close_hour: 19 }],
-    ["home", { id: "home", name: "Home", type: "home", description: "", open_hour: 0, close_hour: 24 }],
+    ["cafe", { id: "cafe", name: "Café", type: "cafe", description: "", open_hour: 7, close_hour: 19, ...economy }],
+    ["home", { id: "home", name: "Home", type: "home", description: "", open_hour: 0, close_hour: 24, ...economy }],
   ]);
   it("sends residents home when the planned place is closed", () => {
     const r = { ...resident("a"), daily_plan: [{ hour: 20, location_id: "cafe", activity: "Kaffee" }] };

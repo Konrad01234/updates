@@ -16,5 +16,5 @@ export function describeRelationship(rel: Relationship | undefined, other: Resid
 }
 
 export function describeLocations(ls: Location[]): string {
-  return ls.map((l) => `- ${l.id}: ${l.name} (${l.type}, ${l.open_hour}–${l.close_hour} Uhr)`).join("\n");
+  return ls.filter((l) => l.status !== "closed").map((l) => `- ${l.id}: ${l.name} (${l.type}, ${l.open_hour}–${l.close_hour} Uhr${l.price ? `, ${l.price} €` : ""})`).join("\n");
 }

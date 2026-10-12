@@ -4,7 +4,8 @@ import { callJson, turnExtractor, type AiBudget } from "@/lib/ai/client";
 
 /** Phase 4: listeners receive each spoken line while a conversation is generated. */
 export type TurnListener = (info: { a: string; b: string; location: string; speaker: string; text: string; done?: boolean }) => void;
-const listeners = new Set<TurnListener>();
+/** Kept on globalThis: the Next dev server re-instantiates modules per route compile, and /api/sim/listen must see the engine's listeners. */
+const listeners: Set<TurnListener> = ((globalThis as unknown as { __kleinstadtTurnListeners?: Set<TurnListener> }).__kleinstadtTurnListeners ??= new Set<TurnListener>());
 export const onConversationTurn = (l: TurnListener) => { listeners.add(l); return () => listeners.delete(l); };
 import { ConversationSchema } from "@/lib/ai/schemas";
 import { conversationPrompt } from "@/lib/ai/prompts/conversation";

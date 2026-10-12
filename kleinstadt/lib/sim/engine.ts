@@ -53,6 +53,20 @@ export class Engine {
     return this.map;
   }
 
+  /** Puts residents without a position at their home entrance; the UI calls this before the first tick so the map is not empty at 06:00. */
+  async placeResidents() {
+    const map = await this.getMap();
+    const positions = new Map((await this.store.listPositions()).map((p) => [p.resident_id, p]));
+    for (const r of await this.store.listResidents()) {
+      if (positions.has(r.id)) continue;
+      const pos = initialPosition(map, r);
+      positions.set(r.id, pos);
+      await this.store.setPosition(pos);
+      if (!r.current_location_id) await this.store.updateResident(r.id, { current_location_id: r.home_id });
+    }
+    return positions;
+  }
+
   /** Runs `ticks` ten-minute ticks. Night is skipped: 23:50 → next day 06:00. */
   async step(ticks: number): Promise<SimState> {
     let state = await this.store.getState();

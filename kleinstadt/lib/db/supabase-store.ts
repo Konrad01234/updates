@@ -63,8 +63,10 @@ export class SupabaseStore implements Store {
   async addEvent(e: Omit<SimEvent, "id">) {
     return this.unwrap(await this.db.from("events").insert(e).select().single()) as SimEvent;
   }
-  async listEvents(limit = 200) {
-    return this.unwrap(await this.db.from("events").select("*").order("id", { ascending: false }).limit(limit)) as SimEvent[];
+  async listEvents(limit = 200, exclude: SimEvent["type"][] = []) {
+    let q = this.db.from("events").select("*");
+    if (exclude.length) q = q.not("type", "in", `(${exclude.join(",")})`);
+    return this.unwrap(await q.order("id", { ascending: false }).limit(limit)) as SimEvent[];
   }
   async listPositions() { return this.unwrap(await this.db.from("positions").select("*")) as Position[]; }
   async setPosition(p: Position) { this.unwrap(await this.db.from("positions").upsert(p)); }

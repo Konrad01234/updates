@@ -40,10 +40,10 @@ export const weatherEffects = (w: World | null) => ({
   parkBonus: w?.weather === "sonnig" ? 0.2 : 0,
 });
 
-/** Sun elevation 0..1 and a light colour for the renderer: sunrise 6, peak 13, sunset 20. */
+/** Sun elevation 0..1 and a light colour for the renderer: first light 5, peak 13, dark at 21, so the day's first frame at 06:00 is dawn, not night. */
 export function sunState(hour: number, minute: number) {
   const t = hour + minute / 60;
-  const elevation = t < 6 || t > 20 ? 0 : Math.sin(((t - 6) / 14) * Math.PI);
+  const elevation = t <= 5 || t >= 21 ? 0 : Math.sin(((t - 5) / 16) * Math.PI);
   const phase = elevation === 0 ? "night" : elevation < 0.35 ? "golden" : "day";
   const color = phase === "night" ? "#2b3a5c" : phase === "golden" ? "#ffb878" : "#fff6e0";
   return { elevation, phase, color } as const;

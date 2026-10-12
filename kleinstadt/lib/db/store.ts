@@ -27,7 +27,8 @@ export interface Store {
   listRelationships(): Promise<Relationship[]>;
   upsertRelationship(r: Relationship): Promise<void>;
   addEvent(e: Omit<SimEvent, "id">): Promise<SimEvent>;
-  listEvents(limit?: number): Promise<SimEvent[]>;
+  /** Newest first; `exclude` drops event types (the UI leaves out the many `move` rows). */
+  listEvents(limit?: number, exclude?: SimEvent["type"][]): Promise<SimEvent[]>;
   listPositions(): Promise<Position[]>;
   setPosition(p: Position): Promise<void>;
   saveSnapshot(s: Snapshot): Promise<void>;
@@ -106,7 +107,7 @@ export class InMemoryStore implements Store {
     this.events.push(ev);
     return { ...ev };
   }
-  async listEvents(limit = 200) { return this.events.slice(-limit).reverse(); }
+  async listEvents(limit = 200, exclude: SimEvent["type"][] = []) { return this.events.filter((e) => !exclude.includes(e.type)).slice(-limit).reverse(); }
   async listPositions() { return [...this.positions.values()].map((p) => ({ ...p, path: [...p.path] })); }
   async setPosition(p: Position) { this.positions.set(p.resident_id, { ...p, path: [...p.path] }); }
   async saveSnapshot(s: Snapshot) { this.snapshots.set(s.sim_day, structuredClone(s)); }

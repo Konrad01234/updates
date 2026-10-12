@@ -108,7 +108,7 @@ export default function Page() {
           <h2>Bewohner</h2>
           {snap.residents.map((r) => (
             <div key={r.id} className={`resident${r.id === selected ? " active" : ""}`} onClick={() => setSelected(r.id)}>
-              {r.name}<small>{locName(r.current_location_id)} · {r.current_action || "–"} · {Math.round(r.balance)} €</small>
+              {r.name}<small>{r.current_location_id ? `${locName(r.current_location_id)} · ` : ""}{r.current_action || "–"} · {Math.round(r.balance)} €</small>
             </div>
           ))}
         </section>
@@ -121,7 +121,7 @@ export default function Page() {
             <Scene3D map={snap.map} residents={snap.residents} positions={snap.positions} locations={snap.locations} events={snap.events}
               state={snap.state} world={snap.world} follow={follow} onPickResident={setSelected} onPickLocation={setSelectedPlace} />
           ) : (
-            <MapCanvas map={snap.map} residents={snap.residents} positions={snap.positions} locations={snap.locations} events={snap.events}
+            <MapCanvas map={snap.map} residents={snap.residents} positions={snap.positions} locations={snap.locations} events={snap.events} state={snap.state}
               follow={follow} onPickResident={setSelected} onPickTalk={setOpenEvent} />
           )}
           <div className="timeline">

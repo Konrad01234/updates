@@ -66,6 +66,10 @@ npm run dev                       # http://localhost:3000
 
 Ohne Supabase-Zugangsdaten läuft alles im Arbeitsspeicher des Dev-Servers (geht beim Neustart verloren). Mit `NEXT_PUBLIC_SUPABASE_URL` und `SUPABASE_SERVICE_ROLE_KEY` wird Supabase genutzt; vorher `supabase/migrations/0001_init.sql` im SQL-Editor ausführen (pgvector muss aktiviert sein).
 
+## Ohne Server im Browser öffnen
+
+`npm run build:static` bündelt die Oberfläche samt Mock-Simulation in eine einzige Datei `dist-static/lindenbach.html`, die sich direkt im Browser öffnen lässt (Doppelklick, kein Server, keine Keys). `scripts/static/api.ts` beantwortet darin die `/api/sim`-Aufrufe der Oberfläche in der Seite selbst und muss mitgepflegt werden, wenn sich eine Route ändert. Echte KI-Gespräche gibt es nur mit dem Next-Server (`npm run dev`).
+
 ## Browser-Prüfung
 
 Alle Ansichten wurden im Mock-Modus mit Headless-Chromium (Playwright) durchgespielt: Laden per SSE-Stream, 10-Minuten-Schritt, 1×/5×/20× mit Pause, 2D-Karte, 3D-Szene bei Tag und Nacht, Protokoll mit Transkripten, Bewohner-Detail mit Folgen, Zeitung ab Tag 2, Beziehungsgraph mit Filter, Gott-Modus mit Vorschau und Anwenden, Belauschen, Zurückspulen über Snapshots. Dabei behoben:

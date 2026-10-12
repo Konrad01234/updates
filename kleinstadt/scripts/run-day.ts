@@ -1,0 +1,29 @@
+/**
+ * Simulates whole days in the terminal.
+ *   npx tsx scripts/run-day.ts            one day, mock mode unless keys are set
+ *   npx tsx scripts/run-day.ts 3          three days
+ *   SKIP_AI=true npx tsx scripts/run-day.ts   movement and encounters only (Phase 1, steps 1–4)
+ */
+import { InMemoryStore } from "@/lib/db/store";
+import { seed } from "@/data/seed";
+import { Engine } from "@/lib/sim/engine";
+import { registerDefaultMocks } from "@/lib/ai/mock";
+
+async function main() {
+  const days = Number(process.argv[2] ?? 1);
+  registerDefaultMocks();
+  const store = new InMemoryStore();
+  await store.reset(seed());
+  const engine = new Engine(store, { skipAi: process.env.SKIP_AI === "true" });
+  for (let d = 0; d < days; d++) await engine.step(18);
+  const events = (await store.listEvents(5000)).reverse();
+  const counts = events.reduce<Record<string, number>>((acc, e) => ((acc[e.type] = (acc[e.type] ?? 0) + 1), acc), {});
+  console.log(`\n${days} Tag(e) simuliert. Events:`, counts);
+  for (const e of events.filter((e) => e.type !== "move").slice(0, 25)) {
+    console.log(`Tag ${e.sim_day} ${String(e.sim_hour).padStart(2, "0")}:00  ${e.summary}`);
+  }
+  const state = await store.getState();
+  console.log(`\nStand: Tag ${state.sim_day}, ${state.sim_hour} Uhr`);
+}
+
+main().catch((err) => { console.error(err); process.exit(1); });

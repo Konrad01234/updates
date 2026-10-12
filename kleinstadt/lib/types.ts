@@ -72,9 +72,32 @@ export interface SimEvent {
 export interface SimState {
   sim_day: number;
   sim_hour: number;
+  /** 0, 10, 20, 30, 40, 50 (Phase 2: ten-minute ticks) */
+  sim_minute: number;
   ai_calls_today: number;
+}
+
+export interface Position {
+  resident_id: string;
+  x: number;
+  y: number;
+  /** remaining cells to walk; empty = at the entrance of current_location_id */
+  path: { x: number; y: number }[];
+  /** destination while walking */
+  target_location_id: string | null;
+  paused_ticks: number;
+  street_talks_this_trip: number;
+}
+
+export interface Snapshot {
+  sim_day: number;
+  created_at: string;
+  data: { residents: Resident[]; relationships: Relationship[]; positions: Position[]; max_memory_id: number };
 }
 
 export const DAY_START = 6;
 export const DAY_END = 23;
 export const EMBEDDING_DIM = 512;
+export const TICK_MINUTES = 10;
+export const CELLS_PER_TICK = 10;
+export const CELLS_PER_TICK_GREEN = 7;

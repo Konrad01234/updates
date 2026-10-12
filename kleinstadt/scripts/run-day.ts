@@ -15,7 +15,7 @@ async function main() {
   const store = new InMemoryStore();
   await store.reset(seed());
   const engine = new Engine(store, { skipAi: process.env.SKIP_AI === "true" });
-  for (let d = 0; d < days; d++) await engine.step(18);
+  for (let d = 0; d < days; d++) await engine.stepDay();
   const events = (await store.listEvents(5000)).reverse();
   const counts = events.reduce<Record<string, number>>((acc, e) => ((acc[e.type] = (acc[e.type] ?? 0) + 1), acc), {});
   console.log(`\n${days} Tag(e) simuliert. Events:`, counts);
@@ -23,7 +23,7 @@ async function main() {
     console.log(`Tag ${e.sim_day} ${String(e.sim_hour).padStart(2, "0")}:00  ${e.summary}`);
   }
   const state = await store.getState();
-  console.log(`\nStand: Tag ${state.sim_day}, ${state.sim_hour} Uhr`);
+  console.log(`\nStand: Tag ${state.sim_day}, ${state.sim_hour}:${String(state.sim_minute).padStart(2, "0")} Uhr`);
 }
 
 main().catch((err) => { console.error(err); process.exit(1); });

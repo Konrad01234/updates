@@ -1,6 +1,6 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type { Store } from "./store";
-import type { Location, Memory, Relationship, Resident, SimEvent, SimState } from "@/lib/types";
+import type { Location, Memory, Position, Relationship, Resident, SimEvent, SimState, Snapshot } from "@/lib/types";
 
 /** Supabase-backed store. Uses the service role key: server-side only. */
 export class SupabaseStore implements Store {
@@ -17,7 +17,7 @@ export class SupabaseStore implements Store {
   }
 
   async getState() {
-    return this.unwrap(await this.db.from("sim_state").select("sim_day,sim_hour,ai_calls_today").eq("id", 1).single()) as SimState;
+    return this.unwrap(await this.db.from("sim_state").select("sim_day,sim_hour,sim_minute,ai_calls_today").eq("id", 1).single()) as SimState;
   }
   async setState(state: SimState) {
     this.unwrap(await this.db.from("sim_state").update(state).eq("id", 1));
@@ -46,14 +46,31 @@ export class SupabaseStore implements Store {
   async listEvents(limit = 200) {
     return this.unwrap(await this.db.from("events").select("*").order("id", { ascending: false }).limit(limit)) as SimEvent[];
   }
+  async listPositions() { return this.unwrap(await this.db.from("positions").select("*")) as Position[]; }
+  async setPosition(p: Position) { this.unwrap(await this.db.from("positions").upsert(p)); }
+  async saveSnapshot(s: Snapshot) { this.unwrap(await this.db.from("snapshots").upsert(s)); }
+  async listSnapshots() { return this.unwrap(await this.db.from("snapshots").select("*").order("sim_day")) as Snapshot[]; }
+  async rewindTo(day: number) {
+    const snap = this.unwrap(await this.db.from("snapshots").select("*").eq("sim_day", day).maybeSingle()) as Snapshot | null;
+    if (!snap) return null;
+    this.unwrap(await this.db.from("memories").delete().gte("sim_day", day));
+    this.unwrap(await this.db.from("memories").delete().gt("id", snap.data.max_memory_id));
+    this.unwrap(await this.db.from("events").delete().gte("sim_day", day));
+    this.unwrap(await this.db.from("snapshots").delete().gt("sim_day", day));
+    this.unwrap(await this.db.from("residents").upsert(snap.data.residents));
+    this.unwrap(await this.db.from("relationships").upsert(snap.data.relationships));
+    this.unwrap(await this.db.from("positions").upsert(snap.data.positions));
+    await this.setState({ sim_day: day, sim_hour: 6, sim_minute: 0, ai_calls_today: 0 });
+    return snap;
+  }
   async reset(seed: Parameters<Store["reset"]>[0]) {
-    for (const t of ["events", "memories", "relationships", "residents", "locations"]) {
+    for (const t of ["events", "memories", "relationships", "positions", "snapshots", "residents", "locations"]) {
       this.unwrap(await this.db.from(t).delete().neq("id", "__none__"));
     }
     this.unwrap(await this.db.from("locations").insert(seed.locations));
     this.unwrap(await this.db.from("residents").insert(seed.residents));
     this.unwrap(await this.db.from("relationships").insert(seed.relationships));
     this.unwrap(await this.db.from("memories").insert(seed.memories));
-    await this.setState({ sim_day: 1, sim_hour: 6, ai_calls_today: 0 });
+    await this.setState({ sim_day: 1, sim_hour: 6, sim_minute: 0, ai_calls_today: 0 });
   }
 }

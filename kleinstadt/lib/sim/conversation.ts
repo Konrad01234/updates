@@ -35,7 +35,7 @@ export async function runConversation(
   }
   return store.addEvent({
     sim_day: day, sim_hour: hour, type: "talk", resident_ids: [a.id, b.id], location_id: location.id,
-    summary: `${a.name} und ${b.name} reden in ${location.name}: ${res.memories[0].content}`,
+    summary: `${a.name} und ${b.name} reden ${location.name.startsWith("auf der") ? location.name : `in ${location.name}`}: ${res.memories[0].content}`,
     transcript: res.turns,
   });
 }

@@ -9,8 +9,8 @@ describe("engine", () => {
     const store = new InMemoryStore();
     await store.reset(seed());
     const engine = new Engine(store, { skipAi: true, rng: () => 0.99 });
-    const state = await engine.step(18);
-    expect(state).toMatchObject({ sim_day: 2, sim_hour: 6 });
+    const state = await engine.stepDay();
+    expect(state).toMatchObject({ sim_day: 2, sim_hour: 6, sim_minute: 0 });
     const events = await store.listEvents(5000);
     expect(events.filter((e) => e.type === "move").length).toBeGreaterThan(8);
     expect(events.some((e) => e.type === "talk")).toBe(false);
@@ -23,7 +23,7 @@ describe("engine", () => {
     const store = new InMemoryStore();
     await store.reset(seed());
     const engine = new Engine(store, { rng: () => 0.1 });
-    await engine.step(18);
+    await engine.stepDay();
     const events = await store.listEvents(5000);
     expect(events.filter((e) => e.type === "talk").length).toBeGreaterThan(0);
     expect(events.filter((e) => e.type === "reflect").length).toBe(8);

@@ -27,3 +27,5 @@ h2 { font-size: 13px; font-weight: normal; letter-spacing: .04em; color: #666; m
 .detail dt { color: #666; font-size: 13px; }
 .detail dd { margin: 0 0 8px; }
 @media (max-width: 760px) { main { grid-template-columns: 1fr; } .col + .col { border-left: 0; border-top: 1px solid var(--line); } }
+.timeline { display: flex; gap: 8px; align-items: center; margin: 12px 0 20px; flex-wrap: wrap; color: #666; }
+.timeline button { padding: 3px 8px; font-size: 13px; }

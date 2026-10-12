@@ -1,6 +1,11 @@
 import type { Store } from "@/lib/db/store";
 import type { Location, Relationship, Resident, SimEvent } from "@/lib/types";
-import { callJson, type AiBudget } from "@/lib/ai/client";
+import { callJson, turnExtractor, type AiBudget } from "@/lib/ai/client";
+
+/** Phase 4: listeners receive each spoken line while a conversation is generated. */
+export type TurnListener = (info: { a: string; b: string; location: string; speaker: string; text: string; done?: boolean }) => void;
+const listeners = new Set<TurnListener>();
+export const onConversationTurn = (l: TurnListener) => { listeners.add(l); return () => listeners.delete(l); };
 import { ConversationSchema } from "@/lib/ai/schemas";
 import { conversationPrompt } from "@/lib/ai/prompts/conversation";
 import { recall, remember } from "./memory";
@@ -21,7 +26,10 @@ export async function runConversation(
     a, b, memA, memB, location, hour, day, maxTurns,
     relAB: relationships.get(relKey(a.id, b.id)), relBA: relationships.get(relKey(b.id, a.id)),
   });
-  const res = await callJson("conversation", { role: "resident", ...prompt }, ConversationSchema, budget);
+  const emit = (speaker: string, text: string, done = false) => { for (const l of listeners) l({ a: a.id, b: b.id, location: location.name, speaker, text, done }); };
+  const onToken = listeners.size ? turnExtractor((sp, tx) => emit(sp, tx)) : undefined;
+  const res = await callJson("conversation", { role: "resident", ...prompt, onToken }, ConversationSchema, budget);
+  if (listeners.size) emit("", "", true);
 
   for (const m of res.memories) {
     await remember(store, m.resident_id, "conversation", m.content, m.importance, day, hour);

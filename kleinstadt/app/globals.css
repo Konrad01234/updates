@@ -32,3 +32,30 @@ h2 { font-size: 13px; font-weight: normal; letter-spacing: .04em; color: #666; m
 .weather { color: #666; }
 .event.economy { color: var(--clay); }
 .event.weather { color: #666; }
+.event.divine { color: var(--clay); font-weight: bold; }
+.event.news { color: #555; }
+button.active { background: var(--ink); color: var(--paper); }
+.paper { border: 1px solid var(--ink); padding: 16px 20px; margin-bottom: 20px; background: #fffdf6; }
+.masthead { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px solid var(--ink); padding-bottom: 8px; margin-bottom: 12px; }
+.masthead .title { font-size: 26px; letter-spacing: .02em; }
+.article { border-bottom: 1px solid var(--line); padding: 8px 0; }
+.article summary { cursor: pointer; list-style: none; }
+.article summary small { display: block; color: var(--clay); font-size: 12px; }
+.article summary b { display: block; font-size: 17px; }
+.article summary em { display: block; color: #555; }
+.article p { max-width: 70ch; }
+.graph { border: 1px solid var(--line); padding: 12px; margin-bottom: 20px; }
+.graph-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+.graph-controls input[type=range] { width: 160px; }
+.graph-tip { font-size: 13px; padding: 8px; border-top: 1px solid var(--line); }
+.god { border: 1px solid var(--line); padding: 12px; margin-bottom: 20px; }
+.god textarea { width: 100%; font: inherit; padding: 8px; border: 1px solid var(--line); background: #fffdf6; color: var(--ink); }
+.god-row { display: flex; gap: 8px; margin: 8px 0; }
+.god-row select { font: inherit; }
+.god-preview { border-top: 1px solid var(--line); padding-top: 8px; }
+.god-preview ul { padding-left: 18px; }
+.listener { border: 1px solid var(--line); padding: 12px; margin-bottom: 20px; max-height: 320px; overflow: auto; }
+.listener h2 { display: flex; justify-content: space-between; align-items: center; }
+.listener-line { padding: 4px 0; }
+.listener-line small { display: block; color: #888; font-size: 11px; }
+.listener-end { color: #888; font-style: italic; padding: 4px 0 10px; }

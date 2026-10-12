@@ -1,15 +1,19 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
-import type { Location, Memory, Position, Relationship, Resident, SimEvent, SimState, Transaction, World } from "@/lib/types";
+import type { Location, Memory, Newspaper as Paper, Position, Relationship, Resident, SimEvent, SimState, Transaction, World } from "@/lib/types";
+import Newspaper from "./Newspaper";
+import GodMode from "./GodMode";
+import Listener from "./Listener";
 import MapCanvas, { type MapData } from "./MapCanvas";
 
 const Scene3D = dynamic(() => import("./Scene3D"), { ssr: false });
+const RelationshipGraph = dynamic(() => import("./RelationshipGraph"), { ssr: false });
 
 interface Snapshot {
   state: SimState; residents: Resident[]; locations: Location[]; events: SimEvent[]; relationships: Relationship[];
   memories: Record<string, Memory[]>; positions: Position[]; snapshots: number[]; running: boolean; speed: number;
-  error: string | null; map: MapData; world: World | null; transactions: Transaction[];
+  error: string | null; map: MapData; world: World | null; transactions: Transaction[]; newspapers: Paper[];
 }
 
 const clock = (s: SimState) => `Tag ${s.sim_day}, ${String(s.sim_hour).padStart(2, "0")}:${String(s.sim_minute).padStart(2, "0")}`;
@@ -22,6 +26,8 @@ export default function Page() {
   const [openEvent, setOpenEvent] = useState<number | null>(null);
   const [view, setView] = useState<"3d" | "2d">("3d");
   const [selectedPlace, setSelectedPlace] = useState<string | null>(null);
+  const [panel, setPanel] = useState<"none" | "paper" | "graph" | "god" | "listen">("none");
+  const [listenPair, setListenPair] = useState<[string, string] | null>(null);
   const es = useRef<EventSource | null>(null);
 
   const connect = useCallback(() => {
@@ -59,6 +65,10 @@ export default function Page() {
         <button disabled={busy} onClick={() => post("/api/sim/run", { speed: 20 })}>20×</button>
         <button disabled={busy} onClick={() => confirm("Stadt auf Tag 1 zurücksetzen?") && post("/api/sim/reset")}>Zurücksetzen</button>
         <button onClick={() => setView(view === "3d" ? "2d" : "3d")}>{view === "3d" ? "2D-Karte" : "3D-Ansicht"}</button>
+        <button className={panel === "paper" ? "active" : ""} disabled={snap.newspapers.length === 0} onClick={() => setPanel(panel === "paper" ? "none" : "paper")}>Zeitung</button>
+        <button className={panel === "graph" ? "active" : ""} onClick={() => setPanel(panel === "graph" ? "none" : "graph")}>Beziehungen</button>
+        <button className={panel === "god" ? "active" : ""} onClick={() => setPanel(panel === "god" ? "none" : "god")}>Gott-Modus</button>
+        <button className={panel === "listen" ? "active" : ""} onClick={() => { setListenPair(null); setPanel(panel === "listen" ? "none" : "listen"); }}>Belauschen</button>
       </header>
       <main>
         <section className="col">
@@ -78,6 +88,7 @@ export default function Page() {
                 <dd>{(snap.memories[sel.id] ?? []).map((m) => <div key={m.id}>· {m.content}</div>)}</dd>
               </dl>
               <button onClick={() => setFollow(follow === sel.id ? null : sel.id)}>{follow === sel.id ? "Nicht mehr folgen" : "Folgen"}</button>{" "}
+              <button onClick={() => { setListenPair(listenPair && listenPair[0] !== sel.id ? [listenPair[0], sel.id] : [sel.id, sel.id]); setPanel("listen"); }}>Belauschen</button>{" "}
               <button onClick={() => setSelected(null)}>Schließen</button>
             </div>
           )}
@@ -102,6 +113,10 @@ export default function Page() {
           ))}
         </section>
         <section className="col">
+          {panel === "paper" && <Newspaper papers={snap.newspapers} onClose={() => setPanel("none")} onJump={(id) => { setOpenEvent(id); setPanel("none"); }} />}
+          {panel === "graph" && <RelationshipGraph currentDay={snap.state.sim_day} reasons={(a, b) => snap.events.filter((e) => e.type === "talk" && e.resident_ids.includes(a) && e.resident_ids.includes(b)).slice(0, 3).map((e) => e.summary)} />}
+          {panel === "god" && <GodMode residents={snap.residents} locations={snap.locations.filter((l) => l.type !== "home")} disabled={busy} onDone={() => setPanel("none")} />}
+          {panel === "listen" && <Listener names={new Map(snap.residents.map((r) => [r.id, r.name]))} filter={listenPair} disabled={snap.speed === 20} onClose={() => setPanel("none")} />}
           {view === "3d" ? (
             <Scene3D map={snap.map} residents={snap.residents} positions={snap.positions} locations={snap.locations} events={snap.events}
               state={snap.state} world={snap.world} follow={follow} onPickResident={setSelected} onPickLocation={setSelectedPlace} />

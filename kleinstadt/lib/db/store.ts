@@ -1,4 +1,4 @@
-import type { Location, Memory, Position, Relationship, Resident, SimEvent, SimState, Snapshot, Transaction, World } from "@/lib/types";
+import type { Location, Memory, Newspaper, Position, Relationship, RelationshipHistory, Resident, SimEvent, SimState, Snapshot, Transaction, World } from "@/lib/types";
 
 /** Storage abstraction: in-memory for tests and dry runs, Supabase in production. */
 export interface Store {
@@ -10,6 +10,14 @@ export interface Store {
   getWorld(day: number): Promise<World | null>;
   setWorld(w: World): Promise<void>;
   addTransaction(t: Omit<Transaction, "id">): Promise<void>;
+  addResident(r: Resident): Promise<void>;
+  removeResident(id: string): Promise<void>;
+  listEventsOfDay(day: number): Promise<SimEvent[]>;
+  getEvent(id: number): Promise<SimEvent | null>;
+  addRelationshipHistory(rows: RelationshipHistory[]): Promise<void>;
+  listRelationshipHistory(day?: number): Promise<RelationshipHistory[]>;
+  saveNewspaper(n: Newspaper): Promise<void>;
+  listNewspapers(): Promise<Newspaper[]>;
   listTransactions(day?: number): Promise<Transaction[]>;
   listResidents(): Promise<Resident[]>;
   updateResident(id: string, patch: Partial<Resident>): Promise<void>;
@@ -34,6 +42,8 @@ export class InMemoryStore implements Store {
   private positions = new Map<string, Position>();
   private worlds = new Map<number, World>();
   private transactions: Transaction[] = [];
+  private history: RelationshipHistory[] = [];
+  private newspapers = new Map<number, Newspaper>();
   private snapshots = new Map<number, Snapshot>();
   private locations: Location[] = [];
   private residents: Resident[] = [];
@@ -54,6 +64,21 @@ export class InMemoryStore implements Store {
   async getWorld(day: number) { const w = this.worlds.get(day); return w ? { ...w } : null; }
   async setWorld(w: World) { this.worlds.set(w.sim_day, { ...w }); }
   async addTransaction(t: Omit<Transaction, "id">) { this.transactions.push({ ...t, id: this.nextId++ }); }
+  async addResident(r: Resident) { this.residents.push({ ...r }); }
+  async removeResident(id: string) {
+    this.residents = this.residents.filter((r) => r.id !== id);
+    this.positions.delete(id);
+    for (const k of [...this.relationships.keys()]) if (k.startsWith(`${id}->`) || k.endsWith(`->${id}`)) this.relationships.delete(k);
+  }
+  async listEventsOfDay(day: number) { return this.events.filter((e) => e.sim_day === day).map((e) => ({ ...e })); }
+  async getEvent(id: number) { const e = this.events.find((x) => x.id === id); return e ? { ...e } : null; }
+  async addRelationshipHistory(rows: RelationshipHistory[]) {
+    this.history = this.history.filter((h) => !rows.some((r) => r.sim_day === h.sim_day && r.resident_id === h.resident_id && r.other_id === h.other_id));
+    this.history.push(...rows.map((r) => ({ ...r })));
+  }
+  async listRelationshipHistory(day?: number) { return this.history.filter((h) => day === undefined || h.sim_day === day).map((h) => ({ ...h })); }
+  async saveNewspaper(n: Newspaper) { this.newspapers.set(n.sim_day, structuredClone(n)); }
+  async listNewspapers() { return [...this.newspapers.values()].sort((a, b) => a.sim_day - b.sim_day); }
   async listTransactions(day?: number) { return this.transactions.filter((t) => day === undefined || t.sim_day === day).map((t) => ({ ...t })); }
   async listResidents() { return this.residents.map((r) => ({ ...r })); }
   async updateResident(id: string, patch: Partial<Resident>) {
@@ -95,6 +120,8 @@ export class InMemoryStore implements Store {
     this.residents = structuredClone(snap.data.residents);
     if (snap.data.locations) this.locations = structuredClone(snap.data.locations);
     this.transactions = this.transactions.filter((t) => t.sim_day < day);
+    this.history = this.history.filter((h) => h.sim_day < day);
+    for (const d of [...this.newspapers.keys()]) if (d >= day) this.newspapers.delete(d);
     for (const d of [...this.worlds.keys()]) if (d > day) this.worlds.delete(d);
     this.relationships = new Map(snap.data.relationships.map((r) => [`${r.resident_id}->${r.other_id}`, { ...r }]));
     this.positions = new Map(snap.data.positions.map((p) => [p.resident_id, structuredClone(p)]));
@@ -107,6 +134,8 @@ export class InMemoryStore implements Store {
     this.snapshots = new Map();
     this.worlds = new Map();
     this.transactions = [];
+    this.history = [];
+    this.newspapers = new Map();
     this.locations = seed.locations.map((l) => ({ ...l }));
     this.residents = seed.residents.map((r) => ({ ...r }));
     this.relationships = new Map();

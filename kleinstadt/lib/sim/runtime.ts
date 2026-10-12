@@ -13,10 +13,11 @@ let busy = false;
 let lastError: string | null = null;
 registerDefaultMocks();
 
-async function getEngine() {
+export async function getEngine() {
   if (!engine) engine = new Engine(await getStore());
   return engine;
 }
+export const isRunning = () => busy;
 
 export async function stepSim(ticks: number) {
   if (busy) throw new Error("Simulation läuft bereits");
@@ -75,11 +76,12 @@ export async function snapshot() {
   ]);
   const world = await store.getWorld(state.sim_day);
   const transactions = (await store.listTransactions(state.sim_day)).slice(-30).reverse();
+  const newspapers = await store.listNewspapers();
   const memories = Object.fromEntries(
     await Promise.all(residents.map(async (r) => [r.id, (await store.listMemories(r.id)).slice(-10).reverse()])),
   );
   return {
-    state, residents, locations, events, relationships, memories, positions, world, transactions,
+    state, residents, locations, events, relationships, memories, positions, world, transactions, newspapers,
     snapshots: snapshots.map((s) => s.sim_day), running: busy, speed, error: lastError,
     map: { width: map.width, height: map.height, cells: map.cells, places: map.places },
   };

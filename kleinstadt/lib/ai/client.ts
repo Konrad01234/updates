@@ -1,4 +1,4 @@
-import type { ZodSchema } from "zod";
+import type { ZodType, ZodTypeDef } from "zod";
 
 export const MODELS = {
   resident: "claude-haiku-5-5",
@@ -12,6 +12,8 @@ export interface AiRequest {
   system: string;
   user: string;
   maxTokens?: number;
+  /** Phase 4: receives text as it streams in (raw JSON fragments). */
+  onToken?: (text: string) => void;
 }
 
 export interface AiBudget {
@@ -33,23 +35,48 @@ function stripFences(text: string) {
 async function callAnthropic(req: AiRequest): Promise<string> {
   const { default: Anthropic } = await import("@anthropic-ai/sdk");
   const client = new Anthropic();
-  const res = await client.messages.create({
+  const params = {
     model: MODELS[req.role],
     max_tokens: req.maxTokens ?? 1500,
-    system: [{ type: "text", text: req.system, cache_control: { type: "ephemeral" } }],
-    messages: [{ role: "user", content: req.user }],
-  });
-  return res.content.filter((b) => b.type === "text").map((b) => (b as { text: string }).text).join("\n");
+    system: [{ type: "text" as const, text: req.system, cache_control: { type: "ephemeral" as const } }],
+    messages: [{ role: "user" as const, content: req.user }],
+  };
+  if (!req.onToken) {
+    const res = await client.messages.create(params);
+    return res.content.filter((b) => b.type === "text").map((b) => (b as { text: string }).text).join("\n");
+  }
+  const stream = client.messages.stream(params);
+  let full = "";
+  stream.on("text", (t) => { full += t; req.onToken!(t); });
+  await stream.finalMessage();
+  return full;
+}
+
+/** Turns streamed JSON fragments into complete "speaker: text" lines as soon as each turn closes. */
+export function turnExtractor(onTurn: (speaker: string, text: string) => void) {
+  let buf = "", seen = 0;
+  return (chunk: string) => {
+    buf += chunk;
+    const re = /"speaker":\s*"([^"]+)",\s*"text":\s*"((?:[^"\\]|\\.)*)"/g;
+    let m: RegExpExecArray | null, i = 0;
+    while ((m = re.exec(buf))) { if (i++ >= seen) { seen++; onTurn(m[1], m[2].replace(/\\"/g, '"')); } }
+  };
 }
 
 /** Calls the model (or the mock), validates JSON against the schema, retries once on failure. */
-export async function callJson<T>(tag: string, req: AiRequest, schema: ZodSchema<T>, budget: AiBudget): Promise<T> {
+export async function callJson<T>(tag: string, req: AiRequest, schema: ZodType<T, ZodTypeDef, unknown>, budget: AiBudget): Promise<T> {
   if (budget.used >= budget.limit) {
     throw new Error(`AI budget exhausted: ${budget.used}/${budget.limit} calls today`);
   }
   for (let attempt = 0; attempt < 2; attempt++) {
     budget.used++;
-    const raw = isMock() ? mockProvider(tag, req) : JSON.parse(stripFences(await callAnthropic(req)));
+    let raw: unknown;
+    if (isMock()) {
+      raw = mockProvider(tag, req);
+      if (req.onToken) for (const piece of JSON.stringify(raw).match(/.{1,40}/gs) ?? []) req.onToken(piece);
+    } else {
+      raw = JSON.parse(stripFences(await callAnthropic(req)));
+    }
     const parsed = schema.safeParse(raw);
     if (parsed.success) return parsed.data;
     if (attempt === 1) throw new Error(`schema error for ${tag}: ${parsed.error.message}`);

@@ -1,6 +1,6 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type { Store } from "./store";
-import type { Location, Memory, Position, Relationship, Resident, SimEvent, SimState, Snapshot, Transaction, World } from "@/lib/types";
+import type { Location, Memory, Newspaper, Position, Relationship, RelationshipHistory, Resident, SimEvent, SimState, Snapshot, Transaction, World } from "@/lib/types";
 
 /** Supabase-backed store. Uses the service role key: server-side only. */
 export class SupabaseStore implements Store {
@@ -32,6 +32,17 @@ export class SupabaseStore implements Store {
     const q = this.db.from("transactions").select("*");
     return this.unwrap(await (day === undefined ? q : q.eq("sim_day", day))) as Transaction[];
   }
+  async addResident(r: Resident) { this.unwrap(await this.db.from("residents").insert(r)); }
+  async removeResident(id: string) { this.unwrap(await this.db.from("residents").delete().eq("id", id)); }
+  async listEventsOfDay(day: number) { return this.unwrap(await this.db.from("events").select("*").eq("sim_day", day).order("id")) as SimEvent[]; }
+  async getEvent(id: number) { return this.unwrap(await this.db.from("events").select("*").eq("id", id).maybeSingle()) as SimEvent | null; }
+  async addRelationshipHistory(rows: RelationshipHistory[]) { if (rows.length) this.unwrap(await this.db.from("relationship_history").upsert(rows)); }
+  async listRelationshipHistory(day?: number) {
+    const q = this.db.from("relationship_history").select("*");
+    return this.unwrap(await (day === undefined ? q : q.eq("sim_day", day))) as RelationshipHistory[];
+  }
+  async saveNewspaper(n: Newspaper) { this.unwrap(await this.db.from("newspaper").upsert(n)); }
+  async listNewspapers() { return this.unwrap(await this.db.from("newspaper").select("*").order("sim_day")) as Newspaper[]; }
   async listResidents() { return this.unwrap(await this.db.from("residents").select("*").order("id")) as Resident[]; }
   async updateResident(id: string, patch: Partial<Resident>) {
     this.unwrap(await this.db.from("residents").update(patch).eq("id", id));
@@ -69,6 +80,8 @@ export class SupabaseStore implements Store {
     this.unwrap(await this.db.from("residents").upsert(snap.data.residents));
     if (snap.data.locations) this.unwrap(await this.db.from("locations").upsert(snap.data.locations));
     this.unwrap(await this.db.from("transactions").delete().gte("sim_day", day));
+    this.unwrap(await this.db.from("relationship_history").delete().gte("sim_day", day));
+    this.unwrap(await this.db.from("newspaper").delete().gte("sim_day", day));
     this.unwrap(await this.db.from("world").delete().gt("sim_day", day));
     this.unwrap(await this.db.from("relationships").upsert(snap.data.relationships));
     this.unwrap(await this.db.from("positions").upsert(snap.data.positions));
@@ -76,7 +89,7 @@ export class SupabaseStore implements Store {
     return snap;
   }
   async reset(seed: Parameters<Store["reset"]>[0]) {
-    for (const t of ["events", "memories", "relationships", "positions", "snapshots", "transactions", "residents", "locations"]) {
+    for (const t of ["events", "memories", "relationships", "relationship_history", "newspaper", "positions", "snapshots", "transactions", "residents", "locations"]) {
       this.unwrap(await this.db.from(t).delete().neq("id", "__none__"));
     }
     this.unwrap(await this.db.from("locations").insert(seed.locations));

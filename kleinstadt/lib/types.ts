@@ -81,7 +81,28 @@ export interface Relationship {
   updated_day: number;
 }
 
-export type EventType = "move" | "talk" | "action" | "reflect" | "economy" | "weather";
+export type EventType = "move" | "talk" | "action" | "reflect" | "economy" | "weather" | "divine" | "news";
+
+export interface RelationshipHistory {
+  sim_day: number;
+  resident_id: string;
+  other_id: string;
+  score: number;
+}
+
+export interface Article {
+  headline: string;
+  teaser: string;
+  body: string;
+  section: "Lokales" | "Wirtschaft" | "Gesellschaft" | "Wetter" | "Klatsch";
+  event_ids: number[];
+  mentioned_resident_ids: string[];
+}
+
+export interface Newspaper {
+  sim_day: number;
+  articles: Article[];
+}
 
 export interface Turn {
   speaker: string;

@@ -14,6 +14,8 @@ import { FOUNDING_CAPITAL, isShop, payVisit, settleDay, wantsToFound } from "./e
 import { FoundingSchema } from "@/lib/ai/schemas";
 import { foundingPrompt } from "@/lib/ai/prompts/founding";
 import type { World } from "@/lib/types";
+import { recordRelationshipHistory } from "./history";
+import { writeNewspaper } from "./newspaper";
 import { adjacent } from "./pathfinding";
 import { entranceOf, initialPosition, isWalking, maybeDepart, ticksPerHour, walk } from "./movement";
 
@@ -43,6 +45,8 @@ export class Engine {
     this.budget = { used: 0, limit: opts.maxCallsPerDay ?? Number(process.env.MAX_AI_CALLS_PER_DAY ?? 200) };
     this.skipAi = opts.skipAi ?? false;
   }
+
+  get aiBudget() { return this.budget; }
 
   async getMap(): Promise<TownMap> {
     if (!this.map) this.map = buildMap((await this.store.listResidents()).map((r) => r.home_id));
@@ -90,6 +94,7 @@ export class Engine {
         await this.store.addEvent({ sim_day: day, sim_hour: hour, type: "weather", resident_ids: [], location_id: null, summary: `Wetter: ${weatherSentence(this.world)}`, transcript: null });
       }
       for (const r of residents) await remember(this.store, r.id, "observation", weatherSentence(this.world), 1, day, hour);
+      if (!this.skipAi && day > 1) await writeNewspaper(this.store, day, this.budget);
       if (!this.skipAi) { await this.planDay(residents, [...locations.values()], day); residents = await this.store.listResidents(); }
     }
     if (!this.world) this.world = await rollWorld(this.store, day, this.rng);
@@ -179,6 +184,7 @@ export class Engine {
       }
       if (hour === DAY_END) {
         if (!this.skipAi) for (const r of residents) await reflect(this.store, r, day, this.budget);
+        await recordRelationshipHistory(this.store, day);
         const notes = await settleDay(this.store, day, this.visits, this.visitStreak);
         for (const n of notes) await this.store.addEvent({ sim_day: day, sim_hour: hour, type: "economy", resident_ids: [], location_id: null, summary: n, transcript: null });
         if (!this.skipAi) await this.foundings(day);
